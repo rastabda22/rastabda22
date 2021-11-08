@@ -18,7 +18,7 @@ from pprint import pprint
 from PIL import Image
 
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
-from CachePath import remove_folders_marker
+from CachePath import photo_cache_name, remove_folders_marker
 from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
@@ -2127,13 +2127,14 @@ class TreeWalker:
 					break
 			random_list.append(random_number)
 			[random_media, random_number] = self.pick_random_image(album, random_number)
-			folder_prefix = remove_folders_marker(random_media.album.cache_base)
-			if folder_prefix:
-				folder_prefix += Options.config['cache_folder_separator']
+			album_prefix = remove_folders_marker(random_media.album.cache_base)
+			if album_prefix:
+				album_prefix += Options.config['cache_folder_separator']
 			thumbnail = os.path.join(
 					Options.config['cache_path'],
 					random_media.album.subdir,
-					folder_prefix + random_media.cache_base + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
+					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], "album_square")
+					# album_prefix + random_media.cache_base + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
 				)
 			if os.path.exists(thumbnail):
 				random_thumbnails.append(thumbnail)

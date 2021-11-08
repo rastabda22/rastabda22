@@ -28,7 +28,6 @@ import math
 import numpy as np
 
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
-# from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
 from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes, switch_to_lowercase
@@ -688,7 +687,16 @@ class Album(object):
 			album.password_identifiers_set = dictionary["password_identifiers_set"]
 
 		for single_media_dict in dictionary["media"]:
-			new_media = SingleMedia.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)), json_files, json_files_min_mtime)
+			new_media = SingleMedia.from_dict(
+				album,
+				single_media_dict,
+				os.path.join(
+					Options.config['album_path'],
+					remove_folders_marker(album.baseless_path)
+				),
+				json_files,
+				json_files_min_mtime
+			)
 			if new_media.is_valid:
 				album.add_single_media(new_media)
 
@@ -1869,17 +1877,26 @@ class SingleMedia(object):
 			# convert the original image to jpg because the browser won't be able to show it
 			message("browser unsupported mime type", "", 4)
 			next_level()
-			album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
-			if album_prefix == Options.config["cache_folder_separator"]:
-				album_prefix = ""
-			thumbs_path_with_subdir = os.path.join(thumbs_path, self.album.subdir)
+			thumbs_path_with_subdir = os.path.join(
+				thumbs_path,
+				self.album.subdir
+			)
 			try:
 				os.stat(thumbs_path_with_subdir)
 			except OSError:
 				make_dir(thumbs_path_with_subdir, "nonexixtent cache directory")
 
-			converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
-			converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
+			album_prefix = remove_folders_marker(self.album.cache_base)
+			if album_prefix:
+				album_prefix += Options.config['cache_folder_separator']
+			converted_path_without_cache_path = os.path.join(
+				self.album.subdir,
+				album_prefix + photo_cache_name(self, 0)
+			)
+			converted_path = os.path.join(
+				thumbs_path_with_subdir,
+				album_prefix + photo_cache_name(self, 0)
+			)
 
 			image_jpg = image.convert('RGB')
 			try:
@@ -2022,9 +2039,9 @@ class SingleMedia(object):
 
 	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type="", mobile_bigger=False):
 
-		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
-		if album_prefix == Options.config["cache_folder_separator"]:
-			album_prefix = ""
+		album_prefix = remove_folders_marker(self.album.cache_base)
+		if album_prefix:
+			album_prefix += Options.config['cache_folder_separator']
 		thumbs_path_with_subdir = os.path.join(thumbs_path, self.album.subdir)
 		actual_thumb_size = thumb_size
 		media_thumb_size = Options.config['media_thumb_size']
@@ -2033,7 +2050,10 @@ class SingleMedia(object):
 			actual_thumb_size = int(round(actual_thumb_size * Options.config['mobile_thumbnail_factor']))
 			media_thumb_size = int(round(media_thumb_size * Options.config['mobile_thumbnail_factor']))
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
-		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
+		thumb_path = os.path.join(
+			thumbs_path_with_subdir,
+			album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger)
+		)
 
 		_is_thumbnail = SingleMedia.is_thumbnail(thumb_type)
 
@@ -2467,10 +2487,6 @@ class SingleMedia(object):
 
 
 	def _video_transcode(self, transcode_path, original_path, json_files, json_files_min_mtime):
-		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
-		if album_prefix == Options.config["cache_folder_separator"]:
-			album_prefix = ""
-
 		album_cache_path = os.path.join(transcode_path, self.album.subdir)
 		if os.path.exists(album_cache_path):
 			if not os.access(album_cache_path, os.W_OK):
@@ -2480,7 +2496,14 @@ class SingleMedia(object):
 			make_dir(album_cache_path, "nonexistent albums cache subdir")
 
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
-		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
+
+		album_prefix = remove_folders_marker(self.album.cache_base)
+		if album_prefix:
+			album_prefix += Options.config['cache_folder_separator']
+		transcode_path = os.path.join(
+			album_cache_path,
+			album_prefix + video_cache_name(self)
+		)
 		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file and not Options.config['recreate_transcoded_videos']:
 			indented_message("existing transcoded video", info_string, 4)
 			self._video_metadata(transcode_path, False)
@@ -2657,22 +2680,32 @@ class SingleMedia(object):
 			Options.thumbnail_types_and_sizes_list = list(thumbnail_types_and_sizes().items())
 
 		caches = []
-		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
-		if album_prefix == Options.config["cache_folder_separator"]:
-			album_prefix = ""
+		album_prefix = remove_folders_marker(self.album.cache_base)
+		if album_prefix:
+			album_prefix += Options.config['cache_folder_separator']
 
 		if self.is_video:
 			# transcoded video path
-			caches.append(os.path.join(self.album.subdir, album_prefix + video_cache_name(self)))
+			caches.append(
+				os.path.join(
+					self.album.subdir,
+					album_prefix + video_cache_name(self)
+				)
+			)
 			# image for sharing on social media
-			caches.append(os.path.join(self.album.subdir, album_prefix + photo_cache_name(self, self.image_size)))
+			caches.append(
+				os.path.join(
+					self.album.subdir,
+					album_prefix + photo_cache_name(self, self.image_size)
+				)
+			)
 		else:
 			# converted image for unsupported browser image types
 			if self.mime_type in Options.config['browser_unsupported_mime_types']:
 				caches.append(
 					os.path.join(
 						self.album.subdir,
-						album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg"
+						album_prefix + photo_cache_name(self, 0)
 					)
 				)
 			# reduced sizes paths
@@ -2690,13 +2723,7 @@ class SingleMedia(object):
 				caches.append(
 					os.path.join(
 						self.album.subdir,
-						album_prefix +
-							photo_cache_name(
-											self,
-											thumb_size,
-											thumb_type,
-											mobile_bigger
-						)
+						album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger)
 					)
 				)
 		if hasattr(self, "converted_path"):
