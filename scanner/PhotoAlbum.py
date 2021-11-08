@@ -2370,9 +2370,6 @@ class SingleMedia(object):
 					quality = Options.config['jpeg_quality']
 				else:
 					quality = Options.config['webp_quality']
-				if thumb_type:
-					# use maximum quality for album and media thumbnails
-					quality = 95
 				try:
 					start_image_copy_for_saving.save(thumb_path, quality = quality, exif = self.exif_by_PIL)
 				except AttributeError:
