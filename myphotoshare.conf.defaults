@@ -196,22 +196,24 @@ video_add_options =
 
 # The formats that will be used for saving the cache files
 # Available formats:
-# - jgp (lossy): the default, do no remove unless you know what you are doing, because it's the only format known by all browsers
-# - png (lossless): produces better but bigger images
-# - webp (lossy or lossless), better than jpg, but not known by old browsers
-# Remove the 'webp' option if you need to save space on disk (webp images are about half the size than jpg ones)
+# - jgp (lossy): the default, do no remove: it's the only format known by all browsers
+# - webp (lossy), better than jpg: produces smaller (0.5x) images than jpg, but is not known by old browsers
+# - png (lossless): produces better but bigger (10x) images than jpg
+# Remove the 'webp' option if you need to save space on disk
 cache_images_formats = ['webp', 'jpg']
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 95
-jpeg_quality = 95
+jpeg_quality = 90
 
 # The webp quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 100
-webp_quality = 90
+webp_quality = 70
 
 # The png compress level for generating the reduced size images and the tumbnails
 # an integer number 0 - 9
+# The default value is the maximum in order to get something uselful,
+# png default value of 6 makes png files double the size of jpg ones; higher values change size very few
 png_compress_level = 6
 
 # markers that permit not to scan files in folder or whole trees
