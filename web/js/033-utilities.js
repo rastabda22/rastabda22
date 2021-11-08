@@ -3049,7 +3049,7 @@
 		var mediaParameter, mediaWidth, mediaHeight, widthParameter, heightParameter;
 		var folders, myShareText, myShareTextAdd;
 
-		if (! env.isMobile.any()) {
+		if (false && ! env.isMobile.any()) {
 			$(".ssk-whatsapp").hide();
 		} else {
 			// with touchscreens luminosity on hover cannot be used
@@ -3075,6 +3075,7 @@
 
 		var logo = "img/myphotoshareLogo.jpg";
 		var logoSize = 1024;
+		var whatsAppParameter = "";
 
 		if (
 			env.currentMedia === null ||
@@ -3123,6 +3124,11 @@
 						env.currentMedia.cacheSubdir,
 						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg"
 					]);
+					whatsAppParameter = Utilities.pathJoin([
+						env.server_cache_path,
+						env.currentMedia.cacheSubdir,
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts.jpg"
+					]);
 
 					if (mediaWidth > mediaHeight) {
 						widthParameter = env.options.reduced_sizes[reducedSizesIndex];
@@ -3146,7 +3152,6 @@
 		// the following line is needed in order to bypass the browser (?) cache;
 		// without the random number the php code isn't executed
 		myShareUrl += '?random=' + Math.floor(Math.random() * 10000000);
-		myShareUrl += '&m=' + encodeURIComponent(mediaParameter);
 		myShareUrl += '&w=' + widthParameter;
 		myShareUrl += '&h=' + heightParameter;
 		myShareUrl += '&url=' + encodeURIComponent(urlWithoutHash);
@@ -3160,11 +3165,16 @@
 			myShareUrl += '&hash=' + encodeURIComponent(hash.substring(1));
 			myShareUrl += hash;
 		}
-
+		whatsAppUrl = myShareUrl;
+		myShareUrl += '&m=' + encodeURIComponent(mediaParameter);
+		if (whatsAppParameter)
+			whatsAppUrl += '&m=' + encodeURIComponent(whatsAppParameter);
+		else
+			whatsAppUrl = myShareUrl;
 		jQuery.removeData(".ssk");
 		$('.ssk').attr('data-text', myShareText);
 		$('.ssk-facebook').attr('data-url', myShareUrl);
-		$('.ssk-whatsapp').attr('data-url', myShareUrl);
+		$('.ssk-whatsapp').attr('data-url', whatsAppUrl);
 		$('.ssk-twitter').attr('data-url', myShareUrl);
 		$('.ssk-google-plus').attr('data-url', myShareUrl);
 		$('.ssk-email').attr('data-url', location.href);
