@@ -1571,6 +1571,16 @@
 								if (data.hasOwnProperty(key) && (! forceReload || uiKeys.indexOf(key) !== -1))
 									env.options[key] = data[key];
 
+							// decide what format to use for cache images
+							env.options.format = "jpg";
+							for (let i = 0; i < env.options["cache_images_formats"].length; i ++) {
+								let format = env.options["cache_images_formats"][i];
+								if ($("html").hasClass(format)) {
+									env.options.format = format;
+									break;
+								}
+							}
+
 							if (forceReload) {
 								Functions.setBooleanCookie("hideTitle", env.options.hide_title);
 								Functions.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);

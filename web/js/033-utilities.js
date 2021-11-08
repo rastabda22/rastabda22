@@ -2064,19 +2064,19 @@
 			let firstThumbnail = $("#subalbums .album-button img.thumbnail").first();
 			if (firstThumbnail.attr("src") !== "img/image-placeholder.png") {
 				var mustBeSquare = (env.options.album_thumb_type.indexOf("square") > -1);
-				var isSquare = (firstThumbnail.attr("src").substr(-5, 1) === "s");
+				var isSquare = (firstThumbnail.attr("src").substr(- env.options.format.length - 2, 1) === "s");
 				if (isSquare !== mustBeSquare) {
 					$("#subalbums .album-button img.thumbnail").each(
 						function() {
 							var attribute;
-							if (["af.jpg", "as.jpg"].indexOf($(this).attr("src").substr(-6)) !== -1)
+							if (["af." + env.options.format, "as." + env.options.format].indexOf($(this).attr("src").substr(-3 - env.options.format.length)) !== -1)
 								attribute = "src";
 							else
 								// this value is for thumbnails not processed by LazyLoad yet
 								attribute = "data-src";
 
 							var srcArray = $(this).attr(attribute).split("");
-							var charPosition = srcArray.length - 5;
+							var charPosition = srcArray.length - env.options.format.length - 2;
 							srcArray[charPosition] = srcArray[charPosition] === "s" ? "f" : "s";
 							$(this).attr(attribute, srcArray.join(""));
 						}
@@ -2418,7 +2418,7 @@
 			else if (env.options.media_thumb_type.indexOf("fixed_height") > -1)
 				suffix += "f";
 		}
-		suffix += ".jpg";
+		suffix += "." + env.options.format;
 
 		cacheBase = this.foldersCacheBase + env.options.cache_folder_separator + this.cacheBase + suffix;
 		if (cacheBase.indexOf(rootString) === 0)
@@ -2447,7 +2447,7 @@
 		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
 		if (this.isImage()) {
 			suffix += size.toString();
-			suffix += ".jpg";
+			suffix += "." + env.options.format;
 		} else if (this.isVideo()) {
 			suffix += "transcoded.mp4";
 		}
@@ -3087,7 +3087,7 @@
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.options.cache_album_subdir,
-					env.currentAlbum.cacheBase + ".jpg"
+					env.currentAlbum.cacheBase + "." + env.options.format
 					]);
 				widthParameter = env.currentAlbum.compositeImageSize;
 				heightParameter = env.currentAlbum.compositeImageSize;
@@ -3111,7 +3111,7 @@
 					mediaParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + ".jpg"
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + "." + env.options.format
 					]);
 					widthParameter = env.currentMedia.metadata.size[0];
 					heightParameter = env.currentMedia.metadata.size[1];
@@ -3122,12 +3122,12 @@
 					mediaParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg"
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + "." + env.options.format
 					]);
 					whatsAppParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts.jpg"
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts." + env.options.format
 					]);
 
 					if (mediaWidth > mediaHeight) {

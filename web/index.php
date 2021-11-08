@@ -132,6 +132,7 @@
 			<script type="text/javascript" src="js/014-file-saver.js"></script>
 			<script type="text/javascript" src="js/015-jquery-mark.js"></script>
 			<script type="text/javascript" src="js/016-lzw-compress.js"></script>
+			<script type="text/javascript" src="js/017-imgsupport.js"></script>
 			<script type="text/javascript" src="js/020-classes.js"></script>
 			<script type="text/javascript" src="js/031-translations.js"></script>
 			<script type="text/javascript" src="js/033-utilities.js"></script>

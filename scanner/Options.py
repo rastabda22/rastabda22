@@ -320,6 +320,16 @@ def get_options():
 				config[option] = default_config.getboolean('options', option)
 		elif option in ('reduced_sizes', 'metadata_tools_preference', 'cache_images_formats'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
+			if option == "cache_images_formats":
+				admitted_values = ["jpg", "png", "webp"]
+				for value in config[option]:
+					if value not in admitted_values:
+						config[option].remove(value)
+				# the cache_images_formats must include jpg
+				if not "jpg" in config[option]:
+					config[option].append("jpg")
+				# remove duplicates
+				config[option] = [i for n, i in enumerate(config[option]) if i not in config[option][:n]]
 		elif option in ('mobile_thumbnail_factor', 'face_cascade_scale_factor'):
 			config[option] = usr_config.getfloat('options', option)
 			if config[option] < 1:
