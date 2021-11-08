@@ -1,4 +1,6 @@
-* now a different format than jpg can be used for cached reductions and thumbnail; available formats: jpg, png, webp;
+### version v5.3.99 (November 8, 2021)
+
+* now a different format than jpg can be used for cached reductions and thumbnail; available formats: jpg, png, webp
 * new options `cache_images_formats`, `webp_quality`, `png_compress_level`
 * new logo for the project
 * use the logo when sharing a protected album or media
