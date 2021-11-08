@@ -2362,6 +2362,7 @@ class SingleMedia(object):
 			indented_message("video transparency added", "", 4)
 		else:
 			start_image_copy_for_saving = start_image_copy_filled
+		start_image_copy_for_saving = start_image_copy_for_saving.convert('RGB')
 
 		message("saving...", "", 5)
 		try:
@@ -2409,14 +2410,14 @@ class SingleMedia(object):
 					else:
 						quality = Options.config['webp_quality']
 					try:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality = quality, exif = self.exif_by_PIL)
+						start_image_copy_for_saving.save(thumb_path, quality = quality, exif = self.exif_by_PIL)
 					except AttributeError:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality = quality)
+						start_image_copy_for_saving.save(thumb_path, quality = quality)
 				elif format == "png":
 					try:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
+						start_image_copy_for_saving.save(thumb_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
 					except AttributeError:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, compress_level = Options.config['png_compress_level'])
+						start_image_copy_for_saving.save(thumb_path, compress_level = Options.config['png_compress_level'])
 				next_level()
 				if original_thumb_size > Options.config['album_thumb_size']:
 					msg = "saved reduced (2nd try, " + str(original_thumb_size) + ")"
