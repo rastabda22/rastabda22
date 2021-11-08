@@ -159,7 +159,7 @@
 
 		echo '<script>
 			function isPhp() {}
-		</script>';
+		</script>' . "\n";
 
 		//~ ini_set('display_errors', 1);
 		//~ error_reporting(E_ALL);
@@ -174,9 +174,10 @@
 		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
 			$mediaPath = urldecode($_GET['m']);
-			if (strpos(realpath($mediaPath), realpath('cache')) !== 0 || ! url_exist(realpath($mediaPath)))
+			if (strpos(realpath($mediaPath), realpath('cache')) !== 0 || ! url_exist(realpath($mediaPath))) {
 				// use the MyPhotoShare logo instead
 				$mediaPath = 'img/myphotoshareLogo.jpg';
+			}
 
 			// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
 			$linkTag = '<link rel="';
@@ -189,14 +190,16 @@
 				$linkTag .= 'image_src';
 			$linkTag .= '" href="' . $mediaPath . '"';
 			$linkTag .= '>';
-			echo "$linkTag\n";
+			echo "\n$linkTag\n";
 
 			// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
 
 			$title = urldecode($_GET['title']);
-			echo '<meta property="og:title" content="' . $title . '" />' . "\n";
+			echo "\n" .
+					'<meta property="og:title" content="' . $title . '" />' . "\n";
 
-			echo '<meta property="og:type" content="website" />' . "\n";
+			echo "\n" .
+					'<meta property="og:type" content="website" />' . "\n";
 
 			// security: myphotoshare hashes only has letter, numbers, underscores and dashes
 			$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
@@ -204,19 +207,29 @@
 			//$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
 
 			$pageUrl = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-			echo '<meta property="og:url" content="' . htmlentities($pageUrl) . '" />' . "\n";
+			echo "\n" .
+					'<meta property="og:url" content="' . htmlentities($pageUrl) . '" />' . "\n";
 
 			$description = empty($_GET['desc']) ? $title : urldecode($_GET['desc']);
-			echo '<meta property="og:description" content="' . $description . '" />' . "\n";
+			echo "\n" .
+					'<meta name="description" content="' . $description . '" />' . "\n";
+			echo "\n" .
+					'<meta property="og:description" content="' . $description . '" />' . "\n";
 
-			echo '<meta property="og:image" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
+			$image = htmlentities($urlWithoutHash . $mediaPath);
 
-			echo '<meta property="og:image:type" content="image/jpg" />' . "\n";
+			echo "\n" .
+					'<meta property="og:image" itemprop="image" content="' . $image . '" />' . "\n";
+
+			echo "\n" .
+					'<meta property="og:image:type" content="image/jpg" />' . "\n";
 
 			if (ctype_digit($_GET['w']))
-				echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
+				echo "\n" .
+					'<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
 			if (ctype_digit($_GET['h']))
-				echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
+				echo "\n" .
+					'<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
 		}
 
 		?>
