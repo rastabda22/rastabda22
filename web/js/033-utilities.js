@@ -3087,7 +3087,8 @@
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.options.cache_album_subdir,
-					env.currentAlbum.cacheBase + "." + env.options.format
+					// always use jpg image for sharing
+					env.currentAlbum.cacheBase + ".jpg"
 					]);
 				widthParameter = env.currentAlbum.compositeImageSize;
 				heightParameter = env.currentAlbum.compositeImageSize;
@@ -3111,7 +3112,8 @@
 					mediaParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + "." + env.options.format
+						// always use jpg image for sharing
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + ".jpg"
 					]);
 					widthParameter = env.currentMedia.metadata.size[0];
 					heightParameter = env.currentMedia.metadata.size[1];
@@ -3122,12 +3124,14 @@
 					mediaParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + "." + env.options.format
+						// always use jpg image for sharing
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg"
 					]);
 					whatsAppParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
-						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts." + env.options.format
+						// always use jpg image for sharing
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts.jpg"
 					]);
 
 					if (mediaWidth > mediaHeight) {
