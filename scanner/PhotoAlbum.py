@@ -1376,7 +1376,8 @@ class SingleMedia(object):
 						pass
 
 				self._photo_metadata(image)
-				self._photo_thumbnails(image, media_path, Options.config['cache_path'], json_files, json_files_min_mtime)
+				for format in Options.config['cache_images_formats']:
+					self._photo_thumbnails(image, media_path, Options.config['cache_path'], json_files, json_files_min_mtime, format)
 				if self.has_gps_data:
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
@@ -1394,7 +1395,8 @@ class SingleMedia(object):
 					# let us set all the reduction sizes to the value of the transcoded video
 					for thumb_size in Options.config['reduced_sizes']:
 						self._attributes["fileSizes"].setVideo(thumb_size, os.path.getsize(transcode_path))
-					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
+					for format in Options.config['cache_images_formats']:
+						self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime, format)
 
 					if self.has_gps_data:
 						message("looking for geonames...", "", 5)
@@ -1841,7 +1843,7 @@ class SingleMedia(object):
 
 
 
-	def _photo_thumbnails(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime):
+	def _photo_thumbnails(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime, format):
 		# give image the correct orientation
 		try:
 			mirror = image
@@ -1871,7 +1873,7 @@ class SingleMedia(object):
 			# https://gitlab.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
 			message("WARNING: Photo couldn't be trasposed", photo_path, 2)
 
-		self._photo_thumbnails_cascade(image, photo_path, thumbs_path, json_files, json_files_min_mtime)
+		self._photo_thumbnails_cascade(image, photo_path, thumbs_path, json_files, json_files_min_mtime, format)
 
 		if self.mime_type in Options.config['browser_unsupported_mime_types']:
 			# convert the original image to jpg because the browser won't be able to show it
@@ -1891,23 +1893,29 @@ class SingleMedia(object):
 				album_prefix += Options.config['cache_folder_separator']
 			converted_path_without_cache_path = os.path.join(
 				self.album.subdir,
-				album_prefix + photo_cache_name(self, 0)
+				album_prefix + photo_cache_name(self, 0, format)
 			)
 			converted_path = os.path.join(
 				thumbs_path_with_subdir,
-				album_prefix + photo_cache_name(self, 0)
+				album_prefix + photo_cache_name(self, 0, format)
 			)
 
-			image_jpg = image.convert('RGB')
+			image = image.convert('RGB')
 			try:
-				message("saving the original image as jpg...", converted_path_without_cache_path, 4)
-				if hasattr(image, 'exif_by_PIL'):
-					image.save(converted_path, quality=95, exif=exif)
+				message("saving the original image as " + format + "...", converted_path_without_cache_path, 4)
+				if format == "jpg":
+					if hasattr(image, 'exif_by_PIL'):
+						image.save(converted_path, quality=Options.config['jpeg_quality'], exif=exif)
+					else:
+						image.save(converted_path, quality=95)
 				else:
-					image.save(converted_path, quality=95)
-				indented_message("original image saved as jpg!", "", 4)
+					if hasattr(image, 'exif_by_PIL'):
+						image.save(converted_path, exif=exif)
+					else:
+						image.save(converted_path)
+				indented_message("original image saved as " + format + "!", "", 4)
 			except OSError:
-				indented_message("error saving the original image as jpg", "", 4)
+				indented_message("error saving the original image as " + format, "", 4)
 				# this is when the image has transparecy, jpg cannot handle it -> save as png
 				# note: png doesn't know exif data
 				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
@@ -1941,7 +1949,7 @@ class SingleMedia(object):
 		return veredict
 
 
-	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime):
+	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime, format):
 		if Options.thumbnail_types_and_sizes_list is None:
 			Options.thumbnail_types_and_sizes_list = list(thumbnail_types_and_sizes().items())
 
@@ -1953,11 +1961,11 @@ class SingleMedia(object):
 				for thumb_or_reduced_size_image in thumbs_and_reduced_size_images:
 					index += 1
 					if index == last_index or SingleMedia._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
-						[thumb, thumb_path] = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type, mobile_bigger)
+						[thumb, thumb_path] = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, format, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
 
-	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime):
+	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime, format):
 		# this function calls self.reduce_size_or_make_thumbnail() with the proper image needed by self.reduce_size_or_make_thumbnail()
 		# so that the thumbnail doesn't get blurred
 		reduced_size_image = image
@@ -1965,7 +1973,7 @@ class SingleMedia(object):
 
 		message("checking reduced sizes", "", 5)
 		for thumb_size in Options.config['reduced_sizes']:
-			[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime)
+			[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, format)
 			self.file_sizes.setImage(thumb_size, os.path.getsize(thumb_path))
 			reduced_size_images = [reduced_size_image] + reduced_size_images
 		indented_message("reduced sizes checked!", "", 5)
@@ -1973,7 +1981,7 @@ class SingleMedia(object):
 		message("checking thumbnails", "", 5)
 		if len(reduced_size_images) == 0:
 			reduced_size_images = [image]
-		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime)
+		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime, format)
 		indented_message("thumbnails checked!", "", 5)
 
 
@@ -2037,7 +2045,7 @@ class SingleMedia(object):
 					return np.mean(np.asarray(positions)).tolist()
 
 
-	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type="", mobile_bigger=False):
+	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, format, thumb_type="", mobile_bigger=False):
 
 		album_prefix = remove_folders_marker(self.album.cache_base)
 		if album_prefix:
@@ -2052,7 +2060,7 @@ class SingleMedia(object):
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
 		thumb_path = os.path.join(
 			thumbs_path_with_subdir,
-			album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger)
+			album_prefix + photo_cache_name(self, thumb_size, format, thumb_type, mobile_bigger)
 		)
 
 		_is_thumbnail = SingleMedia.is_thumbnail(thumb_type)
@@ -2084,7 +2092,7 @@ class SingleMedia(object):
 		message("so the reduction/thumbnail is not OK, creating it!", "", 5)
 
 		original_thumb_size = actual_thumb_size
-		info_string = str(original_thumb_size)
+		info_string = str(original_thumb_size) + ", " + format
 		if thumb_type == "album_square" or thumb_type == "media_square":
 			info_string += ", square"
 		if thumb_size == Options.config['album_thumb_size'] and thumb_type == "album_fit":
@@ -2353,14 +2361,21 @@ class SingleMedia(object):
 
 		message("saving...", "", 5)
 		try:
-			jpeg_quality = Options.config['jpeg_quality']
-			if thumb_type:
-				# use maximum quality for album and media thumbnails
-				jpeg_quality = 95
-			if hasattr(start_image, 'exif_by_PIL'):
-				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality, exif=exif)
+			if format == "jpg":
+				jpeg_quality = Options.config['jpeg_quality']
+				if thumb_type:
+					# use maximum quality for album and media thumbnails
+					jpeg_quality = 95
+				if hasattr(start_image, 'exif_by_PIL'):
+					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality, exif=exif)
+				else:
+					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality)
 			else:
-				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
+				if hasattr(start_image, 'exif_by_PIL'):
+					start_image_copy_for_saving.save(thumb_path, exif=exif)
+				else:
+					start_image_copy_for_saving.save(thumb_path)
+
 			next_level()
 			if original_thumb_size > Options.config['album_thumb_size']:
 				msg = "reduced size image saved"
@@ -2384,10 +2399,16 @@ class SingleMedia(object):
 		except IOError:
 			message("saving (2nd try)...", "", 5)
 			try:
-				if hasattr(start_image, 'exif_by_PIL'):
-					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
+				if format == "jpg":
+					if hasattr(start_image, 'exif_by_PIL'):
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'], exif=exif)
+					else:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'])
 				else:
-					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
+					if hasattr(start_image, 'exif_by_PIL'):
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, exif=exif)
+					else:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path)
 				next_level()
 				if original_thumb_size > Options.config['album_thumb_size']:
 					msg = "saved reduced (2nd try, " + str(original_thumb_size) + ")"
@@ -2418,7 +2439,7 @@ class SingleMedia(object):
 			return [start_image, thumb_path]
 
 
-	def _video_thumbnails(self, thumbs_path, original_path, json_files, json_files_min_mtime):
+	def _video_thumbnails(self, thumbs_path, original_path, json_files, json_files_min_mtime, format):
 		(_, tfn) = tempfile.mkstemp()
 		message("generating thumbnail from video", original_path, 4)
 		return_code = VideoTranscodeWrapper().call(
@@ -2472,13 +2493,13 @@ class SingleMedia(object):
 		# generate the reduce size image used for sharing on social media
 		message("checking reduced size image", "", 5)
 		[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(
-			mirror, original_path, thumbs_path, size, json_files, json_files_min_mtime
+			mirror, original_path, thumbs_path, size, json_files, json_files_min_mtime, format
 		)
 		self.image_size = size
 		indented_message("reduced size image checked!", "", 5)
 
 		# generate the thumbnails
-		self.generate_all_thumbnails([mirror], original_path, thumbs_path, json_files, json_files_min_mtime)
+		self.generate_all_thumbnails([mirror], original_path, thumbs_path, json_files, json_files_min_mtime, format)
 
 		try:
 			os.unlink(tfn)
@@ -2693,41 +2714,44 @@ class SingleMedia(object):
 				)
 			)
 			# image for sharing on social media
-			caches.append(
-				os.path.join(
-					self.album.subdir,
-					album_prefix + photo_cache_name(self, self.image_size)
+			for format in Options.config['cache_images_formats']:
+				caches.append(
+					os.path.join(
+						self.album.subdir,
+						album_prefix + photo_cache_name(self, self.image_size, format)
+					)
 				)
-			)
 		else:
-			# converted image for unsupported browser image types
-			if self.mime_type in Options.config['browser_unsupported_mime_types']:
-				caches.append(
-					os.path.join(
-						self.album.subdir,
-						album_prefix + photo_cache_name(self, 0)
+			for format in Options.config['cache_images_formats']:
+				# converted image for unsupported browser image types
+				if self.mime_type in Options.config['browser_unsupported_mime_types']:
+					caches.append(
+						os.path.join(
+							self.album.subdir,
+							album_prefix + photo_cache_name(self, 0, format)
+						)
 					)
-				)
-			# reduced sizes paths
-			for thumb_size in Options.config['reduced_sizes']:
-				caches.append(
-					os.path.join(
-						self.album.subdir,
-						album_prefix + photo_cache_name(self, thumb_size)
+				# reduced sizes paths
+				for thumb_size in Options.config['reduced_sizes']:
+					caches.append(
+						os.path.join(
+							self.album.subdir,
+							album_prefix + photo_cache_name(self, thumb_size, format)
+						)
 					)
-				)
 
 		# album and media thumbnail path
-		for thumb_type, thumb_sizes in Options.thumbnail_types_and_sizes_list:
-			for (thumb_size, mobile_bigger) in thumb_sizes:
-				caches.append(
-					os.path.join(
-						self.album.subdir,
-						album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger)
+		for format in Options.config['cache_images_formats']:
+			for thumb_type, thumb_sizes in Options.thumbnail_types_and_sizes_list:
+				for (thumb_size, mobile_bigger) in thumb_sizes:
+					caches.append(
+						os.path.join(
+							self.album.subdir,
+							album_prefix + photo_cache_name(self, thumb_size, format, thumb_type, mobile_bigger)
+						)
 					)
-				)
-		if hasattr(self, "converted_path"):
-			caches.append(self.converted_path)
+		# if hasattr(self, "converted_path"):
+		# 	caches.append(self.converted_path)
 		return caches
 
 	@property

@@ -318,7 +318,7 @@ def get_options():
 			except ValueError:
 				indented_message("PRE WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
 				config[option] = default_config.getboolean('options', option)
-		elif option in ('reduced_sizes', 'metadata_tools_preference'):
+		elif option in ('reduced_sizes', 'metadata_tools_preference', 'cache_images_formats'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
 		elif option in ('mobile_thumbnail_factor', 'face_cascade_scale_factor'):
 			config[option] = usr_config.getfloat('options', option)

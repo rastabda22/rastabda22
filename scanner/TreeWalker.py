@@ -1772,15 +1772,16 @@ class TreeWalker:
 								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_files_min_mtime
 							):
 								# remove wide images, in order not to have blurred thumbnails
-								fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
-								match = re.search(fixed_height_thumbnail_re, cache_file)
-								if match and cached_media.size[0] > cached_media.size[1]:
-									try:
-										os.unlink(os.path.join(Options.config['cache_path'], cache_file))
-										message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
-										absolute_cache_file_exists = False
-									except OSError:
-										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
+								for format in Options.config['cache_images_formats']:
+									fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\." + format + "$"
+									match = re.search(fixed_height_thumbnail_re, cache_file)
+									if match and cached_media.size[0] > cached_media.size[1]:
+										try:
+											os.unlink(os.path.join(Options.config['cache_path'], cache_file))
+											message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+											absolute_cache_file_exists = False
+										except OSError:
+											message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
 								indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
@@ -2066,12 +2067,27 @@ class TreeWalker:
 	def generate_composite_image(self, album, max_file_date):
 		# returns the size of the image
 
-		# I'm short-circuiting this function because of issue #169
-		# remove the following return when the issue has been solved
-		# return
+		# pick a maximum of max_album_share_thumbnails_number random images in album and subalbums
+		# and generate a square composite image
+
+		# determine the number of images to use
+		num_unprotected = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
+		if num_unprotected == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+			max_thumbnail_number = 1
+		elif num_unprotected < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+			max_thumbnail_number = 4
+		elif num_unprotected < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+			max_thumbnail_number = 9
+		elif num_unprotected < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+			max_thumbnail_number = 16
+		elif num_unprotected < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+			max_thumbnail_number = 25
+		else:
+			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
 
 		next_level()
-		composite_image_name = album.cache_base + ".jpg"
+		# always use the first format for adding to the composite image
+		composite_image_name = album.cache_base + "." + Options.config['cache_images_formats'][0]
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
 		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
@@ -2090,24 +2106,6 @@ class TreeWalker:
 			return im.size[0]
 
 		message("generating composite image...", composite_image_path, 5)
-
-		# pick a maximum of Options.max_album_share_thumbnails_number random images in album and subalbums
-		# and generate a square composite image
-
-		# determine the number of images to use
-		num_unprotected = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
-		if num_unprotected == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
-			max_thumbnail_number = 1
-		elif num_unprotected < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
-			max_thumbnail_number = 4
-		elif num_unprotected < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
-			max_thumbnail_number = 9
-		elif num_unprotected < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
-			max_thumbnail_number = 16
-		elif num_unprotected < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
-			max_thumbnail_number = 25
-		else:
-			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
 
 		# pick max_thumbnail_number random square album thumbnails
 		random_thumbnails = list()
@@ -2133,7 +2131,7 @@ class TreeWalker:
 			thumbnail = os.path.join(
 					Options.config['cache_path'],
 					random_media.album.subdir,
-					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], "album_square")
+					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], Options.config['cache_images_formats'][0], "album_square")
 					# album_prefix + random_media.cache_base + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
 				)
 			if os.path.exists(thumbnail):
@@ -2192,8 +2190,12 @@ class TreeWalker:
 			img.paste(tile, (x, y))
 
 		# save the composite image
-		img.save(composite_image_path, "JPEG", quality=Options.config['jpeg_quality'])
-		indented_message("composite image generated", "", 5)
+		for format in Options.config['cache_images_formats']:
+			if format == "jpg":
+				img.save(composite_image_path, quality=Options.config['jpeg_quality'])
+			else:
+				img.save(composite_image_path)
+			indented_message("composite image generated", format, 5)
 		back_level()
 		return map_width
 

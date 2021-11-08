@@ -112,7 +112,7 @@ def phrase_to_words(phrase):
 	# splits the phrase into a list
 	return list(phrase.split(' '))
 
-def photo_cache_name_suffix(size, thumb_type="", mobile_bigger=False):
+def photo_cache_name(media, size, format, thumb_type="", mobile_bigger=False):
 	# this function is used for video thumbnails too
 	# with size == 0, it can be called for image formats not supported by the browser
 	photo_suffix = Options.config['cache_folder_separator']
@@ -136,14 +136,9 @@ def photo_cache_name_suffix(size, thumb_type="", mobile_bigger=False):
 			elif thumb_type == "media_fixed_height":
 				photo_suffix += "f"
 		photo_suffix += "."
-	photo_suffix += "jpg"
+	photo_suffix += format
 
-	return photo_suffix
-
-
-def photo_cache_name(media, size, thumb_type="", mobile_bigger=False):
-	# this function is used for video thumbnails too
-	return media.cache_base + photo_cache_name_suffix(size, thumb_type, mobile_bigger)
+	return media.cache_base + photo_suffix
 
 
 def video_cache_name(video):

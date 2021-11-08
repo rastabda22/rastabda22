@@ -194,6 +194,12 @@ video_add_options =
 # End of video encoding options
 # #######################
 
+# The formats that will be used for saving the cache files
+# Available formats:
+# - jgp (lossy): the default, do no remove unless you know what you are doing, because it's the only format known by all browsers
+# - png (lossless): produces better but bigger images
+# - webp (lossy or lossless), better than jpg, but not known by old browsers
+cache_images_formats = ['jpg']
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 100
@@ -531,7 +537,7 @@ min_album_thumbnail = 2
 # The order of items in the list does not change the order the social icons are displayed (shown
 # in parenthesis in the possible values).
 # Please note that, when sharing on a social media,  php is neededin order to get the image/album displayed in the post
-# Without php, sharing is possible, but the social media won't have any possibility to show the image/album in the post 
+# Without php, sharing is possible, but the social media won't have any possibility to show the image/album in the post
 social = "facebook, twitter, pinterest, email"
 
 # Social colored icons or gray ones
