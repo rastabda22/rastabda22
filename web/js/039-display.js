@@ -521,7 +521,6 @@ $(document).ready(function() {
 	});
 
 	util.setLinksVisibility();
-	util.setNextPrevVisibility();
 
 	let nextTitle  = util._t("#next-media-title");
 	let prevTitle  = util._t("#prev-media-title");

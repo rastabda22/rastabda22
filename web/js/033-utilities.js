@@ -4206,6 +4206,10 @@
 	};
 
 	Utilities.prototype.setNextPrevVisibility = function() {
+		if (env.currentMedia === null || env.currentAlbum.isAlbumWithOneMedia())
+			$("#next, #prev").hide();
+		else
+			$("#next, #prev").show();
 		if (env.isMobile.any()) {
 			$("#next, #prev").css("display", "inline").css("opacity", 0.5);
 		} else {

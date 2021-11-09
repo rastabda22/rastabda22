@@ -1041,6 +1041,7 @@
 		if (id === "center") {
 			$(".media-bar").show();
 			whatMedia = this;
+			util.setNextPrevVisibility();
 		} else if (id === "left") {
 			whatMedia = env.prevMedia;
 		} else if (id === "right") {
