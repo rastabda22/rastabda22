@@ -123,8 +123,7 @@ Add the following lines in the `<VirtualHost>` section:
         Options FollowSymLinks
         Options -Indexes
         AllowOverride All
-        Order allow,deny
-        allow from all
+        Require all granted
     </Directory>
 </VirtualHost>
 ```
