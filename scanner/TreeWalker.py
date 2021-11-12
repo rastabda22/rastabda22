@@ -2098,8 +2098,8 @@ class TreeWalker:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
 
 		next_level()
-		# always use the first format for adding to the composite image
-		composite_image_name = album.cache_base + "." + Options.config['cache_images_formats'][0]
+		# always use jpg format for to the composite image
+		composite_image_name = album.cache_base + ".jpg"
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
 		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
@@ -2140,10 +2140,11 @@ class TreeWalker:
 			album_prefix = remove_folders_marker(random_media.album.cache_base)
 			if album_prefix:
 				album_prefix += Options.config['cache_folder_separator']
+			# always use jpg format for building the composite image
 			thumbnail = os.path.join(
 					Options.config['cache_path'],
 					random_media.album.subdir,
-					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], Options.config['cache_images_formats'][0], "album_square")
+					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], "jpg", "album_square")
 				)
 			if os.path.exists(thumbnail):
 				random_thumbnails.append(thumbnail)
