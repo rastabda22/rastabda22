@@ -48,43 +48,37 @@ options_not_to_be_saved = [
 	'passwords_file'
 ]
 options_requiring_json_regeneration = [
-	'geonames_language',
-	'unspecified_geonames_code',
-	'get_geonames_online',
-	'pil_size_for_decompression_bomb_error',
-	'metadata_tools_preference',
-	'subdir_method',
-	'cache_folders_num_digits_array',
-	'max_media_in_json_file',
-	'max_media_from_positions_in_json_file',
-	'excluded_patterns'
+	{'name': 'geonames_language', 'default': ""},
+	{'name': 'unspecified_geonames_code', 'default': 0},
+	{'name': 'get_geonames_online', 'default': False},
+	{'name': 'pil_size_for_decompression_bomb_error', 'default': 0},
+	{'name': 'metadata_tools_preference', 'default': []},
+	{'name': 'subdir_method', 'default': ""},
+	{'name': 'cache_folders_num_digits_array', 'default': 0},
+	{'name': 'max_media_in_json_file', 'default': 0},
+	{'name': 'max_media_from_positions_in_json_file', 'default': 0},
+	{'name': 'excluded_patterns', 'default': []}
 ]
 # every option is given in a dictionary with a value which represent the pre-option default value
 options_requiring_reduced_images_regeneration = [
-	{'name': 'jpeg_quality', 'default': False},
-	{'name': 'webp_quality', 'default': False},
-	{'name': 'png_compress_level', 'default': False},
 	{'name': 'pil_size_for_decompression_bomb_error', 'default': 89478485},
 	{'name': 'copy_exif_into_reductions', 'default': False}
 ]
 options_requiring_thumbnails_regeneration = [
-	{'name': 'jpeg_quality', 'default': False},
-	{'name': 'webp_quality', 'default': False},
-	{'name': 'png_compress_level', 'default': False},
 	{'name': 'pil_size_for_decompression_bomb_error', 'default': 89478485},
-	{'name': 'face_cascade_scale_factor', 'default': False},
-	{'name': 'small_square_crops_background_color', 'default': False},
+	{'name': 'face_cascade_scale_factor', 'default': 0},
+	{'name': 'small_square_crops_background_color', 'default': ""},
 	{'name': 'cv2_installed', 'default': False},
 	{'name': 'copy_exif_into_reductions', 'default': False}
 ]
 options_requiring_jpg_regeneration = [
-	{'name': 'jpeg_quality', 'default': False}
+	{'name': 'jpeg_quality', 'default': 0}
 ]
 options_requiring_webp_regeneration = [
-	{'name': 'webp_quality', 'default': False}
+	{'name': 'webp_quality', 'default': 0}
 ]
 options_requiring_png_regeneration = [
-	{'name': 'png_compress_level', 'default': False}
+	{'name': 'png_compress_level', 'default': 0}
 ]
 options_requiring_videos_regeneration = [
 	{'name': 'video_transcode_bitrate', 'default': '1M'},
@@ -638,10 +632,12 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_reduced_photos'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_reduced_photos'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
 
@@ -653,10 +649,12 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_transcoded_videos'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of videos", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_transcoded_videos'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of videos", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of videos", 3)
 
@@ -668,10 +666,12 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_thumbnails'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_thumbnails'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
 
@@ -683,10 +683,12 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_jpg'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of jpg images", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_jpg'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of jpg images", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of jpg images", 3)
 
@@ -698,10 +700,12 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_webp'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of webp images", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_webp'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of webp images", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of webp images", 3)
 
@@ -713,25 +717,34 @@ def get_options(args):
 				if old_options[option] != config[option]:
 					config['recreate_png'] = True
 					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of png images", 3)
+					break
 			except KeyError:
 				if config[option] != default_value:
 					config['recreate_png'] = True
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of png images", 3)
+					break
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of png images", 3)
 
 		config['recreate_json_files'] = False
 		for option in options_requiring_json_regeneration:
+			option = option_dict['name']
+			default_value = option_dict['default']
 			try:
 				if old_options[option] != config[option]:
 					config['recreate_json_files'] = True
-					message("PRE options", "'" + option + "' has changed from previous scanner run('" + json.dumps(old_options[option]) + "' != '" + json.dumps(config[option]) + "' ), forcing recreation of json files", 3)
+					if type(config[option]) == type([]):
+						message("PRE options", "'" + option + "' has changed from previous scanner run('" + json.dumps(old_options[option]) + "' != '" + json.dumps(config[option]) + "' ), forcing recreation of json files", 3)
+					else:
+						message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of json files", 3)
 					break
 			except KeyError:
-				if option != 'excluded_patterns' or config[option] != []:
+				if config[option] != default_value:
 					config['recreate_json_files'] = True
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of json files", 3)
 					break
+				else:
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of json files", 3)
 
 	except IOError:
 		message("PRE options", "unexisting options.json file, forcing recreation of everything", 3)
