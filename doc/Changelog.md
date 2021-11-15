@@ -1,3 +1,6 @@
+* command line argument parsing switched to argparse
+* bug fixes
+
 ### version v5.3.99 (November 8, 2021)
 
 * now a different format than jpg can be used for cached reductions and thumbnail; available formats: jpg, png, webp

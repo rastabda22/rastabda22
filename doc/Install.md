@@ -183,7 +183,7 @@ Obviously the scanner should be launched too; next section explains how you can 
 
 ## Run the scanner to generate the albums
 
-When you're done, run the static generator (you need Python3 or Python≥2.7 and the Python Imaging Library; for video something like `libav-conv` is required too):
+When you're done, run the static generator (you need Python3 and the Python Imaging Library; for video something like `libav-conv` is required too):
 
 ```bash
     $ /your/myphotoshare/installation/dir/bin/scanner /etc/myphotoshare/myproject.conf > /var/log/myphotoshare/myproject.log 2> /var/log/myphotoshare/myproject.error.log

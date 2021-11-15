@@ -158,9 +158,9 @@ If you prefer to keep control and understand how it works, follow the [Setup and
 
 1. You must have a web server to display your gallery.
 1. [Install MyPhotoShare](#install-it).
-1. Adapt the configuration file [`myphotoshare.conf`](myphotoshare.conf.defaults) to your liking. At a minimum, you must change 3 settings to locate where are the media albums and where is the web content.
+1. Adapt the configuration file [`myphotoshare.conf`](myphotoshare.conf.defaults) to your liking. At a minimum, you must change 3 settings to locate where is the web root, where are the media albums, and where the cache files are written.
 1. Drop pictures and videos into the `albums` directory.
-1. Run MyPhotoShare scanner: look for `myphotoshare_scanner` command or `bin/scanner`. This populates MyPhotoShare cache and creates indexes.
+1. Run MyPhotoShare scanner (look for `myphotoshare_scanner` command or `bin/scanner`), with at least one argument: the options file. This populates MyPhotoShare cache and creates indexes.
 1. When the scanner has completed successfully, aim your web browser at your web site and enjoy!
 
 ## Get and Give Help
