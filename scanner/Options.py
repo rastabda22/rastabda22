@@ -3,6 +3,7 @@
 from datetime import datetime
 import os
 import sys
+import argparse
 import json
 import ast
 import math
@@ -242,7 +243,7 @@ def initialize_opencv():
 		config['cv2_installed'] = False
 		message("PRE importer", "No opencv library available, not using it", 2)
 
-def get_options():
+def get_options(args):
 	global passwords_file_mtime, old_password_codes, global_pattern
 
 	initialize_opencv()
@@ -256,17 +257,11 @@ def get_options():
 	for option in default_config.options('options'):
 		usr_config.set("options", option, default_config.get("options", option))
 
-	if len(sys.argv) == 2:
-		# 1 arguments: the config files
-		# which modifies the default options
-		try:
-			usr_config.readfp(open(sys.argv[1], "r"))
-		except FileNotFoundError:
-			message("PRE FATAL ERROR", "config file '" + sys.argv[1] + "' doesn't exist or unreadable, quitting", 0)
-			sys.exit(-97)
-	else:
-		usr_config.set('options', 'album_path', sys.argv[1])
-		usr_config.set('options', 'cache_path', sys.argv[2])
+	try:
+		usr_config.readfp(open(args.options_file, "r"))
+	except FileNotFoundError:
+		message("PRE FATAL ERROR", "options file '" + args.options_file + "' doesn't exist or unreadable, quitting", 0)
+		sys.exit(-97)
 
 	message("PRE Options", "asterisk denotes options changed by config file", 0)
 	next_level()
@@ -399,12 +394,30 @@ def get_options():
 	# values that have type != string
 	back_level()
 
-	if config['index_html_path']:
+	# command line options supersedes options file ones
+	if args.web_root_path:
+		config['index_html_path'] = os.fsdecode(os.path.abspath(args.web_root_path))
+		message("COMMAND LINE option", "value of 'web-root-path' option used", 1)
+	elif config['index_html_path']:
 		config['index_html_path'] = os.fsdecode(os.path.abspath(config['index_html_path']))
-	if config['album_path']:
+	else:
+		config['index_html_path'] = ""
+
+	if args.album_path:
+		config['album_path'] = os.fsdecode(os.path.abspath(args.album_path))
+		message("COMMAND LINE option", "value of 'album-path' option used", 1)
+	elif config['album_path']:
 		config['album_path'] = os.fsdecode(os.path.abspath(config['album_path']))
-	if config['cache_path']:
+	else:
+		config['album_path'] = ""
+
+	if args.cache_path:
+		config['cache_path'] = os.fsdecode(os.path.abspath(args.cache_path))
+		message("COMMAND LINE option", "value of 'cache-path' option used", 1)
+	elif config['cache_path']:
 		config['cache_path'] = os.fsdecode(os.path.abspath(config['cache_path']))
+	else:
+		config['cache_path'] = ""
 
 	# try to guess value not given
 	guessed_index_dir = False
@@ -419,7 +432,7 @@ def get_options():
 		# default position for index_html_path is script_path/../web
 		# default position for album path is script_path/../web/albums
 		# default position for cache path is script_path/../web/cache
-		script_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+		script_path = os.path.dirname(os.path.realpath(__file__))
 		config['index_html_path'] = os.path.abspath(os.path.join(script_path, "..", "web"))
 		config['album_path'] = os.path.abspath(os.path.join(config['index_html_path'], "albums"))
 		config['cache_path'] = os.path.abspath(os.path.join(config['index_html_path'], "cache"))
@@ -489,78 +502,78 @@ def get_options():
 	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
 	make_dir(passwords_subdir_with_path, "passwords subdir")
 
-	if len(sys.argv) == 2:
-		# 1 arguments: the config files: the password file is in the same directory
-		old_password_codes = get_old_password_codes()
 
-		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
-		password_codes = []
-		passwords_md5 = []
+	# work with the passwords
+	old_password_codes = get_old_password_codes()
 
-		# read the password file
-		# it must exist and be readable, otherwise skip it
-		try:
-			with open(passwords_file_name, 'r') as passwords_file:
-				# Get the old file contents, they are needed in order to evalutate the numsProtectedMediaInSubTree dictionary in json file
-				message("PRE Reading passwords file", passwords_file_name, 4)
-				for line in passwords_file.read().splitlines():
-					# remove leading spaces
-					line = line.lstrip()
-					# lines beginning with # and space-only ones are ignored
-					if line[0:1] == "#" or line.strip() == "":
-						continue
-					# in each line is a password identifier is followed by the corresponding password
-					columns = line.split(' ')
-					identifier = columns[0]
-					# everything beginning with the first non-space character till the end of line (including the traling spaces) is the password
-					password = " ".join(columns[1:]).lstrip()
-					if password == "":
-						indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 4)
-						continue
-					while True:
-						password_code = str(random.randint(min_random, max_random))
-						password_md5 = hashlib.md5(password.encode('utf-8')).hexdigest()
-						if password_code not in password_codes:
-							password_codes.append(password_code)
-							passwords_md5.append(password_md5)
-							break
-					identifiers_and_passwords.append(
-						{
-							'identifier': identifier,
-							'password_md5': password_md5,
-							'password_code': password_code,
-							'used': False
-						}
-					)
-					indented_message(
-						"PRE Password read",
-						"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
-						4
-					)
-			if len(identifiers_and_passwords) > 0:
-				passwords_file_mtime = file_mtime(passwords_file_name)
-		except IOError:
-			indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 3)
+	passwords_file_name = os.path.join(os.path.dirname(args.options_file), config['passwords_file'])
+	password_codes = []
+	passwords_md5 = []
+
+	# read the password file
+	# it must exist and be readable, otherwise skip it
+	try:
+		with open(passwords_file_name, 'r') as passwords_file:
+			# Get the old file contents, they are needed in order to evalutate the numsProtectedMediaInSubTree dictionary in json file
+			message("PRE Reading passwords file", passwords_file_name, 4)
+			for line in passwords_file.read().splitlines():
+				# remove leading spaces
+				line = line.lstrip()
+				# lines beginning with # and space-only ones are ignored
+				if line[0:1] == "#" or line.strip() == "":
+					continue
+				# in each line is a password identifier is followed by the corresponding password
+				columns = line.split(' ')
+				identifier = columns[0]
+				# everything beginning with the first non-space character till the end of line (including the traling spaces) is the password
+				password = " ".join(columns[1:]).lstrip()
+				if password == "":
+					indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 4)
+					continue
+				while True:
+					password_code = str(random.randint(min_random, max_random))
+					password_md5 = hashlib.md5(password.encode('utf-8')).hexdigest()
+					if password_code not in password_codes:
+						password_codes.append(password_code)
+						passwords_md5.append(password_md5)
+						break
+				identifiers_and_passwords.append(
+					{
+						'identifier': identifier,
+						'password_md5': password_md5,
+						'password_code': password_code,
+						'used': False
+					}
+				)
+				indented_message(
+					"PRE Password read",
+					"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
+					4
+				)
+		if len(identifiers_and_passwords) > 0:
+			passwords_file_mtime = file_mtime(passwords_file_name)
+	except IOError:
+		indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 3)
 
 
-		# read the excluded patterns file
-		# it must exist and be readable, otherwise skip it
-		excluded_patterns_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['excluded_patterns_file'])
+	# read the excluded patterns file
+	# it must exist and be readable, otherwise skip it
+	excluded_patterns_file_name = os.path.join(os.path.dirname(args.options_file), config['excluded_patterns_file'])
 
-		try:
-			with open(excluded_patterns_file_name, 'r') as excluded_patterns_file:
-				message("PRE Reading excluded patterns file", excluded_patterns_file_name, 4)
-				for line in excluded_patterns_file.read().splitlines():
-					# lines beginning with # and space-only ones are ignored
-					if line[0:1] == "#" or line.strip() == "":
-						continue
-					# each line is regex, including leading and trailing spaces
-					config['excluded_patterns'].append(line)
-					indented_message("PRE pattern read!", line, 3)
-			if len(config['excluded_patterns']) == 0:
-				indented_message("PRE no patterns to exclude", "", 3)
-		except IOError:
-			indented_message("PRE WARNING", excluded_patterns_file_name + " doesn't exist or unreadable, not using it", 3)
+	try:
+		with open(excluded_patterns_file_name, 'r') as excluded_patterns_file:
+			message("PRE Reading excluded patterns file", excluded_patterns_file_name, 4)
+			for line in excluded_patterns_file.read().splitlines():
+				# lines beginning with # and space-only ones are ignored
+				if line[0:1] == "#" or line.strip() == "":
+					continue
+				# each line is regex, including leading and trailing spaces
+				config['excluded_patterns'].append(line)
+				indented_message("PRE pattern read!", line, 3)
+		if len(config['excluded_patterns']) == 0:
+			indented_message("PRE no patterns to exclude", "", 3)
+	except IOError:
+		indented_message("PRE WARNING", excluded_patterns_file_name + " doesn't exist or unreadable, not using it", 3)
 
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])

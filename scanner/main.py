@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import sys
+import argparse
 import os
+import shutil
 
 # # @python2
 # # Builtins removed in Python3
@@ -12,15 +15,39 @@ import os
 # 	pass
 
 import Options
-from Utilities import report_times, message
+from Utilities import report_times, message, indented_message, next_level, back_level
 
 
 def main():
-	if len(sys.argv) != 3 and len(sys.argv) != 2:
-		print("usage: {0} ALBUM_PATH CACHE_PATH - or {1} CONFIG_FILE".format(sys.argv[0], sys.argv[0]))
-		return
+	parser = argparse.ArgumentParser(
+		description='Scan a media tree in order to generate cache files suitable for showing a beautiful web gallery',
+	)
+	parser.add_argument(
+		"options_file",
+		help="the config file, if it's the only positional argument, or the album path, if two positional arguments are supplied"
+	)
+	parser.add_argument(
+		"-w",
+		"--web-root-path",
+		dest="web_root_path",
+		help="the full root path; it's supposed to have 'albums' and 'cache' directories inside it; supersedes the value in the options file"
+	)
+	parser.add_argument(
+		"-a",
+		"--album-path",
+		dest="album_path",
+		help="the full album path; supersedes the value in the options file"
+	)
+	parser.add_argument(
+		"-c",
+		"--cache-path",
+		dest="cache_path",
+		help="the full cache path; supersedes the value in the options file"
+	)
+	parser.add_argument("--version", action="version", version='%(prog)s v5.3.99')
+	args = parser.parse_args()
 
-	Options.get_options()
+	Options.get_options(args)
 
 	from TreeWalker import TreeWalker
 
