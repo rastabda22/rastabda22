@@ -5,7 +5,7 @@
 	background-color: slategray;
 }
 
-.map-popup-trigger {
+.map-popup-trigger, .map-popup-trigger-double {
 	cursor: pointer;
 	/* font-size: 20px;
 	margin: 20px;
