@@ -316,6 +316,13 @@
 									self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 								}
 
+								if (protectedAlbum.hasOwnProperty("date")) {
+									if (! self.hasOwnProperty("date"))
+										self.date = protectedAlbum.date;
+									else if (protectedAlbum.date > self.date)
+										self.date = protectedAlbum.date;
+								}
+
 								// add pointers to the same object for the symlinks
 								for (let iSymlink = 0; iSymlink < protectedAlbum.symlinkCodesAndNumbers.length; iSymlink ++) {
 									let symlinkCodesAndNumbersItem = protectedAlbum.symlinkCodesAndNumbers[iSymlink];
