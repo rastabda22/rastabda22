@@ -2689,6 +2689,7 @@
 			self === null ||
 			(env.albumInSubalbumDiv !== self || env.isFromAuthForm) && self.subalbums.length;
 
+		let objects = [];
 		if (populateSubalbums) {
 			$("#subalbums").empty();
 			// $("#subalbums").insertBefore("#message-too-many-images");
@@ -2825,75 +2826,18 @@
 								albumButtonAndCaptionObject.append(captionObject);
 								aHrefObject.append(albumButtonAndCaptionObject);
 
-								$("#subalbums").append(aHrefObject);
+								objects[iSubalbum] = {
+									aHrefObject: aHrefObject,
+									ithAlbum: ithAlbum,
+									id: id,
+									captionId: captionId,
+									folderMapTitleWithoutHtmlTags: folderMapTitleWithoutHtmlTags,
+									titleSelector: titleSelector,
+									subfolderHash: subfolderHash
+									// from: from
+								};
 
-								if (ithAlbum.numPositionsInTree) {
-									$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-									$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
-								}
-								$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
-								$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
-
-								if (ithAlbum.hasOwnProperty("description"))
-									$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithAlbum.description));
-
-								if (ithAlbum.hasOwnProperty("numPositionsInTree") && ithAlbum.numPositionsInTree) {
-									$("#subalbum-map-link-" + id).off("click").on(
-										"click",
-										{ithAlbum: ithAlbum},
-										function(ev, from) {
-											// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-											ev.preventDefault();
-											env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + id;
-											TopFunctions.generateMapFromSubalbum(ev, from);
-										}
-									);
-								}
-
-								if (
-									env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
-									env.previousAlbum !== null &&
-									env.previousAlbum.isMap() &&
-									(
-										env.previousMedia === null ||
-										env.previousAlbum.isAlbumWithOneMedia()
-									) &&
-									env.fromEscKey ||
-									env.mapRefreshType === "refresh"
-								) {
-									env.fromEscKey = false;
-									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-								}
-
-								if (
-									typeof isPhp === "function" && (
-										util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-									)
-								) {
-									// execution enters here if we are using index.php
-									$("#" + id).off("auxclick").off("auxclick").on(
-										"auxclick",
-										// {subfolderHash: subfolderHash},
-										function (ev) {
-											if (ev.which === 2) {
-												util.openInNewTab(subfolderHash);
-												return false;
-											}
-										}
-									);
-								}
-
-								$("#subalbum-select-box-" + id + " .select-box").show();
-								$("#subalbum-select-box-" + id).off("click").on(
-									"click",
-									function(ev) {
-										ev.stopPropagation();
-										ev.preventDefault();
-										self.toggleSubalbumSelection("#subalbum-select-box-" + id);
-									}
-								);
 								resolve_subalbumPromise();
-								self.pickRandomMediaAndInsertIt(iSubalbum);
 							}
 						);
 					}
@@ -2904,6 +2848,90 @@
 
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
+				// perform the last operations with each subalbum
+				for (let i = 0; i < self.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let aHrefObject = objects[iSubalbum].aHrefObject;
+					let ithAlbum = objects[iSubalbum].ithAlbum;
+					let id = objects[iSubalbum].id;
+					let captionId = objects[iSubalbum].captionId;
+					let folderMapTitleWithoutHtmlTags = objects[iSubalbum].folderMapTitleWithoutHtmlTags;
+					let titleSelector = objects[iSubalbum].titleSelector;
+					let subfolderHash = objects[iSubalbum].subfolderHash;
+					// let from = objects[iSubalbum].from;
+
+					$("#subalbums").append(aHrefObject);
+
+					if (ithAlbum.numPositionsInTree) {
+						$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
+						$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+					}
+					$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
+					$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
+
+					if (ithAlbum.hasOwnProperty("description"))
+						$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithAlbum.description));
+
+					if (ithAlbum.hasOwnProperty("numPositionsInTree") && ithAlbum.numPositionsInTree) {
+						$("#subalbum-map-link-" + id).off("click").on(
+							"click",
+							{ithAlbum: ithAlbum},
+							function(ev, from) {
+								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+								ev.preventDefault();
+								env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + id;
+								TopFunctions.generateMapFromSubalbum(ev, from);
+							}
+						);
+					}
+
+					if (
+						env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
+						env.previousAlbum !== null &&
+						env.previousAlbum.isMap() &&
+						(
+							env.previousMedia === null ||
+							env.previousAlbum.isAlbumWithOneMedia()
+						) &&
+						env.fromEscKey ||
+						env.mapRefreshType === "refresh"
+					) {
+						env.fromEscKey = false;
+						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+					}
+
+					if (
+						typeof isPhp === "function" && (
+							util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+						)
+					) {
+						// execution enters here if we are using index.php
+						$("#" + id).off("auxclick").off("auxclick").on(
+							"auxclick",
+							// {subfolderHash: subfolderHash},
+							function (ev) {
+								if (ev.which === 2) {
+									util.openInNewTab(subfolderHash);
+									return false;
+								}
+							}
+						);
+					}
+
+					$("#subalbum-select-box-" + id + " .select-box").show();
+					$("#subalbum-select-box-" + id).off("click").on(
+						"click",
+						function(ev) {
+							ev.stopPropagation();
+							ev.preventDefault();
+							self.toggleSubalbumSelection("#subalbum-select-box-" + id);
+						}
+					);
+
+					self.pickRandomMediaAndInsertIt(iSubalbum);
+				}
+
+
 				if (! util.aSingleMediaIsHighlighted())
 					util.scrollToHighlightedSubalbum();
 				if (populateSubalbums)
