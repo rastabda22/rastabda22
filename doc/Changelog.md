@@ -1,4 +1,7 @@
-* command line argument parsing switched to argparse
+### version v5.4.0 (November 16, 2021)
+
+* command line argument parsing has been switched to argparse
+* old command line arguments giving albums and cache paths require now options -a and -c respectively
 * bug fixes
 
 ### version v5.3.99 (November 8, 2021)
