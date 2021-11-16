@@ -1,3 +1,7 @@
+### version v5.4.1 (November 16, 2021)
+
+* bug fixes
+
 ### version v5.4.0 (November 16, 2021)
 
 * command line argument parsing has been switched to argparse
