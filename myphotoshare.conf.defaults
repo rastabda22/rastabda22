@@ -199,7 +199,7 @@ video_add_options =
 # - jgp (lossy): the default, do no remove: it's the only format known by all browsers
 # - webp (lossy), better than jpg: produces smaller (0.5x) images than jpg, but is not known by old browsers
 # - png (lossless): produces better but bigger (10x) images than jpg
-# Remove the 'webp' option if you need to save space on disk
+# Remove the 'webp' option if you need to save space on disk and you don't care for users bandwidth
 cache_images_formats = ['webp', 'jpg']
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails

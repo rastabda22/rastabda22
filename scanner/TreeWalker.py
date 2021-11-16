@@ -2202,12 +2202,8 @@ class TreeWalker:
 			img.paste(tile, (x, y))
 
 		# save the composite image
-		for format in Options.config['cache_images_formats']:
-			if format == "jpg":
-				img.save(composite_image_path, quality=Options.config['jpeg_quality'])
-			else:
-				img.save(composite_image_path)
-			indented_message("composite image generated", format, 5)
+		img.save(composite_image_path, quality = Options.config['jpeg_quality'])
+		indented_message("composite image generated", "jpg", 5)
 		back_level()
 		return map_width
 
