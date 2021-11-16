@@ -1617,6 +1617,7 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
+		dirs_in_dir = []
 		unrecognized_files_in_dir = []
 		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
@@ -1645,7 +1646,329 @@ class TreeWalker:
 				indented_message("symlink, skipping it as per 'follow_symlinks' option", entry_with_path, 3)
 			elif os.path.isdir(entry_with_path):
 				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
-					indented_message("symlink to dir, following it as per 'follow_symlinks' option", entry_with_path, 3)
+					indented_message("symlink to dir, following it as per 'follow_symlinks' option", entry, 3)
+
+				# save the directory name for the end of the cycle
+				dirs_in_dir.append(entry)
+
+			elif os.path.isfile(entry_with_path):
+				if skip_files:
+					continue
+				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
+					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
+
+				# save the file name for the end of the cycle
+				files_in_dir.append(entry)
+
+		if len(files_in_dir):
+			message("working with files in dir", absolute_path, 3)
+			next_level()
+			for entry in files_in_dir:
+				entry_with_path = os.path.join(absolute_path, entry)
+				message("working with file", entry_with_path, 3)
+				next_level()
+				single_media_cache_hit = True
+				dirname = os.path.dirname(entry_with_path)
+				try:
+					message("reading file time and size...", "", 5)
+					mtime = file_mtime(entry_with_path)
+					file_size = os.path.getsize(entry_with_path)
+					# file_sizes = Sizes()
+					# file_sizes.set(0, file_size)
+					indented_message("file time and size read!", "", 5)
+					message("reading dir time...", "", 5)
+					dir_mtime = file_mtime(dirname)
+					indented_message("dir time read!", "", 5)
+				except KeyboardInterrupt:
+					raise
+				except OSError:
+					indented_message("could not read file or dir mtime", "", 5)
+					continue
+				else:
+					max_file_date = max(max_file_date, mtime)
+					single_media = None
+					cached_media = None
+					absolute_cache_file_exists = False
+
+				# checksum is needed for all the media, calculate it anyway
+				if Options.config['checksum']:
+					message("calculating checksum...", "", 5)
+					with open(entry_with_path, 'rb') as media_path_pointer:
+						media_checksum = checksum(media_path_pointer)
+					indented_message("checksum calculated!", "", 5)
+
+				if not album_cache_hit:
+					indented_message("not a single media cache hit", "json file invalid", 5)
+					single_media_cache_hit = False
+				else:
+					# next_level()
+					message("getting media from cached album...", "", 5)
+					cached_media = cached_album.media_from_path(entry_with_path)
+					if cached_media is None:
+						indented_message("not a single media cache hit", "no such media in cached album",5)
+						single_media_cache_hit = False
+					else:
+						indented_message("cached media got!", "", 5)
+
+					if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
+						indented_message("not a single media cache hit", "modification time different", 5)
+						single_media_cache_hit = False
+
+					if (
+						single_media_cache_hit and (
+							cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
+							cached_media.is_image and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
+						)
+					):
+						indented_message("not a single media cache hit", "file size different", 5)
+						single_media_cache_hit = False
+
+					if single_media_cache_hit and Options.config['checksum']:
+						try:
+							cached_media._attributes['checksum']
+
+							if cached_media._attributes['checksum'] == media_checksum:
+								indented_message("checksum OK!", "", 5)
+							else:
+								indented_message("not a single media cache hit", "bad checksum!", 5)
+								single_media_cache_hit = False
+						except KeyError:
+							message("not a single media cache hit", "no checksum in json file", 5)
+							single_media_cache_hit = False
+
+					if single_media_cache_hit and cached_media:
+						if mtime != cached_media.datetime_file:
+							message("not a single media cache hit", "file datetime different from cache one", 5)
+							single_media_cache_hit = False
+						else:
+							cache_files = cached_media.image_caches
+							# check if the cache files actually exist and are not old
+							for cache_file in cache_files:
+								absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
+								absolute_cache_file_exists = os.path.exists(absolute_cache_file)
+								if (
+									Options.config['recreate_fixed_height_thumbnails'] and
+									absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_files_min_mtime
+								):
+									# remove wide images, in order not to have blurred thumbnails
+									for format in Options.config['cache_images_formats']:
+										fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\." + format + "$"
+										match = re.search(fixed_height_thumbnail_re, cache_file)
+										if match and cached_media.size[0] > cached_media.size[1]:
+											try:
+												os.unlink(os.path.join(Options.config['cache_path'], cache_file))
+												message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+												absolute_cache_file_exists = False
+											except OSError:
+												message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
+
+								if not absolute_cache_file_exists:
+									indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
+									single_media_cache_hit = False
+									break
+								if file_mtime(absolute_cache_file) < cached_media.datetime_file:
+									indented_message("not a single media cache hit", "reduction/thumbnail older than cached media", 4)
+									single_media_cache_hit = False
+									break
+								if file_mtime(absolute_cache_file) > json_files_min_mtime:
+									indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
+									single_media_cache_hit = False
+									break
+								if cached_media.is_image and Options.config['recreate_reduced_photos']:
+									indented_message("not a single media cache hit", "reduced photo recreation requested", 4)
+									single_media_cache_hit = False
+									break
+								if cached_media.is_video and Options.config['recreate_transcoded_videos']:
+									indented_message("not a single media cache hit", "transcoded video recreation requested", 4)
+									single_media_cache_hit = False
+									break
+								if Options.config['recreate_thumbnails']:
+									indented_message("not a single media cache hit", "thumbnail recreation requested", 4)
+									single_media_cache_hit = False
+									break
+								if Options.config['recreate_jpg']:
+									indented_message("not a single media cache hit", "jpg recreation requested", 4)
+									single_media_cache_hit = False
+									break
+								if Options.config['recreate_webp']:
+									indented_message("not a single media cache hit", "webp recreation requested", 4)
+									single_media_cache_hit = False
+									break
+								if Options.config['recreate_png']:
+									indented_message("not a single media cache hit", "png recreation requested", 4)
+									single_media_cache_hit = False
+									break
+					# back_level()
+
+				if single_media_cache_hit:
+					single_media = cached_media
+					if single_media.is_video:
+						message("single media cache hit!", "transcoded video and thumbnails OK", 4)
+					else:
+						message("single media cache hit!", "reduced size images and thumbnails OK", 4)
+				else:
+					message("processing media from file", "", 5)
+					single_media = SingleMedia(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
+					if Options.config['checksum']:
+						single_media._attributes["checksum"] = media_checksum
+
+				if single_media.is_valid:
+					if not single_media_cache_hit or must_process_passwords:
+						next_level()
+						message("processing passwords for single media...", "", 4)
+						single_media.password_identifiers_set = set()
+						single_media.album_identifiers_set = set()
+						file_name = os.path.basename(entry_with_path)
+
+						# apply the album passwords_md5 to the media
+						for album_identifier in sorted(album.password_identifiers_set):
+							if album_identifier not in single_media.album_identifiers_set:
+								single_media.album_identifiers_set.add(album_identifier)
+								password_md5 = convert_identifiers_set_to_md5s_set(set([album_identifier])).pop()
+								indented_message("album password added to media", "identifier = " + album_identifier + ", encrypted password = " + password_md5, 3)
+							else:
+								indented_message("album password not added to media", "identifier '" + album_identifier + "' already protects this media", 3)
+
+						# apply the file passwords_md5 and password codes to the media if they match the media name
+						for pattern_and_password in patterns_and_passwords:
+							if pattern_and_password['what_flag'] == 'dirsonly':
+								indented_message("password not added to media", "flag 'dirsonly' prevents applying this pattern to file names", 3)
+							else:
+								case = "case insentitive"
+								whole = "part of name"
+								if pattern_and_password['case_flag'] == 'cs':
+									if pattern_and_password['whole_flag'] == 'whole':
+										match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+										whole = "whole name"
+									else:
+										match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
+									case = "case sentitive"
+								else:
+									if pattern_and_password['whole_flag'] == 'whole':
+										match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
+										whole = "whole name"
+									else:
+										match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
+
+								if match:
+									identifier = pattern_and_password['identifier']
+									Options.mark_identifier_as_used(identifier)
+									if identifier not in single_media.password_identifiers_set:
+										single_media.password_identifiers_set.add(identifier)
+										indented_message(
+											"password and code added to media",
+											"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
+											4
+										)
+									else:
+										indented_message(
+											"password and code not added to media",
+											"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
+											3
+										)
+						indented_message("passwords for single media processed!", "", 5)
+						back_level()
+					else:
+						indented_message("no need to process passwords for media", "", 5)
+						for identifier in single_media.password_identifiers_set:
+							Options.mark_identifier_as_used(identifier)
+
+					if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
+						# update the protected media count according to the album and single media passwords
+						complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+						if single_media.is_image:
+							album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+						else:
+							album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+
+						album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+						if not single_media.has_gps_data:
+							if single_media.is_image:
+								album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+							else:
+								album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+
+							album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+
+						if single_media.is_image:
+							album.nums_media_in_sub_tree.incrementImages()
+						else:
+							album.nums_media_in_sub_tree.incrementVideos()
+
+						if not single_media.has_gps_data:
+							if single_media.is_image:
+								album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+							else:
+								album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+						if single_media.has_gps_data:
+							album.positions_and_media_in_tree.add_single_media(single_media)
+
+						if single_media.is_video:
+							num_video_in_dir += 1
+							if not single_media_cache_hit:
+								num_video_processed_in_dir += 1
+						else:
+							num_photo_in_dir += 1
+							if not single_media_cache_hit:
+								num_photo_processed_in_dir += 1
+
+							if single_media.has_exif_date:
+								num_photo_with_exif_date_in_dir += 1
+							if single_media.has_gps_data:
+								num_photo_with_geotags_in_dir += 1
+
+							if single_media.has_exif_date:
+								if single_media.has_gps_data:
+									num_photo_with_exif_date_and_geotags_in_dir += 1
+								else:
+									photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+							else:
+								if single_media.has_gps_data:
+									photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+								else:
+									photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
+
+						next_level()
+						message("adding single media to dates tree...", "", 5)
+						# the following function has a check on media already present
+						self.add_single_media_to_tree_by_date(single_media)
+						indented_message("single media added to dates tree!", "", 5)
+
+						if single_media.has_gps_data:
+							message("adding single media to geonames tree...", "", 5)
+							# the following function has a check on media already present
+							self.add_single_media_to_tree_by_geonames(single_media)
+							indented_message("single media added to geonames tree!", "", 5)
+
+						message("adding single media to search tree...", "", 5)
+						# the following function has a check on media already present
+						self.add_single_media_to_tree_by_search(single_media)
+						indented_message("single media added to search tree", "", 5)
+
+						album.add_single_media(single_media)
+						self.all_media.append(single_media)
+
+						back_level()
+					else:
+						indented_message("single media not added to anything...", "it was already there", 5)
+
+				elif not single_media.is_valid:
+					indented_message("not image nor video", entry_with_path, 3)
+					unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
+				back_level()
+			back_level()
+
+		if len(dirs_in_dir):
+			message("working with directories in dir", absolute_path, 3)
+			next_level()
+			for entry in dirs_in_dir:
+				entry_with_path = os.path.join(absolute_path, entry)
+				message("working with directory", entry_with_path, 3)
+				next_level()
+
 				trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
 				entry_for_cache_base = os.path.join(Options.config['folders_string'], trimmed_path, entry)
 				next_level()
@@ -1673,314 +1996,8 @@ class TreeWalker:
 					self.add_album_to_tree_by_search(next_walked_album)
 					indented_message("album added to search tree", "", 5)
 					back_level()
-
-			elif os.path.isfile(entry_with_path):
-				if skip_files:
-					continue
-				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
-					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
-
-				# save the file name for the end of the cycle, so that subdirs are processed first
-				files_in_dir.append(entry_with_path)
-
-		message("working with files in dir", absolute_path, 3)
-		next_level()
-		for entry_with_path in files_in_dir:
-			message("working with file", entry_with_path, 3)
-			next_level()
-			single_media_cache_hit = True
-			dirname = os.path.dirname(entry_with_path)
-			try:
-				message("reading file time and size...", "", 5)
-				mtime = file_mtime(entry_with_path)
-				file_size = os.path.getsize(entry_with_path)
-				# file_sizes = Sizes()
-				# file_sizes.set(0, file_size)
-				indented_message("file time and size read!", "", 5)
-				message("reading dir time...", "", 5)
-				dir_mtime = file_mtime(dirname)
-				indented_message("dir time read!", "", 5)
-			except KeyboardInterrupt:
-				raise
-			except OSError:
-				indented_message("could not read file or dir mtime", "", 5)
-				continue
-			else:
-				max_file_date = max(max_file_date, mtime)
-				single_media = None
-				cached_media = None
-				absolute_cache_file_exists = False
-
-			# checksum is needed for all the media, calculate it anyway
-			if Options.config['checksum']:
-				message("calculating checksum...", "", 5)
-				with open(entry_with_path, 'rb') as media_path_pointer:
-					media_checksum = checksum(media_path_pointer)
-				indented_message("checksum calculated!", "", 5)
-
-			if not album_cache_hit:
-				indented_message("not a single media cache hit", "json file invalid", 5)
-				single_media_cache_hit = False
-			else:
-				# next_level()
-				message("getting media from cached album...", "", 5)
-				cached_media = cached_album.media_from_path(entry_with_path)
-				if cached_media is None:
-					indented_message("not a single media cache hit", "no such media in cached album",5)
-					single_media_cache_hit = False
-				else:
-					indented_message("cached media got!", "", 5)
-
-				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
-					indented_message("not a single media cache hit", "modification time different", 5)
-					single_media_cache_hit = False
-
-				if (
-					single_media_cache_hit and (
-						cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
-						cached_media.is_image and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
-					)
-				):
-					indented_message("not a single media cache hit", "file size different", 5)
-					single_media_cache_hit = False
-
-				if single_media_cache_hit and Options.config['checksum']:
-					try:
-						cached_media._attributes['checksum']
-
-						if cached_media._attributes['checksum'] == media_checksum:
-							indented_message("checksum OK!", "", 5)
-						else:
-							indented_message("not a single media cache hit", "bad checksum!", 5)
-							single_media_cache_hit = False
-					except KeyError:
-						message("not a single media cache hit", "no checksum in json file", 5)
-						single_media_cache_hit = False
-
-				if single_media_cache_hit and cached_media:
-					if mtime != cached_media.datetime_file:
-						message("not a single media cache hit", "file datetime different from cache one", 5)
-						single_media_cache_hit = False
-					else:
-						cache_files = cached_media.image_caches
-						# check if the cache files actually exist and are not old
-						for cache_file in cache_files:
-							absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
-							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
-							if (
-								Options.config['recreate_fixed_height_thumbnails'] and
-								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_files_min_mtime
-							):
-								# remove wide images, in order not to have blurred thumbnails
-								for format in Options.config['cache_images_formats']:
-									fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\." + format + "$"
-									match = re.search(fixed_height_thumbnail_re, cache_file)
-									if match and cached_media.size[0] > cached_media.size[1]:
-										try:
-											os.unlink(os.path.join(Options.config['cache_path'], cache_file))
-											message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
-											absolute_cache_file_exists = False
-										except OSError:
-											message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
-
-							if not absolute_cache_file_exists:
-								indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
-								single_media_cache_hit = False
-								break
-							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
-								indented_message("not a single media cache hit", "reduction/thumbnail older than cached media", 4)
-								single_media_cache_hit = False
-								break
-							if file_mtime(absolute_cache_file) > json_files_min_mtime:
-								indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
-								single_media_cache_hit = False
-								break
-							if cached_media.is_image and Options.config['recreate_reduced_photos']:
-								indented_message("not a single media cache hit", "reduced photo recreation requested", 4)
-								single_media_cache_hit = False
-								break
-							if cached_media.is_video and Options.config['recreate_transcoded_videos']:
-								indented_message("not a single media cache hit", "transcoded video recreation requested", 4)
-								single_media_cache_hit = False
-								break
-							if Options.config['recreate_thumbnails']:
-								indented_message("not a single media cache hit", "thumbnail recreation requested", 4)
-								single_media_cache_hit = False
-								break
-							if Options.config['recreate_jpg']:
-								indented_message("not a single media cache hit", "jpg recreation requested", 4)
-								single_media_cache_hit = False
-								break
-							if Options.config['recreate_webp']:
-								indented_message("not a single media cache hit", "webp recreation requested", 4)
-								single_media_cache_hit = False
-								break
-							if Options.config['recreate_png']:
-								indented_message("not a single media cache hit", "png recreation requested", 4)
-								single_media_cache_hit = False
-								break
-				# back_level()
-
-			if single_media_cache_hit:
-				single_media = cached_media
-				if single_media.is_video:
-					message("single media cache hit!", "transcoded video and thumbnails OK", 4)
-				else:
-					message("single media cache hit!", "reduced size images and thumbnails OK", 4)
-			else:
-				message("processing media from file", "", 5)
-				single_media = SingleMedia(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
-				if Options.config['checksum']:
-					single_media._attributes["checksum"] = media_checksum
-
-			if single_media.is_valid:
-				if not single_media_cache_hit or must_process_passwords:
-					next_level()
-					message("processing passwords for single media...", "", 4)
-					single_media.password_identifiers_set = set()
-					single_media.album_identifiers_set = set()
-					file_name = os.path.basename(entry_with_path)
-
-					# apply the album passwords_md5 to the media
-					for album_identifier in sorted(album.password_identifiers_set):
-						if album_identifier not in single_media.album_identifiers_set:
-							single_media.album_identifiers_set.add(album_identifier)
-							password_md5 = convert_identifiers_set_to_md5s_set(set([album_identifier])).pop()
-							indented_message("album password added to media", "identifier = " + album_identifier + ", encrypted password = " + password_md5, 3)
-						else:
-							indented_message("album password not added to media", "identifier '" + album_identifier + "' already protects this media", 3)
-
-					# apply the file passwords_md5 and password codes to the media if they match the media name
-					for pattern_and_password in patterns_and_passwords:
-						if pattern_and_password['what_flag'] == 'dirsonly':
-							indented_message("password not added to media", "flag 'dirsonly' prevents applying this pattern to file names", 3)
-						else:
-							case = "case insentitive"
-							whole = "part of name"
-							if pattern_and_password['case_flag'] == 'cs':
-								if pattern_and_password['whole_flag'] == 'whole':
-									match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
-									whole = "whole name"
-								else:
-									match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
-								case = "case sentitive"
-							else:
-								if pattern_and_password['whole_flag'] == 'whole':
-									match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
-									whole = "whole name"
-								else:
-									match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
-
-							if match:
-								identifier = pattern_and_password['identifier']
-								Options.mark_identifier_as_used(identifier)
-								if identifier not in single_media.password_identifiers_set:
-									single_media.password_identifiers_set.add(identifier)
-									indented_message(
-										"password and code added to media",
-										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
-										4
-									)
-								else:
-									indented_message(
-										"password and code not added to media",
-										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
-										3
-									)
-					indented_message("passwords for single media processed!", "", 5)
-					back_level()
-				else:
-					indented_message("no need to process passwords for media", "", 5)
-					for identifier in single_media.password_identifiers_set:
-						Options.mark_identifier_as_used(identifier)
-
-				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
-					# update the protected media count according to the album and single media passwords
-					complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-					if single_media.is_image:
-						album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
-					else:
-						album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
-
-					album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
-					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
-
-					if not single_media.has_gps_data:
-						if single_media.is_image:
-							album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
-						else:
-							album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
-
-						album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
-						album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
-
-					if single_media.is_image:
-						album.nums_media_in_sub_tree.incrementImages()
-					else:
-						album.nums_media_in_sub_tree.incrementVideos()
-
-					if not single_media.has_gps_data:
-						if single_media.is_image:
-							album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-						else:
-							album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-					if single_media.has_gps_data:
-						album.positions_and_media_in_tree.add_single_media(single_media)
-
-					if single_media.is_video:
-						num_video_in_dir += 1
-						if not single_media_cache_hit:
-							num_video_processed_in_dir += 1
-					else:
-						num_photo_in_dir += 1
-						if not single_media_cache_hit:
-							num_photo_processed_in_dir += 1
-
-						if single_media.has_exif_date:
-							num_photo_with_exif_date_in_dir += 1
-						if single_media.has_gps_data:
-							num_photo_with_geotags_in_dir += 1
-
-						if single_media.has_exif_date:
-							if single_media.has_gps_data:
-								num_photo_with_exif_date_and_geotags_in_dir += 1
-							else:
-								photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
-						else:
-							if single_media.has_gps_data:
-								photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
-							else:
-								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
-
-					next_level()
-					message("adding single media to dates tree...", "", 5)
-					# the following function has a check on media already present
-					self.add_single_media_to_tree_by_date(single_media)
-					indented_message("single media added to dates tree!", "", 5)
-
-					if single_media.has_gps_data:
-						message("adding single media to geonames tree...", "", 5)
-						# the following function has a check on media already present
-						self.add_single_media_to_tree_by_geonames(single_media)
-						indented_message("single media added to geonames tree!", "", 5)
-
-					message("adding single media to search tree...", "", 5)
-					# the following function has a check on media already present
-					self.add_single_media_to_tree_by_search(single_media)
-					indented_message("single media added to search tree", "", 5)
-
-					album.add_single_media(single_media)
-					self.all_media.append(single_media)
-
-					back_level()
-				else:
-					indented_message("single media not added to anything...", "it was already there", 5)
-
-			elif not single_media.is_valid:
-				indented_message("not image nor video", entry_with_path, 3)
-				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
+				back_level()
 			back_level()
-		back_level()
 
 		if num_video_in_dir:
 			Options.num_video += num_video_in_dir
