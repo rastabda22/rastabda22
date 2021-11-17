@@ -142,6 +142,8 @@ $ sudo a2ensite _mysitename_
 $ sudo a2enmod deflate
 ```
 
+In order to activage font compression, see https://stackoverflow.com/questions/1563862/compress-deflate-font-face-fonts
+
 * Add support for Header directive to manage the browser cache correctly with Mod_header.
 ```bash
 $ sudo a2enmod headers
