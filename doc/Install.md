@@ -173,7 +173,7 @@ When MyPhotoShare code is updated, update your `myphotoshare` directory.
 Go to the folder you cloned the repository in and execute:
 ```bash
     $ git pull https://gitlab.com/paolobenve/myphotoshare.git
-    $ ./bin/js-css-minify.sh
+    $ ./bin/js-css-minify.sh /your/config/file
 ```
 
 If you aren't using `git`, all the system files must be deleted and the [new package](https://gitlab.com/paolobenve/myphotoshare/-/archive/master/myphotoshare-master.zip) unzipped in the same place. You can, however, preserve the cache directory inside `web/`, expecially if you have many photos; the scanner knows how to respect the cache content and only generates again the json files/reductions/thumbnails when strictly required.
