@@ -1,3 +1,5 @@
+* `js_minifier` option: added `mangler` value for uglifyjs.terser with -m option
+
 ### version v5.4.1 (November 16, 2021)
 
 * bug fixes

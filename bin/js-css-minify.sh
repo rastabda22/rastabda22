@@ -106,6 +106,14 @@ case $MINIFY_JS in
 			( >&2 echo "Aborting..." )
 			exit 1
 		fi
+	;;
+	mangler)
+		uglifyjs.terser -V > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			( >&2 echo "'uglifyjs.terser' is not installed. Look for package 'uglifyjs.terser' or 'https://terser.org/'" )
+			( >&2 echo "Aborting..." )
+			exit 1
+		fi
 esac
 
 case $MINIFY_CSS in
@@ -205,7 +213,11 @@ while read jsfile; do
 		;;
 
 		terser)
-			uglifyjs.terser -o $newfile $jsfile
+			uglifyjs.terser -o $newfile $jsfile3
+		;;
+
+		mangler)
+			uglifyjs.terser -o $newfile $jsfile -m
 		;;
 
 		*)

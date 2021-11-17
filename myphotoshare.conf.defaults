@@ -84,16 +84,17 @@ use_system_js_libraries = false
 
 # CSS minifier
 # permitted values:
-#    web_service : https://cssminifier.com/
-#    cssmin : cssmin (https://github.com/zacharyvoase/cssmin) (Default)
+#    cssmin : cssmin (https://github.com/zacharyvoase/cssmin) (default)
 #    rcssmin3: python3-rcssmin (http://opensource.perlig.de/rcssmin/)
+#    web_service : https://cssminifier.com/
 css_minifier = cssmin
 
 # JavaScript minifier
 # permitted values:
-#    web_service : https://javascript-minifier.com/
-#    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (Default)
+#    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (default)
 #    terser: uglifyjs.terser (https://terser.org/)
+#    mangler: uglifyjs.terser with -m option (https://terser.org/)
+#    web_service : https://javascript-minifier.com/
 js_minifier = jsmin3
 
 

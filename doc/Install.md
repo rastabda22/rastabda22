@@ -70,7 +70,7 @@ This simply minifies and concatenate all JavaScript and CSS source files.
     $ ./bin/js-css-minify.sh /etc/myphotoshare/myproject.conf
 ```
 
-By default, a local minifier is used (cssmin and jsmin are currently supported, more local tools can easily be added). https://javascript-minifier.com/ and https://cssminifier.com/ web services may be used, changing options in the config file, but they are subject to timeout errors which the script cannot detect.
+By default, a local minifier is used (cssmin, jsmin and terser, with or without the -m mangling option) are currently supported, more local tools can easily be added). https://javascript-minifier.com/ and https://cssminifier.com/ web services may be used, changing options in the config file, but they are subject to timeout errors which the script cannot detect.
 
 
 ### Configure your web server
@@ -173,7 +173,7 @@ When MyPhotoShare code is updated, update your `myphotoshare` directory.
 Go to the folder you cloned the repository in and execute:
 ```bash
     $ git pull https://gitlab.com/paolobenve/myphotoshare.git
-    $ ./bin/js-css-minify.sh /your/config/file
+    $ ./bin/js-css-minify.sh /etc/myphotoshare/myproject.conf
 ```
 
 If you aren't using `git`, all the system files must be deleted and the [new package](https://gitlab.com/paolobenve/myphotoshare/-/archive/master/myphotoshare-master.zip) unzipped in the same place. You can, however, preserve the cache directory inside `web/`, expecially if you have many photos; the scanner knows how to respect the cache content and only generates again the json files/reductions/thumbnails when strictly required.
