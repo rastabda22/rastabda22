@@ -60,6 +60,18 @@ if [ ! -d "$PROJECT_DIR/web/css" ] || [ ! -w "$PROJECT_DIR/web/css" ]; then
 	exit 1
 fi
 
+# Is save_data option set to true? if that's the case custom fonts won't be used.
+SAVE_DATA="$(sed -nr 's/^\s*save_data\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
+DEFAULT_SAVE_DATA="$(sed -nr 's/^\s*save_data\s*=\s*(\w+)\s*.*$/\1/p' $DEFAULT_CONF)"
+SAVE_DATA=${SAVE_DATA:-$DEFAULT_SAVE_DATA}
+if [ "$SAVE_DATA" = "true" ] || [ "$SAVE_DATA" = "1" ]; then
+	SAVE_DATA="true"
+	echo
+	echo "save_data option is set to true, custom fonts won't be included in minified css file"
+else
+	SAVE_DATA="false"
+fi
+
 
 # Parse which minifiers to use from configuration file
 MINIFY_JS="$(sed -nr 's/^\s*js_minifier\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
@@ -246,24 +258,26 @@ if [ $? -ne 0 ]; then
 fi
 ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 	newfile="${cssfile%.*}.min.css"
-	echo "minifying $cssfile"
-	case $MINIFY_CSS in
-		web_service)
-			curl -X POST -s --data-urlencode "input@$cssfile" https://cssminifier.com/raw > $newfile
-		;;
+	if [ "${cssfile}" != "001-fonts.css" ] || [ "${SAVE_DATA}" == "false" ]; then
+		echo "minifying $cssfile"
+		case $MINIFY_CSS in
+			web_service)
+				curl -X POST -s --data-urlencode "input@$cssfile" https://cssminifier.com/raw > $newfile
+			;;
 
-		cssmin)
-			cssmin < $cssfile > $newfile
-		;;
+			cssmin)
+				cssmin < $cssfile > $newfile
+			;;
 
-		rcssmin3)
-			python3 -m rcssmin < $cssfile > $newfile
-		;;
+			rcssmin3)
+				python3 -m rcssmin < $cssfile > $newfile
+			;;
 
-		*)
-			( >&2 echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'" )
-			( >&2 echo "Doing nothing on file $cssfile" )
-	esac
+			*)
+				( >&2 echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'" )
+				( >&2 echo "Doing nothing on file $cssfile" )
+		esac
+	fi
 done
 
 # merge all into one single file

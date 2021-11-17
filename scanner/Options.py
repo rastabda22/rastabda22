@@ -292,6 +292,7 @@ def get_options(args):
 				indented_message("PRE WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
 		elif option in (
+				'save_data',
 				'follow_symlinks',
 				'checksum',
 				'different_album_thumbnails',

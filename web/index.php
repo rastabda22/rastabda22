@@ -52,7 +52,9 @@
 			<link href="css/styles.min.css" rel="stylesheet" type="text/css" />
 		<?php	} else { ?>
 			<link href="css/000-controls.css" rel="stylesheet" type="text/css" />
-			<link href="css/001-fonts.css" rel="stylesheet" type="text/css" />
+			<?php if (! is_option_set('save_data')) { ?>
+				<link href="css/001-fonts.css" rel="stylesheet" type="text/css" />
+			<?php } ?>
 			<link href="css/002-mobile.css" rel="stylesheet" type="text/css" />
 			<link href="css/003-social.css" rel="stylesheet" type="text/css" />
 			<link href="css/005-leaflet.css" rel="stylesheet" type="text/css" />

@@ -328,6 +328,10 @@ max_media_from_positions_in_json_file = 100
 # scanner and ui options
 ###########################################################
 
+# Try to reduce bandwidth use by the web site:
+# - custom fonts aren't used (saves about 200/300 kB)
+save_data = false
+
 # The sizes for the reduced images
 # they must be reverse ordered, i.e. from biggest to smallest
 # a void array is allowed: this way the original image will be used all the ways, possibly the load times will be higher
