@@ -2080,8 +2080,11 @@ class TreeWalker:
 		return [x, y]
 
 
-	def pick_random_image(self, album, random_number):
-		good_media = [single_media for single_media in album.media_list if not len(single_media.password_identifiers_set)]
+	def pick_random_image(self, album, random_number, unprotected_only):
+		if unprotected_only:
+			good_media = [single_media for single_media in album.media_list if not len(single_media.password_identifiers_set)]
+		else:
+			good_media = album.media_list[:]
 		good_media_number = len(good_media)
 		if random_number < good_media_number:
 			return [good_media[random_number], random_number]
@@ -2090,7 +2093,7 @@ class TreeWalker:
 			for subalbum in album.subalbums_list:
 				subalbum_good_media_number = subalbum.nums_protected_media_in_sub_tree.nums_protected[','].total()
 				if random_number < subalbum_good_media_number:
-					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
+					[picked_image, random_number] = self.pick_random_image(subalbum, random_number, unprotected_only)
 					if picked_image:
 						return [picked_image, random_number]
 				random_number -= subalbum_good_media_number
@@ -2152,8 +2155,10 @@ class TreeWalker:
 		if num_unprotected > 0:
 			good_media_number = num_unprotected
 			num_random_thumbnails = min(max_thumbnail_number, good_media_number)
+			unprotected_only = True
 		else:
 			good_media_number = album.nums_media_in_sub_tree.total()
+			unprotected_only = False
 		i = 0
 		# for security sake only use unprotected media
 		while True:
@@ -2164,7 +2169,7 @@ class TreeWalker:
 				if random_number not in random_list and random_number not in bad_list:
 					break
 			random_list.append(random_number)
-			[random_media, random_number] = self.pick_random_image(album, random_number)
+			[random_media, random_number] = self.pick_random_image(album, random_number, unprotected_only)
 			if i == 0:
 				first_random_media = random_media
 			if num_unprotected == 0 or map_width is not None:

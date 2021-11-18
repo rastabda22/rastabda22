@@ -2847,7 +2847,7 @@
 		}
 
 		Promise.all(subalbumsPromises).then(
-			function allRandomImagesGot() {
+			function allSubalbumsWorkedOut() {
 				// perform the last operations with each subalbum
 				for (let i = 0; i < self.subalbums.length; i ++) {
 					let iSubalbum = i;
