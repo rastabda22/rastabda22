@@ -163,8 +163,8 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.32 since imageSize has beed added to videos in albums
 # json_version = 4.33 since randomThumbnail has beed added to subalbums
 
-# json_version = 0
 json_version = 4.33
+# json_version = 0
 
 # the release version number (a string)
 version = "v5.4.1"

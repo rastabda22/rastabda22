@@ -543,24 +543,20 @@ class TreeWalker:
 					message("calculating album date", "based on media and subalbums dates", 5)
 					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
-					if day_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-						[day_album.composite_image_size, day_album.random_media] = self.generate_composite_image_and_choose_random_media(day_album, day_max_file_date)
+					[day_album.composite_image_size, day_album.random_media] = self.generate_composite_image_and_choose_random_media(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
 				message("calculating album date", "based on media and subalbums dates", 5)
 				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
-				if month_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-					[month_album.composite_image_size, month_album.random_media] = self.generate_composite_image_and_choose_random_media(month_album, month_max_file_date)
+				[month_album.composite_image_size, month_album.random_media] = self.generate_composite_image_and_choose_random_media(month_album, month_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
-			if year_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-				[year_album.composite_image_size, year_album.random_media] = self.generate_composite_image_and_choose_random_media(year_album, year_max_file_date)
+			[year_album.composite_image_size, year_album.random_media] = self.generate_composite_image_and_choose_random_media(year_album, year_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
-		if by_date_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-			[by_date_album.composite_image_size, by_date_album.random_media] = self.generate_composite_image_and_choose_random_media(by_date_album, by_date_max_file_date)
+		[by_date_album.composite_image_size, by_date_album.random_media] = self.generate_composite_image_and_choose_random_media(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
 
@@ -1025,8 +1021,7 @@ class TreeWalker:
 						message("calculating album date", "based on media and subalbums dates", 5)
 						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
-						if place_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-							[place_album.composite_image_size, place_album.random_media] = self.generate_composite_image_and_choose_random_media(place_album, place_max_file_date)
+						[place_album.composite_image_size, place_album.random_media] = self.generate_composite_image_and_choose_random_media(place_album, place_max_file_date)
 						if set_alt_place:
 							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
@@ -1042,18 +1037,15 @@ class TreeWalker:
 				message("calculating album date", "based on media and subalbums dates", 5)
 				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
-				if region_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-					[region_album.composite_image_size, region_album.random_media] = self.generate_composite_image_and_choose_random_media(region_album, region_max_file_date)
+				[region_album.composite_image_size, region_album.random_media] = self.generate_composite_image_and_choose_random_media(region_album, region_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
-			if country_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-				[country_album.composite_image_size, country_album.random_media] = self.generate_composite_image_and_choose_random_media(country_album, country_max_file_date)
+			[country_album.composite_image_size, country_album.random_media] = self.generate_composite_image_and_choose_random_media(country_album, country_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-			[by_geonames_album.composite_image_size, by_geonames_album.random_media] = self.generate_composite_image_and_choose_random_media(by_geonames_album, by_geonames_max_file_date)
+		[by_geonames_album.composite_image_size, by_geonames_album.random_media] = self.generate_composite_image_and_choose_random_media(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
 
@@ -2091,12 +2083,16 @@ class TreeWalker:
 		else:
 			random_number -= good_media_number
 			for subalbum in album.subalbums_list:
-				subalbum_good_media_number = subalbum.nums_protected_media_in_sub_tree.nums_protected[','].total()
+				if unprotected_only:
+					subalbum_good_media_number = subalbum.nums_protected_media_in_sub_tree.nums_protected[','].total()
+				else:
+					subalbum_good_media_number = subalbum.nums_media_in_sub_tree.total()
 				if random_number < subalbum_good_media_number:
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number, unprotected_only)
 					if picked_image:
 						return [picked_image, random_number]
 				random_number -= subalbum_good_media_number
+		# if execution arrives here an error has occurred
 		return [None, random_number]
 
 	def generate_composite_image_and_choose_random_media(self, album, max_file_date):
