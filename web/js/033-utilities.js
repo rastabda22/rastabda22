@@ -2342,7 +2342,7 @@
 			if (env.currentAlbum.isFolder()) {
 				mediaElement.attr("title", this.date);
 			} else {
-				[singleMediaName, singleMediaTitle] = this.nameAndTitleForShowing(album, true);
+				[singleMediaName, singleMediaTitle] = this.nameAndTitleForShowing(true);
 				mediaElement.attr("title", Utilities.pathJoin([this.albumName, singleMediaName]));
 			}
 		}
@@ -3768,7 +3768,7 @@
 			}
 		}
 
-		var [nameForShowing, titleForShowing] = singleMedia.nameAndTitleForShowing(album, true, true);
+		var [nameForShowing, titleForShowing] = singleMedia.nameAndTitleForShowing(true, true);
 		var captionsForCollection = Utilities.addSpanToFirstAndSecondLine(nameForShowing, secondLine);
 		var captionForCollectionSorting = nameForShowing + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		return [captionsForCollection, captionForCollectionSorting, titleForShowing];
@@ -3825,7 +3825,7 @@
 		return folderName;
 	};
 
-	SingleMedia.prototype.nameAndTitleForShowing = function(album, html = false, br = false) {
+	SingleMedia.prototype.nameAndTitleForShowing = function(html = false, br = false) {
 		var mediaName = '';
 		var mediaTitle = '';
 		if (this.metadata.hasOwnProperty("title") && this.metadata.title && this.metadata.title !== this.name) {

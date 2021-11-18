@@ -587,7 +587,7 @@
 						let documentTitleComponents = titleComponents.map(component => util.stripHtmlAndReplaceEntities(component));
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
-							let [singleMediaName, singleMediaTitle] = singleMedia.nameAndTitleForShowing(env.currentAlbum, true);
+							let [singleMediaName, singleMediaTitle] = singleMedia.nameAndTitleForShowing(true);
 							if (isSearchTitle || isSelectionTitle || isMapTitle) {
 								let name, mediaNamePosition;
 								if (isSearchTitle)
@@ -2448,7 +2448,7 @@
 					name = ithMedia.captionsForSelection.join(env.br);
 				else {
 
-					[name, title] = ithMedia.nameAndTitleForShowing(this, true, true);
+					[name, title] = ithMedia.nameAndTitleForShowing(true, true);
 				}
 
 				let spanHtml =
@@ -2485,7 +2485,7 @@
 				if (! inPopup && ithMedia.hasGpsData())
 					$("#" + imageId + " img.thumbnail-map-link").attr("title", util._t("#show-on-map")).attr("alt", util._t("#show-on-map"));
 				$("#" + imageId + " img.select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector"));
-				let [nameForShowing, titleForShowing] = ithMedia.nameAndTitleForShowing(this);
+				let [nameForShowing, titleForShowing] = ithMedia.nameAndTitleForShowing();
 				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, nameForShowing])).attr("alt", util.trimExtension(ithMedia.name));
 				$("#" + imageId + " .media-caption .media-name").attr("title", titleForShowing);
 				if (ithMedia.metadata.hasOwnProperty("description")) {
@@ -2596,7 +2596,7 @@
 		// } else if (this.isSearch()) {
 		// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 		} else {
-			let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
+			let [name, title] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 		}
 		if (this.isSearch())
