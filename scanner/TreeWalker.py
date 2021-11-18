@@ -544,23 +544,23 @@ class TreeWalker:
 					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
 					if day_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-						day_album.composite_image_size = self.generate_composite_image(day_album, day_max_file_date)
+						[day_album.composite_image_size, day_album.random_media] = self.generate_composite_image_and_choose_random_media(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
 				message("calculating album date", "based on media and subalbums dates", 5)
 				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
 				if month_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-					month_album.composite_image_size = self.generate_composite_image(month_album, month_max_file_date)
+					[month_album.composite_image_size, month_album.random_media] = self.generate_composite_image_and_choose_random_media(month_album, month_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
 			if year_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-				year_album.composite_image_size = self.generate_composite_image(year_album, year_max_file_date)
+				[year_album.composite_image_size, year_album.random_media] = self.generate_composite_image_and_choose_random_media(year_album, year_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
 		if by_date_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-			by_date_album.composite_image_size = self.generate_composite_image(by_date_album, by_date_max_file_date)
+			[by_date_album.composite_image_size, by_date_album.random_media] = self.generate_composite_image_and_choose_random_media(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
 
@@ -1026,7 +1026,7 @@ class TreeWalker:
 						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
 						if place_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-							place_album.composite_image_size = self.generate_composite_image(place_album, place_max_file_date)
+							[place_album.composite_image_size, place_album.random_media] = self.generate_composite_image_and_choose_random_media(place_album, place_max_file_date)
 						if set_alt_place:
 							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
@@ -1043,17 +1043,17 @@ class TreeWalker:
 				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
 				if region_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-					region_album.composite_image_size = self.generate_composite_image(region_album, region_max_file_date)
+					[region_album.composite_image_size, region_album.random_media] = self.generate_composite_image_and_choose_random_media(region_album, region_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
 			if country_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-				country_album.composite_image_size = self.generate_composite_image(country_album, country_max_file_date)
+				[country_album.composite_image_size, country_album.random_media] = self.generate_composite_image_and_choose_random_media(country_album, country_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
 		if by_geonames_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-			by_geonames_album.composite_image_size = self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
+			[by_geonames_album.composite_image_size, by_geonames_album.random_media] = self.generate_composite_image_and_choose_random_media(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
 
@@ -2056,9 +2056,12 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.nums_protected_media_in_sub_tree.nums_protected[','].total():
-			# generate the album composite image for sharing
-			album.composite_image_size = self.generate_composite_image(album, max_file_date)
+		# generate the album composite image for sharing
+		# actually is generated only if there is unprotected content
+		# anyway, the random media is choosen
+		[album.composite_image_size, album.random_media] = self.generate_composite_image_and_choose_random_media(album, max_file_date)
+		if album.composite_image_size is None:
+			del album.composite_image_size
 		back_level()
 
 		report_times(False)
@@ -2093,60 +2096,68 @@ class TreeWalker:
 				random_number -= subalbum_good_media_number
 		return [None, random_number]
 
-	def generate_composite_image(self, album, max_file_date):
-		# returns the size of the image
+	def generate_composite_image_and_choose_random_media(self, album, max_file_date):
+		# returns the size of the image and a random media which will be put (actually its cache base) in the subalbums' json files
 
 		# pick a maximum of max_album_share_thumbnails_number random images in album and subalbums
 		# and generate a square composite image
 
+		map_width = None
+
 		# determine the number of images to use
 		num_unprotected = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
-		if num_unprotected == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
-			max_thumbnail_number = 1
-		elif num_unprotected < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
-			max_thumbnail_number = 4
-		elif num_unprotected < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
-			max_thumbnail_number = 9
-		elif num_unprotected < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
-			max_thumbnail_number = 16
-		elif num_unprotected < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
-			max_thumbnail_number = 25
+		if num_unprotected:
+			# this code is for composite image, which isn't generated when there isn't any unprotected content
+			if num_unprotected == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+				max_thumbnail_number = 1
+			elif num_unprotected < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+				max_thumbnail_number = 4
+			elif num_unprotected < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+				max_thumbnail_number = 9
+			elif num_unprotected < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+				max_thumbnail_number = 16
+			elif num_unprotected < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+				max_thumbnail_number = 25
+			else:
+				max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
+
+			next_level()
+			# always use jpg format for to the composite image
+			composite_image_name = album.cache_base + ".jpg"
+			composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
+			self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
+			json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
+			if (
+				os.path.exists(composite_image_path) and
+				file_mtime(composite_image_path) > max_file_date and
+				os.path.exists(json_file_with_path) and
+				file_mtime(json_file_with_path) < file_mtime(composite_image_path)
+			):
+				message("composite image OK", "", 5)
+				with open(composite_image_path, 'a'):
+					os.utime(composite_image_path, None)
+				indented_message("composite image OK, touched", composite_image_path, 4)
+				back_level()
+				im = Image.open(composite_image_path)
+				map_width = im.size[0]
+
+				message("generating composite image...", composite_image_path, 5)
 		else:
-			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
-
-		next_level()
-		# always use jpg format for to the composite image
-		composite_image_name = album.cache_base + ".jpg"
-		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
-		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
-		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
-		if (
-			os.path.exists(composite_image_path) and
-			file_mtime(composite_image_path) > max_file_date and
-			os.path.exists(json_file_with_path) and
-			file_mtime(json_file_with_path) < file_mtime(composite_image_path)
-		):
-			message("composite image OK", "", 5)
-			with open(composite_image_path, 'a'):
-				os.utime(composite_image_path, None)
-			indented_message("composite image OK, touched", composite_image_path, 4)
-			back_level()
-			im = Image.open(composite_image_path)
-			return im.size[0]
-
-		message("generating composite image...", composite_image_path, 5)
+			max_thumbnail_number = 1
 
 		# pick max_thumbnail_number random square album thumbnails
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		good_media_number = num_unprotected
-		num_random_thumbnails = min(max_thumbnail_number, good_media_number)
+		if num_unprotected > 0:
+			good_media_number = num_unprotected
+			num_random_thumbnails = min(max_thumbnail_number, good_media_number)
+		else:
+			good_media_number = album.nums_media_in_sub_tree.total()
 		i = 0
-		# for security safe only use unprotected media
-		# anyway, if no unprotected album this function is not invoked
+		# for security sake only use unprotected media
 		while True:
-			if i >= good_media_number:
+			if num_unprotected > 0 and i >= good_media_number:
 				break
 			while True:
 				random_number = random.randint(0, good_media_number - 1)
@@ -2154,6 +2165,12 @@ class TreeWalker:
 					break
 			random_list.append(random_number)
 			[random_media, random_number] = self.pick_random_image(album, random_number)
+			if i == 0:
+				first_random_media = random_media
+			if num_unprotected == 0 or map_width is not None:
+				# the composite image is already there or must not be generated
+				break
+
 			album_prefix = remove_folders_marker(random_media.album.cache_base)
 			if album_prefix:
 				album_prefix += Options.config['cache_folder_separator']
@@ -2173,56 +2190,58 @@ class TreeWalker:
 				bad_list.append(thumbnail)
 				good_media_number -= 1
 
-		if len(random_thumbnails) < max_thumbnail_number:
-			# missing images: use the myphotoshare logo
-			logo = os.path.join(os.path.dirname(__file__), "../web/img/myphotoshareLogo.jpg")
-			for i in range(max_thumbnail_number - len(random_thumbnails)):
-				random_thumbnails.append(logo)
+		if num_unprotected:
+			# this code is for composite image, which isn't generated when there isn't any unprotected content
+			if len(random_thumbnails) < max_thumbnail_number:
+				# missing images: use the myphotoshare logo
+				logo = os.path.join(os.path.dirname(__file__), "../web/img/myphotoshareLogo.jpg")
+				for i in range(max_thumbnail_number - len(random_thumbnails)):
+					random_thumbnails.append(logo)
 
-		random.shuffle(random_thumbnails)
+			random.shuffle(random_thumbnails)
 
-		# generate the composite image
-		# following code inspired from
-		# https://stackoverflow.com/questions/30429383/combine-16-images-into-1-big-image-with-php#30429557
-		# thanks to Adarsh Vardhan who wrote it!
+			# generate the composite image
+			# following code inspired from
+			# https://stackoverflow.com/questions/30429383/combine-16-images-into-1-big-image-with-php#30429557
+			# thanks to Adarsh Vardhan who wrote it!
 
-		tile_width = Options.config['album_thumb_size']
+			tile_width = Options.config['album_thumb_size']
 
-		# INIT BASE IMAGE FILLED WITH BACKGROUND COLOR
-		linear_number_of_tiles = int(math.sqrt(max_thumbnail_number))
-		px_between_tiles = 1
-		side_off_set = 1
+			# INIT BASE IMAGE FILLED WITH BACKGROUND COLOR
+			linear_number_of_tiles = int(math.sqrt(max_thumbnail_number))
+			px_between_tiles = 1
+			side_off_set = 1
 
-		map_width = side_off_set + (tile_width + px_between_tiles) * linear_number_of_tiles - px_between_tiles + side_off_set
-		map_height = side_off_set + (tile_width + px_between_tiles) * linear_number_of_tiles - px_between_tiles + side_off_set
-		img = Image.new('RGB', (map_width, map_height), "white")
+			map_width = side_off_set + (tile_width + px_between_tiles) * linear_number_of_tiles - px_between_tiles + side_off_set
+			map_height = side_off_set + (tile_width + px_between_tiles) * linear_number_of_tiles - px_between_tiles + side_off_set
+			img = Image.new('RGB', (map_width, map_height), "white")
 
-		# PUT SRC IMAGES ON BASE IMAGE
-		index = -1
-		logo_already_resized = False
-		for thumbnail in random_thumbnails:
-			index += 1
-			tile = Image.open(thumbnail)
-			tile_img_width = tile.size[0]
-			tile_img_height = tile.size[1]
-			# the logo has size 1024x1024: reduce it
-			if tile_img_width == 1024:
-				if not logo_already_resized:
-					logo = tile.resize((Options.config['album_thumb_size'], Options.config['album_thumb_size']))
-					logo_already_resized = True
-				tile = logo
-			[x, y] = self._index_to_coords(index, tile_width, px_between_tiles, side_off_set, linear_number_of_tiles)
-			if tile_img_width < tile_width:
-				x += int(float(tile_width - tile_img_width) / 2)
-			if tile_img_height < tile_width:
-				y += int(float(tile_width - tile_img_height) / 2)
-			img.paste(tile, (x, y))
+			# PUT SRC IMAGES ON BASE IMAGE
+			index = -1
+			logo_already_resized = False
+			for thumbnail in random_thumbnails:
+				index += 1
+				tile = Image.open(thumbnail)
+				tile_img_width = tile.size[0]
+				tile_img_height = tile.size[1]
+				# the logo has size 1024x1024: reduce it
+				if tile_img_width == 1024:
+					if not logo_already_resized:
+						logo = tile.resize((Options.config['album_thumb_size'], Options.config['album_thumb_size']))
+						logo_already_resized = True
+					tile = logo
+				[x, y] = self._index_to_coords(index, tile_width, px_between_tiles, side_off_set, linear_number_of_tiles)
+				if tile_img_width < tile_width:
+					x += int(float(tile_width - tile_img_width) / 2)
+				if tile_img_height < tile_width:
+					y += int(float(tile_width - tile_img_height) / 2)
+				img.paste(tile, (x, y))
 
-		# save the composite image
-		img.save(composite_image_path, quality = Options.config['jpeg_quality'])
-		indented_message("composite image generated", "jpg", 5)
-		back_level()
-		return map_width
+			# save the composite image
+			img.save(composite_image_path, quality = Options.config['jpeg_quality'])
+			indented_message("composite image generated", "jpg", 5)
+			back_level()
+		return [map_width, first_random_media]
 
 
 	@staticmethod
