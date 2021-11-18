@@ -2580,61 +2580,59 @@
 		$("#loading").hide();
 	};
 
+	Album.prototype.insertRandomImage = function(randomSubAlbum, index, iSubalbum) {
+		var titleName, randomMediaLink;
+		var randomMedia = randomSubAlbum.media[index];
+		var id = phFl.convertCacheBaseToId(this.subalbums[iSubalbum].cacheBase);
+		var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
+
+		$("#downloading-media").hide();
+
+		if (this.isByDate()) {
+			titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+		} else if (this.isByGps()) {
+			let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+			titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+		// } else if (this.isSearch()) {
+		// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+		} else {
+			let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
+			titleName = util.pathJoin([randomMedia.albumName, name]);
+		}
+		if (this.isSearch())
+			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, this.cacheBase);
+		else
+			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
+
+		titleName = titleName.substr(titleName.indexOf('/') + 1);
+		var goTo = util._t(".go-to") + " " + titleName;
+		$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
+		$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+		// replacing is needed in order to reactivate the lazy loader
+		$("#" + id + " img.thumbnail").replaceWith($("#" + id + " img.thumbnail")[0].outerHTML);
+		$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
+		$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
+
+		if (util.onlyShowNonGeotaggedContent()) {
+			$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.png");
+		}
+
+		$(
+			function() {
+				$("img.lazyload-album-" + id).Lazy(
+					{
+						chainable: false,
+						threshold: env.options.media_thumb_size,
+						bind: 'event',
+						removeAttribute: true
+					}
+				);
+			}
+		);
+	};
+
 
 	Album.prototype.pickRandomMediaAndInsertIt = function(iSubalbum, onlyShowNonGeotaggedContent = false) {
-		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
-			var titleName, randomMediaLink;
-			var randomMedia = randomSubAlbum.media[index];
-			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
-			var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
-
-			$("#downloading-media").hide();
-
-			if (self.isByDate()) {
-				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-			} else if (self.isByGps()) {
-				let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-			// } else if (self.isSearch()) {
-			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-			} else {
-				let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
-				titleName = util.pathJoin([randomMedia.albumName, name]);
-			}
-			if (self.isSearch())
-				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, self.cacheBase);
-			else
-				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
-
-			titleName = titleName.substr(titleName.indexOf('/') + 1);
-			var goTo = util._t(".go-to") + " " + titleName;
-			$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
-			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-			// replacing is needed in order to reactivate the lazy loader
-			$("#" + id + " img.thumbnail").replaceWith($("#" + id + " img.thumbnail")[0].outerHTML);
-			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
-			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
-
-			if (util.onlyShowNonGeotaggedContent()) {
-				$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.png");
-			}
-
-			$(
-				function() {
-					$("img.lazyload-album-" + id).Lazy(
-						{
-							chainable: false,
-							threshold: env.options.media_thumb_size,
-							bind: 'event',
-							removeAttribute: true
-						}
-					);
-				}
-			);
-		}
-		// end of insertRandomImage function
-
-		// body of pickRandomMediaAndInsertIt function begins
 		var self = this;
 		var promise = self.pickRandomMedia(
 			iSubalbum,
@@ -2651,7 +2649,7 @@
 				if (util.onlyShowNonGeotaggedContent() && randomAlbum.media[index].hasGpsData() && $("#" + thisSubalbumCacheBase).is(":visible")) {
 					env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, true);
 				} else {
-					insertRandomImage(randomAlbum, index, iSubalbum);
+					self.insertRandomImage(randomAlbum, index, iSubalbum);
 				}
 			},
 			function(album) {
