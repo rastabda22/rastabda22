@@ -757,8 +757,8 @@ class Album(object):
 					"sizesOfAlbum": subalbum.sizes_of_album,
 					"nonGeotagged": {
 						"numsMediaInSubTree": subalbum.nums_media_in_sub_tree_non_geotagged,
-						"sizesOfSubTree": self.sizes_of_sub_tree_non_geotagged,
-						"sizesOfAlbum": self.sizes_of_album_non_geotagged
+						"sizesOfSubTree": subalbum.sizes_of_sub_tree_non_geotagged,
+						"sizesOfAlbum": subalbum.sizes_of_album_non_geotagged
 					}
 				}
 				nums_protected_by_code = {}
