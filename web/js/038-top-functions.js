@@ -2595,7 +2595,7 @@
 		// } else if (this.isSearch()) {
 		// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 		} else {
-			let [name, title] = randomMedia.nameAndTitleForShowing();
+			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 		}
 		if (this.isSearch())
@@ -3525,7 +3525,7 @@
 								ev.ctrlKey = false;
 								ev.latlng = evt.latlng;
 								ev.fromAddOrSubtract = true;
-								updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
+								let updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
 								updatePromise.then(
 									TopFunctions.prepareAndDoPopupUpdate,
 									function() {
@@ -3545,7 +3545,7 @@
 								ev.ctrlKey = true;
 								ev.latlng = evt.latlng;
 								ev.fromAddOrSubtract = true;
-								updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
+								let updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
 								updatePromise.then(
 									TopFunctions.prepareAndDoPopupUpdate,
 									function() {
@@ -3580,7 +3580,7 @@
 
 						env.mapAlbum.clickHistory.push(clickHistoryElement);
 
-						var matchingIndex, matchingMedia;
+						var matchingIndex;
 						for (indexPositions = 0; indexPositions < clusterPositionsAlreadyInPopup.length; indexPositions ++) {
 							let positionsAndMediaElement = clusterPositionsAlreadyInPopup[indexPositions];
 							matchingIndex = env.mapAlbum.positionsAndMediaInTree.findIndex((element) => positionsAndMediaElement.matchPosition(element));

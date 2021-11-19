@@ -98,7 +98,7 @@
 	};
 
 	Functions.updateMenu = function(album) {
-		var albumOrMedia;
+		var albumOrMedia, thisAlbum;
 		var isPopup = util.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
@@ -1339,7 +1339,7 @@
 									env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, onlyShowNonGeotaggedContent);
 								}
 							}
-						)
+						);
 					}
 				}
 			}
@@ -1573,8 +1573,8 @@
 
 							// decide what format to use for cache images
 							env.options.format = "jpg";
-							for (let i = 0; i < env.options["cache_images_formats"].length; i ++) {
-								let format = env.options["cache_images_formats"][i];
+							for (let i = 0; i < env.options.cache_images_formats.length; i ++) {
+								let format = env.options.cache_images_formats[i];
 								if ($("html").hasClass(format)) {
 									env.options.format = format;
 									break;

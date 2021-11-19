@@ -299,7 +299,7 @@
 								self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.protectedAlbumGot = true;
 
 								if (protectedAlbum.hasOwnProperty("media")) {
-									protectedAlbum.media.forEach(singleMedia => {singleMedia.protected = true;})
+									protectedAlbum.media.forEach(singleMedia => {singleMedia.protected = true;});
 									if (! self.hasOwnProperty("media"))
 										self.media = protectedAlbum.media;
 									else
@@ -385,7 +385,7 @@
 								promise.then(
 									function([mediaGot, positionsGot]) {
 										if (mediaGot) {
-											mediaGot.forEach(singleMedia => {singleMedia.protected = true;})
+											mediaGot.forEach(singleMedia => {singleMedia.protected = true;});
 											if (! self.hasOwnProperty("media"))
 												self.media = mediaGot;
 											else
@@ -1163,7 +1163,7 @@
 				if (filteredIthAlbum.subalbums.length) {
 					let found = false;
 					for (let j = 0; j < filteredIthAlbum.subalbums.length; j ++) {
-						filteredJthSubalbum = filteredIthAlbum.subalbums[j];
+						let filteredJthSubalbum = filteredIthAlbum.subalbums[j];
 						if (index >= filteredIthAlbum.subalbums[j].numsMediaInSubTree.imagesAndVideosTotal()) {
 							index -= filteredIthAlbum.subalbums[j].numsMediaInSubTree.imagesAndVideosTotal();
 						} else {
@@ -1187,7 +1187,7 @@
 				var lastPromise = PhotoFloat.getAlbum(filteredIthAlbum, error, {getMedia: true, getPositions: true});
 				lastPromise.then(
 					function(ithAlbumWithMediaAndPositions) {
-						filteredIthAlbumWithMediaAndPositions = ithAlbumWithMediaAndPositions;
+						let filteredIthAlbumWithMediaAndPositions = ithAlbumWithMediaAndPositions;
 						if (onlyShowNonGeotaggedContent)
 							filteredIthAlbumWithMediaAndPositions = ithAlbumWithMediaAndPositions.cloneAndRemoveGeotaggedContent();
 						resolve_pickRandomMedia([filteredIthAlbumWithMediaAndPositions, index]);

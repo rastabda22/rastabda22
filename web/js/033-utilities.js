@@ -2275,7 +2275,7 @@
 		// Returns the original photo size and -1 if the reduction in the DOM is the biggest one
 		// Returns [false, false] if the original image is already in the DOM
 
-		var [currentReductionSize, currentReductionIndex] = Utilities.currentSizeAndIndex();
+		var [fakeCurrentReductionSize, currentReductionIndex] = Utilities.currentSizeAndIndex();
 		if (currentReductionIndex === -1)
 			return [false, false];
 
@@ -2923,7 +2923,7 @@
 
 	Utilities.scrollToHighlightedSubalbum = function(object = null) {
 		var numVisibleSubalbums = env.currentAlbum.subalbums.length;
-		filter = "*";
+		var filter = "*";
 		if (Utilities.onlyShowNonGeotaggedContent()) {
 			numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
 			filter = ":not(.all-gps)";
@@ -2951,7 +2951,7 @@
 
 	Utilities.scrollAlbumViewToHighlightedThumb = function(object = null) {
 		var numVisibleMedia = env.currentAlbum.subalbums.length;
-		filter = "*";
+		var filter = "*";
 		if (Utilities.onlyShowNonGeotaggedContent()) {
 			numVisibleMedia = $("#thumbs > a:not(.gps)").length;
 			filter = ":not(.gps)";
@@ -3047,7 +3047,7 @@
 	Utilities.socialButtons = function() {
 		var hash, myShareUrl = "";
 		var mediaParameter, mediaWidth, mediaHeight, widthParameter, heightParameter;
-		var folders, myShareText, myShareTextAdd;
+		var myShareText, myShareTextAdd;
 
 		if (false && ! env.isMobile.any()) {
 			$(".ssk-whatsapp").hide();
@@ -3064,7 +3064,7 @@
 		var reducedSizesIndex;
 		if (! env.options.reduced_sizes.length || Math.max(... env.options.reduced_sizes) < 200)
 			// false means original image: it won't be used
-			reducedSizesIndex = false
+			reducedSizesIndex = false;
 		else {
 			// use the size nearest to optimal
 			let optimalSize = 1200;
@@ -3168,7 +3168,7 @@
 		if (hash) {
 			myShareUrl += '&hash=' + encodeURIComponent(hash.substring(1));
 		}
-		whatsAppUrl = myShareUrl;
+		var whatsAppUrl = myShareUrl;
 		myShareUrl += '&m=' + encodeURIComponent(mediaParameter);
 		if (whatsAppParameter)
 			whatsAppUrl += '&m=' + encodeURIComponent(whatsAppParameter);
@@ -3383,7 +3383,7 @@
 			return new Promise(
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent();
-					filteredAlbum = album;
+					var filteredAlbum = album;
 					if (onlyShowNonGeotaggedContent) {
 						filteredAlbum = album.cloneAndRemoveGeotaggedContent();
 					}
