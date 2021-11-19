@@ -1974,6 +1974,15 @@
 		return false;
 	};
 
+	TopFunctions.toggleSaveData = function(ev) {
+		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			env.options.save_data = ! env.options.save_data;
+			f.setBooleanCookie("saveData", env.options.save_data);
+			f.updateMenu();
+		}
+		return false;
+	};
+
 	TopFunctions.toggleDescriptions = function(ev) {
 		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
@@ -2166,6 +2175,7 @@
 		oldOptions.hide_tags = env.options.hide_tags;
 		oldOptions.spacing = env.options.spacing;
 		oldOptions.hide_bottom_thumbnails = env.options.hide_bottom_thumbnails;
+		oldOptions.save_data = env.options.save_data;
 		// oldOptions.default_album_name_sort = env.options.default_album_name_sort;
 		// oldOptions.default_album_reverse_sort = env.options.default_album_reverse_sort;
 		// oldOptions.default_media_name_sort = env.options.default_media_name_sort;
@@ -2221,6 +2231,10 @@
 				if (oldOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails) {
 					env.options.hide_bottom_thumbnails = oldOptions.hide_bottom_thumbnails;
 					TopFunctions.toggleBottomThumbnails(ev);
+				}
+				if (oldOptions.save_data !== env.options.save_data) {
+					env.options.save_data = oldOptions.save_data;
+					TopFunctions.toggleSaveData(ev);
 				}
 
 				if (env.currentMedia === null && env.currentAlbum.subalbums.length && $("#subalbums").is(":visible")) {
@@ -3698,6 +3712,7 @@
 	TopFunctions.prototype.toggleTags = TopFunctions.toggleTags;
 	TopFunctions.prototype.toggleSpacing = TopFunctions.toggleSpacing;
 	TopFunctions.prototype.toggleBottomThumbnails = TopFunctions.toggleBottomThumbnails;
+	TopFunctions.prototype.toggleSaveData = TopFunctions.toggleSaveData;
 
 	window.TopFunctions = TopFunctions;
 }());

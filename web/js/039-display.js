@@ -902,6 +902,14 @@ $(document).ready(function() {
 			tF.toggleBottomThumbnails(ev);
 		}
 	);
+	$("ul#right-menu li.save-data").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleSaveData(ev);
+		}
+	);
 	$("ul#right-menu li.slide").off("click").on(
 		"click",
 		function(ev) {

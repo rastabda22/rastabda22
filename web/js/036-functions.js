@@ -541,21 +541,10 @@
 					$("ul#right-menu li.show-bottom-thumbnails").addClass("selected");
 			}
 
-			if (
-				$("ul#right-menu li.hide-title").hasClass("hidden") &&
-				$("ul#right-menu li.show-descriptions").hasClass("hidden") &&
-				$("ul#right-menu li.show-tags").hasClass("hidden") &&
-				$("ul#right-menu li.media-count").hasClass("hidden") &&
-				$("ul#right-menu li.spaced").hasClass("hidden") &&
-				$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
-				$("ul#right-menu li.slide").hasClass("hidden") &&
-				$("ul#right-menu li.album-names").hasClass("hidden") &&
-				$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
-				$("ul#right-menu li.media-names").hasClass("hidden") &&
-				$("ul#right-menu li.show-bottom-thumbnails").hasClass("hidden")
-			) {
-				$("ul#right-menu li.ui").addClass("hidden");
-			}
+			if (env.options.save_data)
+				$("ul#right-menu li.save-data").addClass("selected");
+			else
+				$("ul#right-menu li.save-data").removeClass("selected");
 		}
 
 		////////////////// BIG ALBUMS //////////////////////////////
@@ -1564,7 +1553,8 @@
 								'hide_descriptions',
 								'hide_tags',
 								'thumb_spacing',
-								'hide_bottom_thumbnails'
+								'hide_bottom_thumbnails',
+								'save_data'
 							];
 
 							for (var key in data)
@@ -1600,6 +1590,7 @@
 								Functions.setCookie("spacing", env.options.spacing);
 
 								Functions.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
+								Functions.setBooleanCookie("saveData", env.options.save_data);
 							} else {
 								util.translate();
 								// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
@@ -1645,6 +1636,10 @@
 								var bottomThumbnailsCookie = Functions.getBooleanCookie("hideBottomThumbnails");
 								if (bottomThumbnailsCookie !== null)
 									env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
+
+								var saveData = Functions.getBooleanCookie("saveData");
+								if (saveData !== null)
+									env.options.save_data = saveData;
 
 								var slideCookie = Functions.getBooleanCookie("albumsSlideStyle");
 								if (slideCookie !== null)
