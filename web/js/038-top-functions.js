@@ -514,8 +514,14 @@
 				}
 
 				if (isInsideCollectionTitle || isFolderTitle) {
+					let firstTime = true;
+					let previousTotalCount = -1;
 					for (const mode in numSubalbums) {
-						if (singleMedia === null) {
+						let totalCount = numSubalbums[mode] + mediaTotalInAlbum[mode] + mediaTotalInSubAlbums[mode];
+						if (firstTime && previousTotalCount > 0 && totalCount > 0)
+							titleCount[mode] += " ";
+						firstTime = false;
+						if (singleMedia === null && totalCount > 0) {
 							titleCount[mode] = "<span class='title-count'>(";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
@@ -561,12 +567,19 @@
 							if (mediaTotalInAlbum[mode] && mediaTotalInSubAlbums[mode]) {
 								titleCount[mode] += ", ";
 
-								let spanTitle = imagesTotalInSubTree[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubTree[mode] + " " + util._t(".title-videos");
+								let spanTitle = "";
+								if (imagesTotalInSubTree[mode])
+									spanTitle += imagesTotalInSubTree[mode] + " " + util._t(".title-images");
+								if (imagesTotalInSubTree[mode] && videosTotalInSubTree[mode])
+									spanTitle = ", ";
+								if (videosTotalInSubTree[mode])
+									spanTitle = videosTotalInSubTree[mode] + " " + util._t(".title-videos");
 								let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree[mode] + " " + util._t(".title-media") + "</span>";
 								let titleSpanObject = $(titleSpanHtml);
 								titleSpanObject.attr("title", spanTitle);
 
-								titleCount[mode] += titleSpanObject.wrapAll('<div>').parent().html() + " ";
+								titleCount[mode] += titleSpanObject.wrapAll('<div>').parent().html();
+								previousTotalCount = totalCount;
 							}
 							titleCount[mode] += ")</span>";
 						}
@@ -749,12 +762,10 @@
 
 						if (Object.keys(titleCount).length > 0) {
 							for (const mode in titleCount) {
-								if (numSubalbums.hasOwnProperty("mode")) {
-									let modeClass = mode;
-									if (mode === "nonGps")
-										modeClass = "non-gps";
-									title += "<span class='" + modeClass + "'>" + titleCount[mode] + "</span>";
-								}
+								let modeClass = mode;
+								if (mode === "nonGps")
+									modeClass = "non-gps";
+								title += "<span class='" + modeClass + "'>" + titleCount[mode] + "</span>";
 							}
 						}
 
