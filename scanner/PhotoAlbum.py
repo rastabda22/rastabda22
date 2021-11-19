@@ -791,9 +791,7 @@ class Album(object):
 				if hasattr(subalbum, "unicode_words"):
 					sub_dict["unicodeWords"] = subalbum.unicode_words
 				if hasattr(subalbum, "random_media"):
-					sub_dict["randomMedia"] = subalbum.random_media.album.cache_base + Options.config["cache_folder_separator"] + subalbum.random_media.cache_base
-					if sub_dict["randomMedia"][0:len(Options.config["folders_string"])] == Options.config["folders_string"]:
-						sub_dict["randomMedia"] = sub_dict["randomMedia"][len(Options.config["folders_string"]) + 1:]
+					sub_dict["randomMedia"] = subalbum.random_media
 				if subalbum.title:
 					sub_dict["title"] = subalbum.title
 				if subalbum.description:

@@ -2580,9 +2580,8 @@
 		$("#loading").hide();
 	};
 
-	Album.prototype.insertRandomImage = function(randomSubAlbum, index, iSubalbum) {
+	Album.prototype.insertRandomImage = function(randomSubAlbumCacheBase, randomMedia, iSubalbum) {
 		var titleName, randomMediaLink;
-		var randomMedia = randomSubAlbum.media[index];
 		var id = phFl.convertCacheBaseToId(this.subalbums[iSubalbum].cacheBase);
 		var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
 
@@ -2600,9 +2599,9 @@
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 		}
 		if (this.isSearch())
-			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, this.cacheBase);
+			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, randomSubAlbumCacheBase, this.cacheBase);
 		else
-			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
+			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia);
 
 		titleName = titleName.substr(titleName.indexOf('/') + 1);
 		var goTo = util._t(".go-to") + " " + titleName;
@@ -2649,7 +2648,7 @@
 				if (util.onlyShowNonGeotaggedContent() && randomAlbum.media[index].hasGpsData() && $("#" + thisSubalbumCacheBase).is(":visible")) {
 					env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, true);
 				} else {
-					self.insertRandomImage(randomAlbum, index, iSubalbum);
+					self.insertRandomImage(randomAlbum.cacheBase, randomAlbum.media[index], iSubalbum);
 				}
 			},
 			function(album) {
@@ -2926,7 +2925,11 @@
 						}
 					);
 
-					self.pickRandomMediaAndInsertIt(iSubalbum);
+					if (env.options.save_data) {
+						self.insertRandomImage(ithAlbum.randomMedia.foldersCacheBase, ithAlbum.randomMedia, iSubalbum);
+					} else {
+						self.pickRandomMediaAndInsertIt(iSubalbum);
+					}
 				}
 
 

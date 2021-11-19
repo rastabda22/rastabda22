@@ -308,6 +308,9 @@
 			this.nonGeotagged.sizesOfSubTree = new Sizes(this.nonGeotagged.sizesOfSubTree);
 			this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
 			this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
+			if (this.hasOwnProperty("randomMedia")) {
+				this.randomMedia = new SingleMedia(this.randomMedia);
+			}
 		}
 
 		toSubalbum() {
@@ -330,6 +333,7 @@
 					promise.then(
 						function(convertedSubalbum) {
 							let properties = [
+								"randomMedia",
 								"captionsForSelection",
 								"captionForSelectionSorting",
 								"captionsForSearch",
