@@ -1534,9 +1534,17 @@
 				} else {
 					$("#thumbs").addClass("hidden");
 				}
+
 				util.addMediaLazyLoader();
-				env.windowWidth = $(window).innerWidth();
+				env.wndowWidth = $(window).innerWidth();
+
+				f.updateMenu();
+				if (env.currentAlbum.subalbums.length)
+					this.bindSubalbumSortEvents();
+				if (env.currentAlbum.media.length)
+					this.bindMediaSortEvents();
 			}
+
 
 			let titlePromise = TopFunctions.setTitle("album", null);
 			titlePromise.then(
@@ -2599,9 +2607,6 @@
 			util.addMediaLazyLoader();
 		}
 
-		f.updateMenu();
-		this.bindMediaSortEvents();
-
 		util.setDescriptionOptions();
 		util.correctElementPositions();
 
@@ -2986,9 +2991,6 @@
 				util.socialButtons();
 
 				util.highlightSearchedWords();
-
-				f.updateMenu();
-				self.bindSubalbumSortEvents();
 			},
 			function() {
 				console.trace();
