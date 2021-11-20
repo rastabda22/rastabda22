@@ -517,11 +517,13 @@
 					let firstTime = true;
 					let previousTotalCount = -1;
 					for (const mode in numSubalbums) {
-						let totalCount = numSubalbums[mode] + mediaTotalInAlbum[mode] + mediaTotalInSubAlbums[mode];
-						if (firstTime && previousTotalCount > 0 && totalCount > 0)
+						let totalCountGT0 = true;
+						if (env.currentMedia === null)
+							totalCountGT0 = numSubalbums[mode] + mediaTotalInAlbum[mode] + mediaTotalInSubAlbums[mode];
+						if (firstTime && previousTotalCount > 0 && totalCountGT0)
 							titleCount[mode] += " ";
 						firstTime = false;
-						if (singleMedia === null && totalCount > 0) {
+						if (singleMedia === null && totalCountGT0) {
 							titleCount[mode] = "<span class='title-count'>(";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
@@ -1518,16 +1520,20 @@
 				} else {
 					$("#subalbums").addClass("hidden");
 				}
-				if (
-					env.albumOfPreviousState === null || (
-						env.albumOfPreviousState !== env.currentAlbum ||
-						env.albumOfPreviousState !== null && env.isFromAuthForm
-					)
-				) {
-					env.currentAlbum.showMedia();
+				if (env.currentAlbum.media.length) {
+					if (
+						env.albumOfPreviousState === null || (
+							env.albumOfPreviousState !== env.currentAlbum ||
+							env.albumOfPreviousState !== null && env.isFromAuthForm
+						)
+					) {
+						env.currentAlbum.showMedia();
+					} else {
+						util.adaptMediaCaptionHeight(false);
+						util.scrollAlbumViewToHighlightedThumb();
+					}
 				} else {
-					util.adaptMediaCaptionHeight(false);
-					util.scrollAlbumViewToHighlightedThumb();
+					$("#thumbs").addClass("hidden");
 				}
 				util.addMediaLazyLoader();
 				env.windowWidth = $(window).innerWidth();
