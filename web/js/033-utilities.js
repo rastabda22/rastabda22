@@ -1632,7 +1632,7 @@
 							// env.currentAlbum.prepareForShowing(0);
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
 							env.currentMediaIndex --;
-							env.currentAlbum.showThumbs();
+							env.currentAlbum.showMedia();
 						}
 					}
 				}

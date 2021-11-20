@@ -773,7 +773,7 @@
 										1000,
 										function() {
 											if (thisAlbum.isSelection())
-												env.currentAlbum.showThumbs();
+												env.currentAlbum.showMedia();
 											Functions.updateMenu();
 											$("#added-individually").stop().fadeOut(3000);
 										}
