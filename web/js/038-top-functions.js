@@ -1536,7 +1536,7 @@
 				}
 
 				util.addMediaLazyLoader();
-				env.wndowWidth = $(window).innerWidth();
+				env.windowWidth = $(window).innerWidth();
 
 				f.updateMenu();
 				if (env.currentAlbum.subalbums.length)
