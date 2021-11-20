@@ -323,6 +323,7 @@
 						}
 					}
 				} else {
+					// here: ! (isSearchTitle || isInsideCollectionTitle)
 					let titleComponentsToAdd;
 					if (env.currentAlbum.hasOwnProperty("ancestorsTitles") && env.currentAlbum.hasOwnProperty("ancestorsNames")) {
 						titleComponentsToAdd = env.currentAlbum.ancestorsNames.map(
@@ -513,17 +514,15 @@
 					}
 				}
 
-				if (isInsideCollectionTitle || isFolderTitle) {
+				if (singleMedia === null && (isInsideCollectionTitle || isFolderTitle)) {
 					let firstTime = true;
 					let previousTotalCount = -1;
 					for (const mode in numSubalbums) {
-						let totalCountGT0 = true;
-						if (env.currentMedia === null)
-							totalCountGT0 = numSubalbums[mode] + mediaTotalInAlbum[mode] + mediaTotalInSubAlbums[mode];
-						if (firstTime && previousTotalCount > 0 && totalCountGT0)
+						let totalCount = numSubalbums[mode] + mediaTotalInAlbum[mode] + mediaTotalInSubAlbums[mode];
+						if (firstTime && previousTotalCount > 0 && totalCount > 0)
 							titleCount[mode] += " ";
 						firstTime = false;
-						if (singleMedia === null && totalCountGT0) {
+						if (totalCount > 0) {
 							titleCount[mode] = "<span class='title-count'>(";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
@@ -2957,7 +2956,8 @@
 					);
 
 					if (env.options.save_data) {
-						self.insertRandomImage(ithAlbum.randomMedia.foldersCacheBase, ithAlbum.randomMedia, iSubalbum);
+						let randomMedia = ithAlbum.randomMedia[parseInt(Math.floor(Math.random() * ithAlbum.randomMedia.length))];
+						self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
 					} else {
 						self.pickRandomMediaAndInsertIt(iSubalbum);
 					}

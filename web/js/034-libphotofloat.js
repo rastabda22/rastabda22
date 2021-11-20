@@ -592,6 +592,10 @@
 
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum, codesSimpleCombination, number) {
+		if (subalbum.hasOwnProperty("randomMedia") && protectedSubalbum.hasOwnProperty("randomMedia"))
+			subalbum.randomMedia = subalbum.randomMedia.concat(protectedSubalbum.randomMedia);
+		else
+			subalbum.randomMedia = protectedSubalbum.randomMedia;
 		subalbum.numsMediaInSubTree.sum(protectedSubalbum.numsMediaInSubTree);
 		subalbum.sizesOfSubTree.sum(protectedSubalbum.sizesOfSubTree);
 		subalbum.sizesOfAlbum.sum(protectedSubalbum.sizesOfAlbum);
