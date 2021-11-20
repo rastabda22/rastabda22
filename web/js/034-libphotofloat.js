@@ -46,43 +46,20 @@
 				if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
 					reject_getJsonFile();
 				} else {
-					if (env.currentHttpRequest.hasOwnProperty(jsonRelativeFileName) && env.currentHttpRequest[jsonRelativeFileName] === null) {
-						// the file is already being loaded, wait
-						waitPromise = new Promise(
-							function(resolve_waitPromise) {
-								resolve_waitPromise();
+					$.ajax(
+						{
+							url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
+							type: "GET",
+							dataType: "json",
+							success: function(albumOrPositionsOrMedia) {
+								resolve_getJsonFile(albumOrPositionsOrMedia);
+							},
+							error: function() {
+								env.cache.inexistentFiles.push(jsonRelativeFileName);
+								reject_getJsonFile();
 							}
-						);
-						waitPromise.then(
-							function waited() {
-								if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1)
-									resolve_getJsonFile(env.currentHttpRequest[jsonRelativeFileName]);
-								else
-									reject_getJsonFile();
-							}
-						);
-					} else {
-						// inform that we are requesting this file
-						env.currentHttpRequest[jsonRelativeFileName] = null;
-						$.ajax(
-							{
-								url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
-								type: "GET",
-								dataType: "json",
-								success: function(albumOrPositionsOrMedia) {
-									// make the requested file available
-									env.currentHttpRequest[jsonRelativeFileName] = albumOrPositionsOrMedia;
-									resolve_getJsonFile(albumOrPositionsOrMedia);
-								},
-								error: function() {
-									// inform that the request has ended
-									env.currentHttpRequest[jsonRelativeFileName] = false;
-									env.cache.inexistentFiles.push(jsonRelativeFileName);
-									reject_getJsonFile();
-								}
-							}
-						);
-					}
+						}
+					);
 				}
 			}
 		);

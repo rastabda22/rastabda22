@@ -1071,7 +1071,6 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
-			env.currentHttpRequest = {};
 			util.translate();
 			$("#auth-text").hide();
 			// $("#thumbs").show();

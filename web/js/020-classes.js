@@ -30,7 +30,6 @@
 			this.isFromAuthForm = false;
 			this.highlightedObjectId = null;
 			this.selectingSelectors = [];
-			this.currentHttpRequest = {};
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
 			this.searchWords = [];
