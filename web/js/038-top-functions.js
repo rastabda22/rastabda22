@@ -2624,19 +2624,23 @@
 
 		if (this.isByDate()) {
 			titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+			randomMediaLink = phFl.encodeHash(randomMedia.dayAlbumCacheBase, randomMedia);
 		} else if (this.isByGps()) {
 			let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 			titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+			randomMediaLink = phFl.encodeHash(randomMedia.gpsAlbumCacheBase, randomMedia);
 		// } else if (this.isSearch()) {
 		// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 		} else {
 			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
+			if (this.isSearch())
+				randomMediaLink = phFl.encodeHash(randomMedia.foldersCacheBase, randomMedia, randomSubAlbumCacheBase, this.cacheBase);
+			else
+				randomMediaLink = phFl.encodeHash(randomMedia.foldersCacheBase, randomMedia);
 		}
-		if (this.isSearch())
-			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, randomSubAlbumCacheBase, this.cacheBase);
-		else
-			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia);
+		// else
+		// 	randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia);
 
 		titleName = titleName.substr(titleName.indexOf('/') + 1);
 		var goTo = util._t(".go-to") + " " + titleName;

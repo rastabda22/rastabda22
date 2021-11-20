@@ -309,7 +309,8 @@
 			this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
 			this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 			if (this.hasOwnProperty("randomMedia")) {
-				this.randomMedia = [new SingleMedia(this.randomMedia)];
+				if (! Array.isArray(this.randomMedia))
+					this.randomMedia = [new SingleMedia(this.randomMedia)];
 			}
 		}
 
