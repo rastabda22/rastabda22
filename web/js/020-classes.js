@@ -71,8 +71,7 @@
 					return (self.isMobile.Android() || self.isMobile.BlackBerry() || self.isMobile.iOS() || self.isMobile.Opera() || self.isMobile.Windows());
 				}
 			};
-			// this variable permits to take into account the real mobile device pixels when deciding the size of reduced size image which is going to be loaded
-			this.devicePixelRatio = 1;
+			// the property devicePixelRatio permits to take into account the real mobile device pixels when deciding the size of reduced size image which is going to be loaded
 			if (this.isMobile.any())
 				this.devicePixelRatio =  window.devicePixelRatio || 1;
 			else

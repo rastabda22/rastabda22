@@ -1571,6 +1571,10 @@
 								}
 							}
 
+							if (env.options.save_data)
+								// do not optimize image formats
+								env.devicePixelRatio = 1;
+
 							if (forceReload) {
 								Functions.setBooleanCookie("hideTitle", env.options.hide_title);
 								Functions.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
