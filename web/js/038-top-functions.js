@@ -1568,6 +1568,12 @@
 								util.setSubalbumsOptions();
 
 								util.adaptSubalbumCaptionHeight();
+								util.adaptMediaCaptionHeight(false);
+								if (util.isPopup()) {
+									map.updatePopup();
+									util.adaptMediaCaptionHeight(true);
+								}
+
 
 								if (util.isMap() || util.isPopup()) {
 									// the map must be generated again including the points that only carry protected content
