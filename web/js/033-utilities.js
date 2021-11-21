@@ -4250,15 +4250,51 @@
 		// check for overflow in album-caption class in order to adapt album caption height to the string length
 		// when diving into search subalbum, the whole album path is showed and it can be lengthy
 		var maxHeight = 0;
+		var top = false;
+		var objects = [];
+		var counter = 0;
+		var length = $('.album-caption').length;
 		$('.album-caption').each(
 			function() {
+				counter ++;
+				newTop = $(this).parent().offset().top;
+				if (top !== false && newTop != top) {
+					// adapt!
+					objects.forEach(
+						function(object) {
+							// object.css("height", maxHeight + 'px');
+							var difference = maxHeight - parseFloat(object.css("height"));
+							object.parent().css("height", (object.parent().height() + difference) + 'px');
+							object.css("height", maxHeight + 'px');
+						}
+					);
+					// newTop value must be recalculated
+					newTop = $(this).parent().offset().top;
+					maxHeight = 0;
+					objects = [];
+				}
+				top = newTop;
+				objects.push($(this));
 				var thisHeight = $(this)[0].scrollHeight;
 				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+
+				// one ore adaptation is needed for the last line
+				if (counter === length) {
+					// adapt!
+					objects.forEach(
+						function(object) {
+							// object.css("height", maxHeight + 'px');
+							var difference = maxHeight - parseFloat(object.css("height"));
+							object.parent().css("height", (object.parent().height() + difference) + 'px');
+							object.css("height", maxHeight + 'px');
+						}
+					);
+				}
 			}
 		);
-		var difference = maxHeight - parseFloat($(".album-caption").css("height"));
-		$(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
-		$(".album-caption").css("height", maxHeight + 'px');
+		// var difference = maxHeight - parseFloat($(".album-caption").css("height"));
+		// $(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
+		// $(".album-caption").css("height", maxHeight + 'px');
 	};
 
 	Utilities.adaptMediaCaptionHeight = function(inPopup) {
