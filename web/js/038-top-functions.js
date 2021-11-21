@@ -284,7 +284,7 @@
 
 					// the counts for inside a search are generated further
 					for (const mode in numSubalbums) {
-						if (numSubalbums.hasOwnProperty("mode")) {
+						if (numSubalbums.hasOwnProperty(mode)) {
 							if (
 								isSearchTitle &&
 								singleMedia === null &&
@@ -374,7 +374,7 @@
 
 						if (singleMedia === null) {
 							for (const mode in numSubalbums) {
-								if (numSubalbums.hasOwnProperty("mode")) {
+								if (numSubalbums.hasOwnProperty(mode)) {
 									titleCount[mode] = "<span class='title-count'>(";
 									if (titleComponents.length === 2)
 										titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
@@ -423,7 +423,7 @@
 
 						if (singleMedia === null) {
 							for (const mode in numSubalbums) {
-								if (numSubalbums.hasOwnProperty("mode")) {
+								if (numSubalbums.hasOwnProperty(mode)) {
 									titleCount[mode] = "<span class='title-count'>(";
 									if (titleComponents.length === 2)
 										titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
