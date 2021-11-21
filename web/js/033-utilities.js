@@ -1534,29 +1534,33 @@
 	};
 
 	SingleMedia.prototype.removeFromSelection = function(clickedSelector) {
-		if (this.isSelected()) {
-			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
+		function removeMediaFromSelectionAlbum(self) {
 			env.selectionAlbum.media.splice(index, 1);
 
-			if (this.hasGpsData()) {
-				env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
+			if (self.hasGpsData()) {
+				env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(self);
 				env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 			}
-			var singleMediaArrayCounts = new Media([this]).imagesAndVideosCount();
+			var singleMediaArrayCounts = new Media([self]).imagesAndVideosCount();
 			env.selectionAlbum.numsMedia.subtract(singleMediaArrayCounts);
-			env.selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
-			if (! this.hasGpsData()) {
+			env.selectionAlbum.sizesOfAlbum.subtract(self.fileSizes);
+			if (! self.hasGpsData()) {
 				env.selectionAlbum.nonGeotagged.numsMedia.subtract(singleMediaArrayCounts);
-				env.selectionAlbum.nonGeotagged.sizesOfAlbum.subtract(this.fileSizes);
+				env.selectionAlbum.nonGeotagged.sizesOfAlbum.subtract(self.fileSizes);
 			}
-			if (! this.isInsideSelectedAlbums()) {
+			if (! self.isInsideSelectedAlbums()) {
 				env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArrayCounts);
-				env.selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
-				if (! this.hasGpsData()) {
+				env.selectionAlbum.sizesOfSubTree.subtract(self.fileSizes);
+				if (! self.hasGpsData()) {
 					env.selectionAlbum.nonGeotagged.numsMediaInSubTree.subtract(singleMediaArrayCounts);
-					env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(this.fileSizes);
+					env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(self.fileSizes);
 				}
 			}
+		}
+		// end of auxiliary function
+
+		if (this.isSelected()) {
+			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -1569,13 +1573,13 @@
 				$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
 
-			delete env.selectionAlbum.mediaNameSort;
-			delete env.selectionAlbum.mediaReverseSort;
-			env.selectionAlbum.sortAlbumsMedia();
+			// delete env.selectionAlbum.mediaNameSort;
+			// delete env.selectionAlbum.mediaReverseSort;
+			// env.selectionAlbum.sortAlbumsMedia();
 
 			if (env.currentAlbum.isSelection()) {
-				if (Utilities.nothingIsSelected()) {
-					// nothing has remained in the selection
+				if (env.currentAlbum.isAlbumWithOneMedia()) {
+					// reset the selection
 					Utilities.initializeSelectionAlbum();
 					window.location.href = Utilities.upHash();
 				} else if (env.currentMedia === null) {
@@ -1601,7 +1605,9 @@
 						}
 					}
 
-					// remove the single media thumbnail
+					// remove the single media from the selection
+					removeMediaFromSelectionAlbum(this);
+					// remove the single media from the page
 					$(clickedSelector).parent().parent().parent().remove();
 
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
@@ -1616,28 +1622,36 @@
 					Utilities.addMediaLazyLoader();
 				} else {
 					// we are in media view
-					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
+					let clickedMediaIndex;
+					let upHash = Utilities.upHash();
+					if (clickedSelector !== singleMediaSelector)
+						clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
 					if (clickedSelector === singleMediaSelector || clickedMediaIndex === env.currentMediaIndex) {
-						// currentMedia ha been removed: show the album
-						window.location.href = Utilities.upHash();
+						// currentMedia is being removed: show the album
+						removeMediaFromSelectionAlbum(this);
+						window.location.href = upHash;
 						// env.currentAlbum.prepareForShowing(-1);
 					} else {
 						// another media which is not currentMedia has been removed among the bottom thumbnails:
 						// keep showing the same media, but remove the media
+						removeMediaFromSelectionAlbum(this);
 						if (env.currentAlbum.isAlbumWithOneMedia()) {
 							// only one media has remained after the removal
-							env.currentMedia = env.currentAlbum.media[0];
-							env.currentMediaIndex = 0;
-							$("#media-view").removeClass("hidden");
-							env.currentMedia.show(env.currentAlbum, "center");
-							// env.currentAlbum.prepareForShowing(0);
-						} else if (clickedMediaIndex < env.currentMediaIndex) {
-							env.currentMediaIndex --;
+							window.location.href = upHash;
+							// env.currentMedia = env.currentAlbum.media[0];
+							// env.currentMediaIndex = 0;
+							// $("#media-view").removeClass("hidden");
+							// env.currentMedia.show(env.currentAlbum, "center");
+							// // env.currentAlbum.prepareForShowing(0);
+						} else {
+							if (clickedMediaIndex < env.currentMediaIndex)
+								env.currentMediaIndex --;
 							env.currentAlbum.showMedia();
 						}
 					}
 				}
 			} else {
+				removeMediaFromSelectionAlbum(this);
 				// update the selector
 				$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
