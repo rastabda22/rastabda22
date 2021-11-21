@@ -1,5 +1,6 @@
-* new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums; perhaps avoiding to load positions unless explicitly asked in js menu
+* new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums (perhaps avoiding to load positions unless explicitly asked in js menu?)
 * `js_minifier` option: added `mangler` value for uglifyjs.terser with -m option
+* bug fixes
 
 ### version v5.4.1 (November 16, 2021)
 

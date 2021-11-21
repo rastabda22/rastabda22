@@ -2622,11 +2622,13 @@
 
 		$("#downloading-media").hide();
 
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] =
+			phFl.decodeHash(randomSubAlbumCacheBase);
 		if (this.isSearch() || this.isSelection()) {
 			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 			//function(cacheBase, singleMedia, foundAlbumCacheBase, collectionCacheBase)
-			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, "", this.cacheBase);
+			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, foundAlbumCacheBase, collectionCacheBase);
 		} else if (this.isByDate()) {
 			titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
 			randomMediaLink = phFl.encodeHash(randomMedia.dayAlbumCacheBase, randomMedia);
@@ -2644,8 +2646,6 @@
 			else
 				randomMediaLink = phFl.encodeHash(randomMedia.foldersCacheBase, randomMedia);
 		}
-		// else
-		// 	randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia);
 
 		titleName = titleName.substr(titleName.indexOf('/') + 1);
 		var goTo = util._t(".go-to") + " " + titleName;
