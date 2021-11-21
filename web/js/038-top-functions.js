@@ -1524,7 +1524,8 @@
 						env.albumOfPreviousState === null || (
 							env.albumOfPreviousState !== env.currentAlbum ||
 							env.albumOfPreviousState !== null && env.isFromAuthForm
-						)
+						) ||
+						! $("#thumbs").children().length
 					) {
 						env.currentAlbum.showMedia();
 					} else {
@@ -2345,7 +2346,12 @@
 			);
 		}
 
-		if (populateMedia && (! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders)) {
+		if (
+			populateMedia &&
+			$("#thumbs").is(":visible") && (
+				! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders
+			)
+		) {
 		// if (! (this.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
 			$(thumbsSelector).empty();
 
