@@ -4267,16 +4267,32 @@
 		if (inPopup)
 			baseSelector = "#popup-images-wrapper";
 		var maxHeight = 0;
+		var top = false;
+		var objects = [];
+		var counter = 0;
+		var length = $(baseSelector + " .media-caption").length;
 		$(baseSelector + " .media-caption").css("height", 0);
 		$(baseSelector + " .media-caption").each(
 			function() {
+				counter ++;
+				newTop = $(this).offset().top;
+				if (top !== false && newTop != top || counter === length) {
+					// adapt!
+					objects.forEach(
+						function(object) {
+							object.css("height", maxHeight + 'px');
+						}
+					);
+					maxHeight = 0;
+					objects = [];
+				}
+				top = newTop;
+				objects.push($(this));
 				var thisHeight = $(this)[0].scrollHeight;
 				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
 			}
 		);
-		// var difference = maxHeight - parseFloat($(".media-caption").css("height"));
-		// $(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
-		$(baseSelector + " .media-caption").css("height", maxHeight + 'px');
+		// $(baseSelector + " .media-caption").css("height", maxHeight + 'px');
 	};
 
 	Utilities.hasProperty = function(object, property) {
