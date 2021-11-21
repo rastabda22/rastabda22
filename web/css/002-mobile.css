@@ -10,7 +10,7 @@
 		font-size: 100%;
 	}
 
-	#album-and-media-container.show-media #album-view {
+	#album-and-media-container.show-media #album-view, #album-and-media-container.show-media .title {
 		display: none;
 		height: 0;
 	}

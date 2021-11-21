@@ -2500,6 +2500,9 @@
 
 		$("#loading").show();
 
+		if (album.media.length && ! $("#thumbs").children().length)
+			album.showMedia();
+
 		var event = {data: {}};
 		event.data.resize = true;
 		event.data.id = "center";
