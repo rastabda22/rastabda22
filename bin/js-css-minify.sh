@@ -258,7 +258,6 @@ if [ $? -ne 0 ]; then
 fi
 ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 	newfile="${cssfile%.*}.min.css"
-	if [ "${cssfile}" != "001-fonts.css" ] || [ "${SAVE_DATA}" == "false" ]; then
 		echo "minifying $cssfile"
 		case $MINIFY_CSS in
 			web_service)
@@ -277,11 +276,17 @@ ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 				( >&2 echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'" )
 				( >&2 echo "Doing nothing on file $cssfile" )
 		esac
+	if [ "${cssfile}" != "001-fonts.css" ] || [ "${SAVE_DATA}" == "false" ]; then
+		# this file will be used by index.html
+		cat $newfile >> styles.min.css
 	fi
+	if [ "${cssfile}" != "001-fonts.css" ]; then
+		# this file will be used by index.php
+		cat $newfile >> styles.save_data.min.css
+	fi
+	# this file will be used by index.php, too
+	cat $newfile >> styles.no_save_data.min.css
 done
-
-# merge all into one single file
-cat *.min.css > styles.min.css
 
 echo
 echo "Completed in $((`date +%s` - $unixseconds)) s."

@@ -49,7 +49,11 @@
 		<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 		<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>
-			<link href="css/styles.min.css" rel="stylesheet" type="text/css" />
+			<?php if (is_option_set('save_data')) { ?>
+				<link href="css/styles.save_data.min.css" rel="stylesheet" type="text/css" />
+			<?php	} else { ?>
+				<link href="css/styles.no_save_data.min.css" rel="stylesheet" type="text/css" />
+			<?php } ?>
 		<?php	} else { ?>
 			<link href="css/000-controls.css" rel="stylesheet" type="text/css" />
 			<?php if (! is_option_set('save_data')) { ?>
