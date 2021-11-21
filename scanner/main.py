@@ -44,7 +44,7 @@ def main():
 		dest="cache_path",
 		help="the full cache path; supersedes the value in the options file"
 	)
-	parser.add_argument("--version", action="version", version='%(prog)s v5.4.1')
+	parser.add_argument("--version", action="version", version='%(prog)s v5.4.2')
 	args = parser.parse_args()
 
 	Options.get_options(args)

@@ -1,3 +1,5 @@
+### version v5.4.2 (November 20, 2021)
+
 * new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums (perhaps avoiding to load positions unless explicitly asked in js menu?)
 * `js_minifier` option: added `mangler` value for uglifyjs.terser with -m option
 * caption height adaptation is now made per line
