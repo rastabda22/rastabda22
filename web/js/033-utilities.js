@@ -4276,13 +4276,15 @@
 			function() {
 				counter ++;
 				newTop = $(this).offset().top;
-				if (top !== false && newTop != top || counter === length) {
+				if (top !== false && newTop !== top) {
 					// adapt!
 					objects.forEach(
 						function(object) {
 							object.css("height", maxHeight + 'px');
 						}
 					);
+					// newTop value must be recalculated
+					newTop = $(this).offset().top;
 					maxHeight = 0;
 					objects = [];
 				}
@@ -4290,6 +4292,16 @@
 				objects.push($(this));
 				var thisHeight = $(this)[0].scrollHeight;
 				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+
+				// one ore adaptation is needed for the last line
+				if (counter === length) {
+					// adapt!
+					objects.forEach(
+						function(object) {
+							object.css("height", maxHeight + 'px');
+						}
+					);
+				}
 			}
 		);
 		// $(baseSelector + " .media-caption").css("height", maxHeight + 'px');
