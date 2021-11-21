@@ -138,7 +138,7 @@
 				var numSubalbums = {
 					gps: env.currentAlbum.subalbums.length,
 					nonGps: env.currentAlbum.subalbums.filter(
-						ithAlbum => ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+						ithSubalbum => ithSubalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 					).length
 				};
 				if (singleMedia === null) {
@@ -2741,269 +2741,249 @@
 			// The promises are needed in order to know when everything has come to its end
 			for (let i = 0; i < self.subalbums.length; i ++) {
 				let iSubalbum = i;
-				let subalbumPromise = new Promise(
-					function(resolve_subalbumPromise) {
-						var ithSubalbum = self.subalbums[iSubalbum];
-						var ithSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: true});
-						ithSubalbumPromise.then(
-							function(ithAlbum) {
-								var id = phFl.convertCacheBaseToId(ithAlbum.cacheBase);
+				var ithSubalbum = self.subalbums[iSubalbum];
+				var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
 
-								let nameHtml;
-								if (self.isSearch())
-									nameHtml = ithAlbum.captionsForSearch.join(env.br);
-								else if (self.isSelection())
-									nameHtml = ithAlbum.captionsForSelection.join(env.br);
-								else {
-									nameHtml = ithAlbum.nameForShowing(self, true, true);
-									if (nameHtml === "")
-										nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
-								}
+				let nameHtml;
+				if (self.isSearch())
+					nameHtml = ithSubalbum.captionsForSearch.join(env.br);
+				else if (self.isSelection())
+					nameHtml = ithSubalbum.captionsForSelection.join(env.br);
+				else {
+					nameHtml = ithSubalbum.nameForShowing(self, true, true);
+					if (nameHtml === "")
+						nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
+				}
 
-								let captionId = "album-caption-" + id;
-								let captionHtml =
-									"<div class='album-caption' id='" + captionId + "'>";
-								captionHtml +=
-										"<div class='album-name'>" + nameHtml + "</div>";
+				let captionId = "album-caption-" + id;
+				let captionHtml =
+					"<div class='album-caption' id='" + captionId + "'>";
+				captionHtml +=
+						"<div class='album-name'>" + nameHtml + "</div>";
 
-								if (ithAlbum.hasOwnProperty("description")) {
-									captionHtml +=
-										"<div class='album-description'>" +
-											"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithAlbum.description) + "</div>" +
-										"</div>";
-								}
+				if (ithSubalbum.hasOwnProperty("description")) {
+					captionHtml +=
+						"<div class='album-description'>" +
+							"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithSubalbum.description) + "</div>" +
+						"</div>";
+				}
 
-								if (ithAlbum.hasOwnProperty("tags") && ithAlbum.tags.length) {
-									captionHtml +=
-										"<div class='album-tags'>" +
-											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithAlbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-										"</div>";
-								}
+				if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+					captionHtml +=
+						"<div class='album-tags'>" +
+							"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+						"</div>";
+				}
 
-								captionHtml +=
-										"<div class='album-caption-count'>" +
-											"(" +
-											"<span class='gps'>" +
-											ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() +
-											"</span>" +
-											"<span class='non-gps'>" +
-											ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal() +
-											"</span>" +
-											" " +
-											"<span class='title-media'>" + util._t(".title-media") + "</span>" +
-											")" +
-										"</div>" +
-									"</div>";
+				captionHtml +=
+						"<div class='album-caption-count'>" +
+							"(" +
+							"<span class='gps'>" +
+							ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() +
+							"</span>" +
+							"<span class='non-gps'>" +
+							ithSubalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal() +
+							"</span>" +
+							" " +
+							"<span class='title-media'>" + util._t(".title-media") + "</span>" +
+							")" +
+						"</div>" +
+					"</div>";
 
-								let captionObject = $(captionHtml);
+				let captionObject = $(captionHtml);
 
-								let selectSrc = 'img/checkbox-unchecked-48px.png';
-								let titleSelector = "#select-subalbum";
-								if (ithAlbum.isSelected()) {
-									selectSrc = 'img/checkbox-checked-48px.png';
-									titleSelector = "#unselect-subalbum";
-								}
+				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let titleSelector = "#select-subalbum";
+				if (ithSubalbum.isSelected()) {
+					selectSrc = 'img/checkbox-checked-48px.png';
+					titleSelector = "#unselect-subalbum";
+				}
 
-								let positionHtml = "";
-								let folderMapTitleWithoutHtmlTags;
-								if (ithAlbum.numPositionsInTree) {
-									folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithAlbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
-									positionHtml =
-										"<a id='subalbum-map-link-" + id + "' >" +
-											"<img " +
-												"class='thumbnail-map-link gps' " +
-												"height='15px' " +
-												"src='img/ic_place_white_24dp_2x.png' " +
-											"/>" +
-										"</a>";
-								}
+				let positionHtml = "";
+				let folderMapTitleWithoutHtmlTags;
+				if (ithSubalbum.numPositionsInTree) {
+					folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
+					positionHtml =
+						"<a id='subalbum-map-link-" + id + "' >" +
+							"<img " +
+								"class='thumbnail-map-link gps' " +
+								"height='15px' " +
+								"src='img/ic_place_white_24dp_2x.png' " +
+							"/>" +
+						"</a>";
+				}
 
-								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
-								let subfolderHash;
-								// TO DO: verify that isMap() is not missing in the following line
-								if (self.isSearch() || self.isSelection()) {
-									subfolderHash = phFl.encodeHash(ithAlbum.cacheBase, null, ithAlbum.cacheBase, self.cacheBase);
-								} else {
-									if (typeof collectionCacheBase !== "undefined" && collectionCacheBase !== null)
-										subfolderHash = phFl.encodeHash(ithAlbum.cacheBase, null, foundAlbumCacheBase, collectionCacheBase);
-									else
-										subfolderHash = phFl.encodeHash(ithAlbum.cacheBase, null);
-								}
+				// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
+				let subfolderHash;
+				// TO DO: verify that isMap() is not missing in the following line
+				if (self.isSearch() || self.isSelection()) {
+					subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, self.cacheBase);
+				} else {
+					if (typeof collectionCacheBase !== "undefined" && collectionCacheBase !== null)
+						subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, collectionCacheBase);
+					else
+						subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
+				}
 
-								let gpsClass = "";
-								if (
-									// ithAlbum.numPositionsInTree &&
-									! ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
-								)
-									gpsClass = " class='all-gps'";
+				let gpsClass = "";
+				if (
+					// ithSubalbum.numPositionsInTree &&
+					! ithSubalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+				)
+					gpsClass = " class='all-gps'";
 
-								let aHrefHtml = "<a href='" + subfolderHash + "'" + gpsClass + "></a>";
-								let aHrefObject = $(aHrefHtml);
-								let albumButtonAndCaptionHtml =
-									"<div id='" + id + "' class='album-button-and-caption'></div>";
-								let albumButtonAndCaptionObject = $(albumButtonAndCaptionHtml);
+				let aHrefHtml = "<a href='" + subfolderHash + "'" + gpsClass + "></a>";
+				let aHrefObject = $(aHrefHtml);
+				let albumButtonAndCaptionHtml =
+					"<div id='" + id + "' class='album-button-and-caption'></div>";
+				let albumButtonAndCaptionObject = $(albumButtonAndCaptionHtml);
 
-								let selectBoxHtml =
-									"<a id='subalbum-select-box-" + id + "'>" +
-										"<img " +
-											"class='select-box' " +
-											"src='" + selectSrc + "' " +
-											"style='display: none;'" +
-										">" +
-									"</a>";
+				let selectBoxHtml =
+					"<a id='subalbum-select-box-" + id + "'>" +
+						"<img " +
+							"class='select-box' " +
+							"src='" + selectSrc + "' " +
+							"style='display: none;'" +
+						">" +
+					"</a>";
 
-								let imageObject = $(
-									"<div class='album-button'>" +
-										selectBoxHtml +
-										positionHtml +
-										"<a class='random-media-link' href=''>" +
-											"<img src='img/link-arrow.png' class='album-button-random-media-link'>" +
-										"</a>" +
-										"<span class='helper'></span>" +
-										"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
-									"</div>"
-								);
-								albumButtonAndCaptionObject.append(imageObject);
-								albumButtonAndCaptionObject.append(captionObject);
-								aHrefObject.append(albumButtonAndCaptionObject);
-
-								objects[iSubalbum] = {
-									aHrefObject: aHrefObject,
-									ithAlbum: ithAlbum,
-									id: id,
-									captionId: captionId,
-									folderMapTitleWithoutHtmlTags: folderMapTitleWithoutHtmlTags,
-									titleSelector: titleSelector,
-									subfolderHash: subfolderHash
-									// from: from
-								};
-
-								resolve_subalbumPromise();
-							}
-						);
-					}
+				let imageObject = $(
+					"<div class='album-button'>" +
+						selectBoxHtml +
+						positionHtml +
+						"<a class='random-media-link' href=''>" +
+							"<img src='img/link-arrow.png' class='album-button-random-media-link'>" +
+						"</a>" +
+						"<span class='helper'></span>" +
+						"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
+					"</div>"
 				);
-				subalbumsPromises.push(subalbumPromise);
+				albumButtonAndCaptionObject.append(imageObject);
+				albumButtonAndCaptionObject.append(captionObject);
+				aHrefObject.append(albumButtonAndCaptionObject);
+
+				objects[iSubalbum] = {
+					aHrefObject: aHrefObject,
+					ithSubalbum: ithSubalbum,
+					id: id,
+					captionId: captionId,
+					folderMapTitleWithoutHtmlTags: folderMapTitleWithoutHtmlTags,
+					titleSelector: titleSelector,
+					subfolderHash: subfolderHash
+					// from: from
+				};
 			}
 
-			Promise.all(subalbumsPromises).then(
-				function allSubalbumsWorkedOut() {
-					// perform the last operations with each subalbum
-					for (let i = 0; i < self.subalbums.length; i ++) {
-						let iSubalbum = i;
-						let aHrefObject = objects[iSubalbum].aHrefObject;
-						let ithAlbum = objects[iSubalbum].ithAlbum;
-						let id = objects[iSubalbum].id;
-						let captionId = objects[iSubalbum].captionId;
-						let folderMapTitleWithoutHtmlTags = objects[iSubalbum].folderMapTitleWithoutHtmlTags;
-						let titleSelector = objects[iSubalbum].titleSelector;
-						let subfolderHash = objects[iSubalbum].subfolderHash;
-						// let from = objects[iSubalbum].from;
+			// perform the last operations with each subalbum
+			for (let i = 0; i < self.subalbums.length; i ++) {
+				let iSubalbum = i;
+				let aHrefObject = objects[iSubalbum].aHrefObject;
+				let ithSubalbum = objects[iSubalbum].ithSubalbum;
+				let id = objects[iSubalbum].id;
+				let captionId = objects[iSubalbum].captionId;
+				let folderMapTitleWithoutHtmlTags = objects[iSubalbum].folderMapTitleWithoutHtmlTags;
+				let titleSelector = objects[iSubalbum].titleSelector;
+				let subfolderHash = objects[iSubalbum].subfolderHash;
+				// let from = objects[iSubalbum].from;
 
-						$("#subalbums").append(aHrefObject);
+				$("#subalbums").append(aHrefObject);
 
-						if (ithAlbum.numPositionsInTree) {
-							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
-						}
-						$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
-						$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
-
-						if (ithAlbum.hasOwnProperty("description"))
-							$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithAlbum.description));
-
-						if (ithAlbum.hasOwnProperty("numPositionsInTree") && ithAlbum.numPositionsInTree) {
-							$("#subalbum-map-link-" + id).off("click").on(
-								"click",
-								{ithAlbum: ithAlbum},
-								function(ev, from) {
-									// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-									ev.preventDefault();
-									env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + id;
-									TopFunctions.generateMapFromSubalbum(ev, from);
-								}
-							);
-						}
-
-						if (
-							env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
-							env.previousAlbum !== null &&
-							env.previousAlbum.isMap() &&
-							(
-								env.previousMedia === null ||
-								env.previousAlbum.isAlbumWithOneMedia()
-							) &&
-							env.fromEscKey ||
-							env.mapRefreshType === "refresh"
-						) {
-							env.fromEscKey = false;
-							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-						}
-
-						if (
-							typeof isPhp === "function" && (
-								util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-							)
-						) {
-							// execution enters here if we are using index.php
-							$("#" + id).off("auxclick").off("auxclick").on(
-								"auxclick",
-								// {subfolderHash: subfolderHash},
-								function (ev) {
-									if (ev.which === 2) {
-										util.openInNewTab(subfolderHash);
-										return false;
-									}
-								}
-							);
-						}
-
-						$("#subalbum-select-box-" + id + " .select-box").show();
-						$("#subalbum-select-box-" + id).off("click").on(
-							"click",
-							function(ev) {
-								ev.stopPropagation();
-								ev.preventDefault();
-								self.toggleSubalbumSelection("#subalbum-select-box-" + id);
-							}
-						);
-
-						if (env.options.save_data) {
-							let randomMedia = ithAlbum.randomMedia[parseInt(Math.floor(Math.random() * ithAlbum.randomMedia.length))];
-							self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
-						} else {
-							self.pickRandomMediaAndInsertIt(iSubalbum);
-						}
-					}
-
-
-					if (! util.aSingleMediaIsHighlighted())
-						util.scrollToHighlightedSubalbum();
-					if (populateSubalbums)
-						env.albumInSubalbumDiv = self;
-					$("#loading").hide();
-
-					if (self.subalbums.length) {
-						$("#album-and-media-container").removeClass("show-media");
-						$("#subalbums").removeClass("hidden");
-						// $("#subalbums").show();
-						$("#album-view").removeAttr("height");
-					}
-
-					util.setSubalbumsOptions();
-					if (self.subalbums.length)
-						util.adaptSubalbumCaptionHeight();
-					util.correctElementPositions();
-
-					// we can run the function that prepare the stuffs for sharing
-					util.socialButtons();
-
-					util.highlightSearchedWords();
-				},
-				function() {
-					console.trace();
+				if (ithSubalbum.numPositionsInTree) {
+					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
+					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
 				}
-			);
+				$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
+				$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
+
+				if (ithSubalbum.hasOwnProperty("description"))
+					$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithSubalbum.description));
+
+				if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+					$("#subalbum-map-link-" + id).off("click").on(
+						"click",
+						{ithSubalbum: ithSubalbum},
+						function(ev, from) {
+							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+							ev.preventDefault();
+							env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + id;
+							TopFunctions.generateMapFromSubalbum(ev, from);
+						}
+					);
+				}
+
+				if (
+					env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
+					env.previousAlbum !== null &&
+					env.previousAlbum.isMap() &&
+					(
+						env.previousMedia === null ||
+						env.previousAlbum.isAlbumWithOneMedia()
+					) &&
+					env.fromEscKey ||
+					env.mapRefreshType === "refresh"
+				) {
+					env.fromEscKey = false;
+					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+				}
+
+				if (
+					typeof isPhp === "function" && (
+						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+					)
+				) {
+					// execution enters here if we are using index.php
+					$("#" + id).off("auxclick").off("auxclick").on(
+						"auxclick",
+						// {subfolderHash: subfolderHash},
+						function (ev) {
+							if (ev.which === 2) {
+								util.openInNewTab(subfolderHash);
+								return false;
+							}
+						}
+					);
+				}
+
+				$("#subalbum-select-box-" + id + " .select-box").show();
+				$("#subalbum-select-box-" + id).off("click").on(
+					"click",
+					function(ev) {
+						ev.stopPropagation();
+						ev.preventDefault();
+						self.toggleSubalbumSelection("#subalbum-select-box-" + id);
+					}
+				);
+
+				if (env.options.save_data) {
+					let randomMedia = ithSubalbum.randomMedia[parseInt(Math.floor(Math.random() * ithSubalbum.randomMedia.length))];
+					self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
+				} else {
+					self.pickRandomMediaAndInsertIt(iSubalbum);
+				}
+			}
+
+			if (! util.aSingleMediaIsHighlighted())
+				util.scrollToHighlightedSubalbum();
+			if (populateSubalbums)
+				env.albumInSubalbumDiv = self;
+			$("#loading").hide();
+
+			if (self.subalbums.length) {
+				$("#album-and-media-container").removeClass("show-media");
+				$("#subalbums").removeClass("hidden");
+				// $("#subalbums").show();
+				$("#album-view").removeAttr("height");
+			}
+
+			util.setSubalbumsOptions();
+			if (self.subalbums.length)
+				util.adaptSubalbumCaptionHeight();
+			util.correctElementPositions();
+
+			// we can run the function that prepare the stuffs for sharing
+			util.socialButtons();
+
+			util.highlightSearchedWords();
 		}
 	};
 
@@ -3057,7 +3037,7 @@
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
-		var subalbumPromise = ev.data.ithAlbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
+		var subalbumPromise = ev.data.ithSubalbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
 		subalbumPromise.then(
 			function(album) {
 				// var album = env.currentAlbum.subalbums[iSubalbum];
