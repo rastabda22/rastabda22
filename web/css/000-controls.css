@@ -834,7 +834,7 @@ video {
 
 .thumb-and-caption-container {
 	margin-bottom: 0;
-	display: inline-block;
+	display: inline-grid;
 }
 
 .thumb-and-caption-container.highlighted .media-caption,
