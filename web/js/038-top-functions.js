@@ -2622,7 +2622,12 @@
 
 		$("#downloading-media").hide();
 
-		if (this.isByDate()) {
+		if (this.isSearch() || this.isSelection()) {
+			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
+			titleName = util.pathJoin([randomMedia.albumName, name]);
+			//function(cacheBase, singleMedia, foundAlbumCacheBase, collectionCacheBase)
+			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, "", this.cacheBase);
+		} else if (this.isByDate()) {
 			titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
 			randomMediaLink = phFl.encodeHash(randomMedia.dayAlbumCacheBase, randomMedia);
 		} else if (this.isByGps()) {
