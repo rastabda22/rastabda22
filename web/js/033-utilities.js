@@ -254,6 +254,7 @@
 
 		env.selectionAlbum.ancestorsCacheBase = rootSelectionAlbum.ancestorsCacheBase.slice();
 		env.selectionAlbum.ancestorsCacheBase.push(env.selectionAlbum.cacheBase);
+		env.selectionAlbum.ancestorsNames = [env.options.by_selection_string, env.selectionAlbum.cacheBase];
 	};
 
 	Utilities._t = function(id) {
