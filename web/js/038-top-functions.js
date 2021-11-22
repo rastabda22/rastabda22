@@ -1463,7 +1463,7 @@
 
 		let menuIconTitle = util._t("#menu-icon-title");
 		if (! env.isMobile.any())
-			menuIconTitle += " [" + util._s("#menu-icon-title") + util._t("#menu-icon-title-end") + "]";
+			menuIconTitle += ", " + util._t("#menu-icon-title-end");
 		$("#menu-icon").attr("title", menuIconTitle);
 		if (env.currentMedia === null)
 			env.currentAlbum.sortAlbumsMedia();

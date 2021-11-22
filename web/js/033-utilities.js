@@ -260,10 +260,15 @@
 	Utilities._t = function(id) {
 		env.language = Utilities.getLanguage();
 		if (env.translations.hasOwnProperty(env.language) && env.translations[env.language].hasOwnProperty(id)) {
+			let shortcut;
+			if (env.shortcuts.hasOwnProperty(env.language) && env.shortcuts[env.language].hasOwnProperty(id))
+				shortcut = " [" + Utilities._s(id) + "]";
+			else
+				shortcut = "";
 			if (env.translations[env.language][id]) {
-				return translation = env.translations[env.language][id] + Utilities._s(id);
+				return env.translations[env.language][id] + shortcut;
 			} else {
-				return env.translations.en[id] + Utilities._s(id);
+				return env.translations.en[id] + shortcut;
 			}
 		}
 	};
@@ -317,8 +322,8 @@
 				let keyObject = $(key);
 				if (keyObject.length) {
 					let translation = env.translations[keyLanguage][key];
-					if (! env.isMobile.any() && env.shortcuts.en.hasOwnProperty(key))
-						translation += " [" + env.shortcuts[keyLanguage][key] + "]";
+					if (! env.isMobile.any() && env.shortcuts.hasOwnProperty(keyLanguage) && env.shortcuts[keyLanguage].hasOwnProperty(key))
+						translation += " [" + Utilities._s(key) + "]";
 					keyObject.html(translation);
 				}
 			}
