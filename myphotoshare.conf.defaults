@@ -27,7 +27,9 @@
 ###########################################################
 ##########################################################
 
-# absolute path of the folder where index.php/html resides; normally album_path will be its "albums" subfolder, and cache_path its "cache" subfolder
+# Absolute path of the folder where index.php/html resides;
+# Normally album_path will be its "albums" subfolder, and cache_path its "cache" subfolder
+#   if it's so, then setting this variable is enough, without need to set album_path or cache_path
 index_html_path =
 
 # albums folder absolute path, for use in python
