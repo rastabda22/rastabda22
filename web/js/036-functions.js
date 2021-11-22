@@ -398,7 +398,10 @@
 		} else {
 			$("ul#right-menu li.ui").removeClass("hidden");
 
-			if (isMapOrPopup) {
+			if (
+				isMapOrPopup ||
+				env.currentMedia !== null && env.isMobile.any()
+			) {
 				$("ul#right-menu li.hide-title").addClass("hidden");
 			} else {
 				$("ul#right-menu li.hide-title").removeClass("hidden");
@@ -444,7 +447,7 @@
 			}
 
 
-			if (isMap || isPopup && env.mapAlbum.media.length <= 1)
+			if (isMap || isPopup && env.mapAlbum.media.length <= 1 || ! $("#thumbs").is(":visible"))
 				$("ul#right-menu li.spaced").addClass("hidden");
 			else
 				$("ul#right-menu li.spaced").removeClass("hidden");
@@ -498,7 +501,7 @@
 					$("ul#right-menu li.album-names").removeClass("selected");
 			}
 
-			if (isMap)
+			if (isMap || ! $("#thumbs").is(":visible"))
 				$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 			else
 				$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
@@ -529,7 +532,7 @@
 
 			if (
 				isMapOrPopup ||
-				env.currentMedia === null || isAlbumWithOneMedia
+				env.currentMedia === null || isAlbumWithOneMedia  || ! $("#thumbs").is(":visible")
 			) {
 				$("ul#right-menu li.show-bottom-thumbnails").addClass("hidden");
 			} else {
