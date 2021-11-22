@@ -392,7 +392,7 @@ $(document).ready(function() {
 						}
 					}
 
-					if (e.key.toLowerCase() === util._s("#select-everything")) {
+					if (e.key.toLowerCase() === util._s(".select.everything")) {
 						if (! e.shiftKey) {
 							// select everything
 							$(".select.everything:not(.hidden):not(.selected)").click();

@@ -16,7 +16,7 @@
 				".enter-fullscreen": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				"#hide-everytyhing": "h",
-				"#select-everything": "a",
+				".select.everything": "a",
 				"#menu-icon-title": "e",
 				"#protected-content-unveil": "u"
 			},
@@ -31,7 +31,7 @@
 				".enter-fullscreen": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				"#hide-everytyhing": "h",
-				"#select-everything": "a",
+				".select.everything": "a",
 				"#menu-icon-title": "e",
 				"#protected-content-unveil": "u"
 			},
@@ -46,7 +46,7 @@
 				".enter-fullscreen": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				"#hide-everytyhing": "h",
-				"#select-everything": "a",
+				".select.everything": "a",
 				"#menu-icon-title": "e",
 				"#protected-content-unveil": "u"
 			},
@@ -61,7 +61,7 @@
 				".enter-fullscreen": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				"#hide-everytyhing": "h",
-				"#select-everything": "a",
+				".select.everything": "a",
 				"#menu-icon-title": "e",
 				"#protected-content-unveil": "u"
 			}
