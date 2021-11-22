@@ -528,10 +528,10 @@ $(document).ready(function() {
 		nextTitle  += " [" + util._s("#next-media-title") + "]";
 		prevTitle  += " [" + util._s("#prev-media-title") + "]";
 	}
-	$("#next").attr("title", nextTitle).attr("alt", nextTitle);
-	$("#prev").attr("title", prevTitle).attr("alt", prevTitle);
-	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));
-	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", util._t("#pinch-out-title"));
+	$("#next").attr("title", nextTitle).attr("alt", ">");
+	$("#prev").attr("title", prevTitle).attr("alt", "<");
+	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", "+");
+	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", "-");
 	if (env.isMobile.any()) {
 		$("#pinch-in").css("width", "30px").css("height", "30px");
 		$("#pinch-out").css("width", "30px").css("height", "30px");

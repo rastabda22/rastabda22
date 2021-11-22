@@ -712,7 +712,7 @@
 								imgTitle1 = util._t("#show-album-markers-on-map");
 								imgTitle2 = util._t("#show-tree-markers-on-map");
 							}
-							let imgAlt = util._t("#show-markers-on-map");
+							let imgAlt = util._t(".marker");
 							let imgHtml =
 								"<img " +
 									"class='title-img gps' " +
@@ -2533,7 +2533,7 @@
 				}
 
 				if (! inPopup && ithMedia.hasGpsData())
-					$("#" + imageId + " img.thumbnail-map-link").attr("title", util._t("#show-on-map")).attr("alt", util._t("#show-on-map"));
+					$("#" + imageId + " img.thumbnail-map-link").attr("title", util._t("#show-on-map")).attr("alt", util._t(".marker"));
 				$("#" + imageId + " img.select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector"));
 				let [nameForShowing, titleForShowing] = ithMedia.nameAndTitleForShowing();
 				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, nameForShowing])).attr("alt", util.trimExtension(ithMedia.name));
@@ -2662,7 +2662,7 @@
 		titleName = titleName.substr(titleName.indexOf('/') + 1);
 		var goTo = util._t(".go-to") + " " + titleName;
 		$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
-		$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+		$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", util._t(".arrow"));
 		// replacing is needed in order to reactivate the lazy loader
 		$("#" + id + " img.thumbnail").replaceWith($("#" + id + " img.thumbnail")[0].outerHTML);
 		$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
@@ -2902,7 +2902,7 @@
 
 				if (ithSubalbum.numPositionsInTree) {
 					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", util._t(".marker"));
 				}
 				$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
 				$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
