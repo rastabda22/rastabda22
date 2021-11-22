@@ -233,7 +233,7 @@ $(document).ready(function() {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
 						return false;
-					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
+					} else if (e.key === util._s("#hide-everytyhing")) {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 						return false;
@@ -260,7 +260,7 @@ $(document).ready(function() {
 							$("video#media-center")[0].pause();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						(e.key.toLowerCase() === util._s("#next-media-title") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -268,7 +268,7 @@ $(document).ready(function() {
 						// env.nextMedia.swipeLeft();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						(e.key.toLowerCase() === util._s("#prev-media-title") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -331,18 +331,18 @@ $(document).ready(function() {
 								return false;
 							}
 						}
-					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut")) {
+					} else if (e.key.toLowerCase() === util._s(".download-link")) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && ! isPopup) {
-					// } else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && ! isPopup) {
+					// } else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && env.currentMedia !== null) {
 						tF.toggleFullscreen(e);
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".metadata-hide") && env.currentMedia !== null) {
 						f.toggleMetadata();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".original-link-shortcut") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".original-link") && env.currentMedia !== null) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
@@ -365,7 +365,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
+						e.key.toLowerCase() === util._s(".map-link") &&
 					 	! isPopup &&
 						! util.onlyShowNonGeotaggedContent() &&
 						(
@@ -381,7 +381,7 @@ $(document).ready(function() {
 							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key.toLowerCase() === util._t("#protected-content-unveil-shortcut") &&
+						e.key.toLowerCase() === util._s("#protected-content-unveil") &&
 						env.currentAlbum !== null
 					) {
 						if (
@@ -392,7 +392,7 @@ $(document).ready(function() {
 						}
 					}
 
-					if (e.key.toLowerCase() === util._t("#select-everything-shortcut")) {
+					if (e.key.toLowerCase() === util._s("#select-everything")) {
 						if (! e.shiftKey) {
 							// select everything
 							$(".select.everything:not(.hidden):not(.selected)").click();
@@ -506,7 +506,7 @@ $(document).ready(function() {
 			// "e" opens the menu, and closes it if focus is not in input field
 			if (
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey &&
-				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && (
+				e.key.toLowerCase() === util._s("#menu-icon-title") && (
 					! $("#right-menu").hasClass("expanded") ||
 					$(".search").hasClass("hidden-by-menu-selection")
 				)
@@ -525,8 +525,8 @@ $(document).ready(function() {
 	let nextTitle  = util._t("#next-media-title");
 	let prevTitle  = util._t("#prev-media-title");
 	if (! env.isMobile.any()) {
-		nextTitle  += " [" + util._t("#next-media-title-shortcut") + "]";
-		prevTitle  += " [" + util._t("#prev-media-title-shortcut") + "]";
+		nextTitle  += " [" + util._s("#next-media-title") + "]";
+		prevTitle  += " [" + util._s("#prev-media-title") + "]";
 	}
 	$("#next").attr("title", nextTitle).attr("alt", nextTitle);
 	$("#prev").attr("title", prevTitle).attr("alt", prevTitle);

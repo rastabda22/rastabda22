@@ -646,7 +646,7 @@
 								else
 									imgTitle = util._t("#suggest-position-on-map");
 								if (! env.isMobile.any())
-									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
+									imgTitle += " [" + util._s(".map-link") + "]";
 								imgObject.attr("title", imgTitle);
 								imgObject.attr("alt", imgTitle);
 								singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
@@ -724,14 +724,14 @@
 
 							if (showSingleMarker) {
 								if (! env.isMobile.any() && ! showDoubleMarker)
-									imgTitle1 += " [" + util._t(".map-link-shortcut") + "]";
+									imgTitle1 += " [" + util._s(".map-link") + "]";
 								imgObject.attr("title", imgTitle1);
 								imgObject.attr("src", imgSrc1);
 								markers += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
 							}
 							if (showDoubleMarker) {
 								if (! env.isMobile.any())
-									imgTitle2 += " [" + util._t(".map-link-shortcut") + "]";
+									imgTitle2 += " [" + util._s(".map-link") + "]";
 								imgObject.attr("title", imgTitle2);
 								imgObject.attr("src", imgSrc2);
 								markers += "<a class='map-popup-trigger-double'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
@@ -1375,7 +1375,7 @@
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
 				if (! env.isMobile.any())
-					linkTitle += " [" + util._t(".map-link-shortcut") + "]";
+					linkTitle += " [" + util._s(".map-link") + "]";
 				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
 					"click",
 					function() {
@@ -1463,7 +1463,7 @@
 
 		let menuIconTitle = util._t("#menu-icon-title");
 		if (! env.isMobile.any())
-			menuIconTitle += " [" + util._t("#menu-icon-title-shortcut") + util._t("#menu-icon-title-end") + "]";
+			menuIconTitle += " [" + util._s("#menu-icon-title") + util._t("#menu-icon-title-end") + "]";
 		$("#menu-icon").attr("title", menuIconTitle);
 		if (env.currentMedia === null)
 			env.currentAlbum.sortAlbumsMedia();

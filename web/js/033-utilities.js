@@ -259,10 +259,22 @@
 
 	Utilities._t = function(id) {
 		env.language = Utilities.getLanguage();
-		if (translations[env.language][id])
-			return translations[env.language][id];
-		else
-			return translations.en[id];
+		if (translations.hasOwnProperty(env.language) && translations[env.language].hasOwnProperty(id)) {
+			if (translations[env.language][id])
+				return translations[env.language][id];
+			else
+				return translations.en[id];
+		}
+	};
+
+	Utilities._s = function(id) {
+		env.language = Utilities.getLanguage();
+		if (shortcuts.hasOwnProperty(env.language) && shortcuts[env.language].hasOwnProperty(id)) {
+			if (shortcuts[env.language][id])
+				return shortcuts[env.language][id];
+			else
+				return shortcuts.en[id];
+		}
 	};
 
 	Utilities.prototype.convertProtectedCacheBaseToCodesSimpleCombination = function(protectedCacheBase) {
@@ -316,8 +328,8 @@
 				let keyObject = $(key);
 				if (keyObject.length) {
 					let translation = translations[keyLanguage][key];
-					if (! env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
-						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]";
+					if (! env.isMobile.any() && shortcuts.en.hasOwnProperty(key))
+						translation += " [" + shortcuts[keyLanguage][key] + "]";
 					keyObject.html(translation);
 				}
 			}
@@ -5043,6 +5055,7 @@
 	Utilities.prototype.isMapCacheBase = Utilities.isMapCacheBase;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
+	Utilities.prototype._s = Utilities._s;
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
