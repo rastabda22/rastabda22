@@ -409,6 +409,8 @@ geonames_user = myphotoshare
 # Do not set it to a small value or you could get too many albums!
 big_virtual_folders_threshold = 999
 
+# should numbers be allowed for search by the scanner?
+search_numbers = true
 
 ###########################################################
 # js options

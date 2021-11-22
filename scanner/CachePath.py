@@ -35,7 +35,10 @@ def remove_non_alphabetic_characters(phrase):
 	# convert non-alphabetic characters to spaces
 	new_phrase = ''
 	for c in phrase:
-		new_phrase += c if (c.isalpha() or c in Options.config['unicode_combining_marks']) else " "
+		if Options.config['search_numbers']:
+			new_phrase += c if (c.isalnum() or c in Options.config['unicode_combining_marks']) else " "
+		else:
+			new_phrase += c if (c.isalpha() or c in Options.config['unicode_combining_marks']) else " "
 	# normalize multiple, leading and trailing spaces
 	phrase = ' '.join(new_phrase.split())
 

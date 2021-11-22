@@ -317,6 +317,7 @@ def get_options(args):
 				'user_may_suggest_location',
 				'show_faces',
 				'use_stop_words',
+				'search_numbers',
 				'debug_memory',
 				'debug_profile'
 		):
@@ -729,7 +730,7 @@ def get_options(args):
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of png images", 3)
 
 		config['recreate_json_files'] = False
-		for option in options_requiring_json_regeneration:
+		for option_dict in options_requiring_json_regeneration:
 			option = option_dict['name']
 			default_value = option_dict['default']
 			try:
