@@ -260,10 +260,14 @@
 	Utilities._t = function(id) {
 		env.language = Utilities.getLanguage();
 		if (env.translations.hasOwnProperty(env.language) && env.translations[env.language].hasOwnProperty(id)) {
-			if (env.translations[env.language][id])
-				return env.translations[env.language][id];
-			else
+			if (env.translations[env.language][id]) {
+				let translation = env.translations[env.language][id];
+				if (env.shortcuts[env.language].hasOwnProperty(id))
+					translation += " [" + env.shortcuts[env.language][id] + "]";
+				return translation;
+			} else {
 				return env.translations.en[id];
+			}
 		}
 	};
 
