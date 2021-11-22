@@ -1,7 +1,11 @@
 (function() {
 
+	var translations = new Translations();
+
 	class Env {
 		constructor() {
+			this.translations = translations.getTranslations();
+			this.shortcuts = translations.getShortcuts();
 			this.guessedPasswordCodes = [];
 			this.guessedPasswordsMd5 = [];
 			this.searchWordsFromJsonFile = [];

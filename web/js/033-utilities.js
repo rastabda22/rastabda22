@@ -259,21 +259,21 @@
 
 	Utilities._t = function(id) {
 		env.language = Utilities.getLanguage();
-		if (translations.hasOwnProperty(env.language) && translations[env.language].hasOwnProperty(id)) {
-			if (translations[env.language][id])
-				return translations[env.language][id];
+		if (env.translations.hasOwnProperty(env.language) && env.translations[env.language].hasOwnProperty(id)) {
+			if (env.translations[env.language][id])
+				return env.translations[env.language][id];
 			else
-				return translations.en[id];
+				return env.translations.en[id];
 		}
 	};
 
 	Utilities._s = function(id) {
 		env.language = Utilities.getLanguage();
-		if (shortcuts.hasOwnProperty(env.language) && shortcuts[env.language].hasOwnProperty(id)) {
-			if (shortcuts[env.language][id])
-				return shortcuts[env.language][id];
+		if (env.shortcuts.hasOwnProperty(env.language) && env.shortcuts[env.language].hasOwnProperty(id)) {
+			if (env.shortcuts[env.language][id])
+				return env.shortcuts[env.language][id];
 			else
-				return shortcuts.en[id];
+				return env.shortcuts.en[id];
 		}
 	};
 
@@ -316,10 +316,10 @@
 		];
 
 		env.language = Utilities.getLanguage();
-		for (var key in translations.en) {
-			if (translations[env.language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
+		for (var key in env.translations.en) {
+			if (env.translations[env.language].hasOwnProperty(key) || env.translations.en.hasOwnProperty(key)) {
 				let keyLanguage = env.language;
-				if (! translations[env.language].hasOwnProperty(key))
+				if (! env.translations[env.language].hasOwnProperty(key))
 					keyLanguage = 'en';
 
 				if (key === '.title-string' && document.title.substr(0, 5) != "<?php")
@@ -327,9 +327,9 @@
 					continue;
 				let keyObject = $(key);
 				if (keyObject.length) {
-					let translation = translations[keyLanguage][key];
-					if (! env.isMobile.any() && shortcuts.en.hasOwnProperty(key))
-						translation += " [" + shortcuts[keyLanguage][key] + "]";
+					let translation = env.translations[keyLanguage][key];
+					if (! env.isMobile.any() && env.shortcuts.en.hasOwnProperty(key))
+						translation += " [" + env.shortcuts[keyLanguage][key] + "]";
 					keyObject.html(translation);
 				}
 			}
@@ -340,9 +340,9 @@
 		var language = "en";
 		var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
 		userLang = userLang.split('-')[0];
-		if (translations[userLang] !== undefined)
+		if (env.translations[userLang] !== undefined)
 			language = userLang;
-		else if (env.options.language && translations[env.options.language] !== undefined)
+		else if (env.options.language && env.translations[env.options.language] !== undefined)
 			language = env.options.language;
 
 		return language;
