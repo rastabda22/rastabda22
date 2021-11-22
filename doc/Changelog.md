@@ -1,4 +1,8 @@
+### version v5.4.4 (November 22, 2021)
+
 * shortcuts are now separated from translations
+* menu trimming
+* alt text of images trimmed
 * new option `search_numbers`: permits to search by number too
 
 ### version v5.4.3 (November 21, 2021)

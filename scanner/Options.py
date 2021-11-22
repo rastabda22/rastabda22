@@ -167,7 +167,7 @@ json_version = 4.33
 # json_version = 0
 
 # the release version number (a string)
-version = "v5.4.3"
+version = "v5.4.4"
 
 
 def set_obsolete_json_version_flag():
