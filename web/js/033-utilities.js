@@ -261,12 +261,9 @@
 		env.language = Utilities.getLanguage();
 		if (env.translations.hasOwnProperty(env.language) && env.translations[env.language].hasOwnProperty(id)) {
 			if (env.translations[env.language][id]) {
-				let translation = env.translations[env.language][id];
-				if (env.shortcuts[env.language].hasOwnProperty(id))
-					translation += " [" + env.shortcuts[env.language][id] + "]";
-				return translation;
+				return translation = env.translations[env.language][id] + Utilities._s(id);
 			} else {
-				return env.translations.en[id];
+				return env.translations.en[id] + Utilities._s(id);
 			}
 		}
 	};
