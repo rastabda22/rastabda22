@@ -1,3 +1,7 @@
+### version v5.4.3 (November 21, 2021)
+
+* bug fixes
+
 ### version v5.4.2 (November 20, 2021)
 
 * new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums (perhaps avoiding to load positions unless explicitly asked in js menu?)
