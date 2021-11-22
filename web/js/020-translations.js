@@ -3,7 +3,81 @@
 	function Translations() {
 	}
 
+	Translations.getShortcuts = function() {
+		var shortcuts = {
+			en: {
+				"#next-media-title": "n",
+				"#prev-media-title": "p",
+				".metadata-show": "m",
+				// ".metadata-hide" is defined further to ".metadata-show" value
+				".original-link": "o",
+				".download-link": "d",
+				".map-link": "s",
+				".enter-fullscreen": "f",
+				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
+				"#hide-everytyhing": "h",
+				"#select-everything": "a",
+				"#menu-icon-title": "e",
+				"#protected-content-unveil": "u"
+			},
+			it: {
+				"#next-media-title": "n",
+				"#prev-media-title": "p",
+				".metadata-show": "m",
+				// ".metadata-hide" is defined further to ".metadata-show" value
+				".original-link": "o",
+				".download-link": "d",
+				".map-link": "s",
+				".enter-fullscreen": "f",
+				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
+				"#hide-everytyhing": "h",
+				"#select-everything": "a",
+				"#menu-icon-title": "e",
+				"#protected-content-unveil": "u"
+			},
+			es: {
+				"#next-media-title": "n",
+				"#prev-media-title": "p",
+				".metadata-show": "m",
+				// ".metadata-hide" is defined further to ".metadata-show" value
+				".original-link": "o",
+				".download-link": "d",
+				".map-link": "s",
+				".enter-fullscreen": "f",
+				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
+				"#hide-everytyhing": "h",
+				"#select-everything": "a",
+				"#menu-icon-title": "e",
+				"#protected-content-unveil": "u"
+			},
+			fr: {
+				"#next-media-title": "n",
+				"#prev-media-title": "p",
+				".metadata-show": "m",
+				// ".metadata-hide" is defined further to ".metadata-show" value
+				".original-link": "o",
+				".download-link": "d",
+				".map-link": "s",
+				".enter-fullscreen": "f",
+				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
+				"#hide-everytyhing": "h",
+				"#select-everything": "a",
+				"#menu-icon-title": "e",
+				"#protected-content-unveil": "u"
+			}
+		};
+
+		for (lang in shortcuts) {
+			shortcuts[lang][".metadata-hide"] = shortcuts[lang][".metadata-show"];
+			shortcuts[lang][".exit-fullscreen"] = shortcuts[lang][".enter-fullscreen"];
+		}
+
+		return shortcuts;
+	};
+
 	Translations.prototype.getTranslations = function() {
+		var shortcuts = this.getShortcuts();
+
 		return {
 			en: {
 				"#root-album": "root album",
@@ -101,7 +175,7 @@
 				"#from-map": "Album by map",
 				"#in": "in",
 				"#place-icon-title": "Show the map for ",
-				"#place-icon-title-end": " [press s to show the map]",
+				"#place-icon-title-end": " [press " + shortcuts.en[".map-link"] + " to show the map]",
 				"#show-on-map": "Show media location on the map",
 				"#suggest-position-on-map": "Suggest a position on the map",
 				"#click-to-suggest-position-on-map": "Click to suggest a position on the map",
@@ -342,7 +416,7 @@
 				"#from-map": "Album dalla mappa",
 				"#in": "in",
 				"#place-icon-title": "Mostra la cartina per ",
-				"#place-icon-title-end": " [premi s per vedere la cartina]",
+				"#place-icon-title-end": " [premi " + shortcuts.en[".map-link"] + " per vedere la cartina]",
 				"#show-on-map": "Mostra la posizione della foto sulla cartina",
 				"#suggest-position-on-map": "Suggerisci una posizione sulla cartina",
 				"#click-to-suggest-position-on-map": "Clicca per suggerire una posizione sulla cartina",
@@ -576,7 +650,7 @@
 				"#error-nonexistent-selection-album": "Álbum de selección que no existe, voy al álbum anterior",
 				"#warning-no-geolocated-media": "Ninguna imágen o bien ninguna imágen geolocalizada<br />Muestro el contenido del álbum",
 				"#place-icon-title": "Muestra en el mapa para ",
-				"#place-icon-title-end": " [presione s para ver el mapa]",
+				"#place-icon-title-end": " [presione " + shortcuts.en[".map-link"] + " para ver el mapa]",
 				"#show-on-map": "Muestra la posición de la foto en el mapa",
 				"#suggest-position-on-map": "Sugiera una posición en el mapa",
 				"#click-to-suggest-position-on-map": "Presione para sugerir una posición en el mapa",
@@ -824,7 +898,7 @@
 				"#from-map": "Album par carte",
 				"#in": "dans",
 				"#place-icon-title": "Afficher la carte pour ",
-				"#place-icon-title-end": " [appuyer sur s pour afficher la carte]",
+				"#place-icon-title-end": " [appuyer sur " + shortcuts.en[".map-link"] + " pour afficher la carte]",
 				"#show-on-map": "Afficher la position des médias sur la carte",
 				"#suggest-position-on-map": "Suggest a position on the map",
 				"#click-to-suggest-position-on-map": "Click to suggest a position on the map",
@@ -971,77 +1045,7 @@
 		};
 	};
 
-	Translations.prototype.getShortcuts = function() {
-		var shortcuts = {
-			en: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				".metadata-show": "m",
-				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
-				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				"#select-everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
-			},
-			it: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				".metadata-show": "m",
-				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
-				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				"#select-everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
-			},
-			es: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				".metadata-show": "m",
-				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
-				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				"#select-everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
-			},
-			fr: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				".metadata-show": "m",
-				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
-				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				"#select-everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
-			}
-		};
-
-		for (lang in shortcuts) {
-			shortcuts[lang][".metadata-hide"] = shortcuts[lang][".metadata-show"];
-			shortcuts[lang][".exit-fullscreen"] = shortcuts[lang][".enter-fullscreen"];
-		}
-
-		return shortcuts;
-	};
+	Translations.prototype.getShortcuts = Translations.getShortcuts;
 
 	/* expose class globally */
 	window.Translations = Translations;
