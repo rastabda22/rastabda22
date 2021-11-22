@@ -307,18 +307,6 @@
 	};
 
 	Utilities.prototype.translate = function() {
-		var keysWithShorcut = [
-			"#next-media-title",
-			"#prev-media-title",
-			".metadata-show",
-			".metadata-hide",
-			".original-link",
-			".download-link",
-			".map-link",
-			".enter-fullscreen",
-			".exit-fullscreen"
-		];
-
 		env.language = Utilities.getLanguage();
 		for (var key in env.translations.en) {
 			if (env.translations[env.language].hasOwnProperty(key) || env.translations.en.hasOwnProperty(key)) {
