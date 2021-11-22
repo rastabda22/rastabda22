@@ -414,9 +414,9 @@
 							if (gpsName === '')
 								gpsName = util._t('.not-specified');
 
-							let aObject = $("<a></a>");
-							aObject.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
-							titlesForTitleComponents[i] = aObject.attr("title");
+							// let aObject = $("<a></a>");
+							// aObject.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
+							// titlesForTitleComponents[i] = aObject.attr("title");
 
 							titleComponents[i] = gpsName;
 						}
