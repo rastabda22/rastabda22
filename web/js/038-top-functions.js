@@ -1070,9 +1070,8 @@
 			) {
 				env.currentAlbum.showMedia();
 			} else {
-				util.scrollBottomMediaToHighlightedThumb();
+				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			}
-			util.addMediaLazyLoader();
 			env.isFromAuthForm = false;
 			$("#powered-by").hide();
 
@@ -1745,7 +1744,7 @@
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();
 			if (env.currentMedia !== null) {
-				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			} else {
 				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
 			}
@@ -1778,7 +1777,7 @@
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();
 			if (env.currentMedia !== null) {
-				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			} else {
 				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
 			}
@@ -1807,7 +1806,7 @@
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();
 			if (env.currentMedia !== null) {
-				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			} else {
 				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
 			}
@@ -2162,7 +2161,7 @@
 				let highlightedSingleMediaId = $("#thumbs .highlighted img.thumbnail").attr("id");
 				env.currentAlbum.showMedia();
 				if (env.currentMedia !== null) {
-					util.scrollBottomMediaToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
+					util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 				} else {
 					util.scrollAlbumViewToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
 				}
@@ -2611,12 +2610,13 @@
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
 			if ($("#album-and-media-container").hasClass("show-media"))
-				util.scrollBottomMediaToHighlightedThumb();
+				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			else if (util.isPopup())
-				util.scrollPopupToHighlightedThumb();
-			else
+				util.scrollPopupToHighlightedThumb(util.addMediaLazyLoader);
+			else {
 				util.scrollAlbumViewToHighlightedThumb();
-			util.addMediaLazyLoader();
+				util.addMediaLazyLoader();
+			}
 		}
 
 		util.setDescriptionOptions();

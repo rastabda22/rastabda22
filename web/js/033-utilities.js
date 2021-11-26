@@ -2685,11 +2685,10 @@
 
 				}
 
-				if ($("#thumbs").is(":visible"))
-					Utilities.scrollBottomMediaToHighlightedThumb();
 				if (id === "center") {
-					if ($("#thumbs").is(":visible"))
-						Utilities.addMediaLazyLoader();
+					if ($("#thumbs").is(":visible")) {
+						Utilities.scrollBottomMediaToHighlightedThumb(Utilities.addMediaLazyLoader);
+					}
 					resolve_scale([containerHeight, containerWidth]);
 				}
 
@@ -3051,7 +3050,7 @@
 			Utilities.addHighlight(thumbObject.parent().parent());
 	};
 
-	Utilities.scrollBottomMediaToHighlightedThumb = function() {
+	Utilities.scrollBottomMediaToHighlightedThumb = function(callback) {
 		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && env.currentMedia !== null) {
 			let thumbObject = $("#" + env.currentMedia.foldersCacheBase + "--" + env.currentMedia.cacheBase);
 			if (thumbObject[0] !== undefined && ! env.currentAlbum.isAlbumWithOneMedia()) {
@@ -3060,7 +3059,8 @@
 					{
 						scrollLeft: thumbObject.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumbObject.width() / 2
 					},
-					"fast"
+					"fast",
+					callback
 				);
 				$(".thumb-container").removeClass("current-thumb");
 				thumbObject.parent().addClass("current-thumb");
