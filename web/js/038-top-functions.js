@@ -41,7 +41,7 @@
 						resolve_generatePositionsAndMediaInMediaAndSubalbums();
 					} else {
 						// we have media and subalbum, but we don't know if positionsAndMediaInTree property is there
-						let promise = phFl.getAlbum(self, null, {getMedia: true, getPositions: true});
+						let promise = phFl.getAlbum(self, null, {getMedia: true, getPositions: ! env.options.save_data});
 						promise.then(
 							function(album) {
 								self = album;
@@ -593,8 +593,8 @@
 				// 	cacheBasesForTitleComponents.splice(numElements, 0, env.options.by_search_string);
 				// }
 
-				promises.push(env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums());
-				// let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
+				if (! env.options.save_data)
+					promises.push(env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums());
 
 				Promise.all(promises).then(
 					function() {
@@ -696,7 +696,7 @@
 
 						documentTitle = documentTitleComponents.reverse().join(raquoForTitle);
 
-						if (singleMedia === null && env.currentAlbum.numPositionsInTree) {
+						if (singleMedia === null && env.currentAlbum.numPositionsInTree && ! env.options.save_data) {
 							let markers = "";
 
 							let showSingleMarker = (env.currentAlbum.numPositionsInMedia > 0 && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums);
@@ -2813,7 +2813,7 @@
 
 				let positionHtml = "";
 				let folderMapTitleWithoutHtmlTags;
-				if (ithSubalbum.numPositionsInTree) {
+				if (ithSubalbum.numPositionsInTree && ! env.options.save_data) {
 					folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
 					positionHtml =
 						"<a id='subalbum-map-link-" + id + "' >" +
@@ -2900,7 +2900,7 @@
 
 				$("#subalbums").append(aHrefObject);
 
-				if (ithSubalbum.numPositionsInTree) {
+				if (ithSubalbum.numPositionsInTree && ! env.options.save_data) {
 					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
 					$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", util._t(".marker"));
 				}
@@ -2910,7 +2910,7 @@
 				if (ithSubalbum.hasOwnProperty("description"))
 					$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
-				if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+				if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree && ! env.options.save_data) {
 					$("#subalbum-map-link-" + id).off("click").on(
 						"click",
 						{ithSubalbum: ithSubalbum},
@@ -2924,6 +2924,7 @@
 				}
 
 				if (
+					! env.options.save_data &&
 					env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
 					env.previousAlbum !== null &&
 					env.previousAlbum.isMap() &&
@@ -3049,7 +3050,7 @@
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
-		var subalbumPromise = ev.data.ithSubalbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
+		var subalbumPromise = ev.data.ithSubalbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: ! env.options.save_data});
 		subalbumPromise.then(
 			function(album) {
 				// var album = env.currentAlbum.subalbums[iSubalbum];

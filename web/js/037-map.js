@@ -204,7 +204,7 @@
 				let cacheBasePromise = new Promise(
 					function(resolve_cacheBasePromise) {
 						let photosInAlbum = photosByAlbum[foldersCacheBase];
-						var getAlbumPromise = phFl.getAlbum(foldersCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
+						var getAlbumPromise = phFl.getAlbum(foldersCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: ! env.options.save_data});
 						getAlbumPromise.then(
 							function(theAlbum) {
 								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {

@@ -1188,7 +1188,7 @@
 						error();
 				}
 			} else {
-				var lastPromise = PhotoFloat.getAlbum(filteredIthAlbum, error, {getMedia: true, getPositions: true});
+				var lastPromise = PhotoFloat.getAlbum(filteredIthAlbum, error, {getMedia: true, getPositions: ! env.options.save_data});
 				lastPromise.then(
 					function(ithAlbumWithMediaAndPositions) {
 						let filteredIthAlbumWithMediaAndPositions = ithAlbumWithMediaAndPositions;
@@ -1426,7 +1426,7 @@
 					}
 				} else if (! util.isSearchCacheBase(albumCacheBase) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
-					promise = PhotoFloat.getAlbum(albumCacheBaseToGet, reject_parseHash, {getMedia: true, getPositions: true});
+					promise = PhotoFloat.getAlbum(albumCacheBaseToGet, reject_parseHash, {getMedia: true, getPositions: ! env.options.save_data});
 					promise.then(
 						function(album) {
 							let result = album.getMediaIndex(mediaFolderCacheBase, mediaCacheBase);
@@ -1508,7 +1508,7 @@
 								if (! thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
 									let subalbumPromise = new Promise(
 										function(resolve_subalbumPromise) {
-											let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+											let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: ! env.options.save_data});
 											promise.then(
 												function(thisAlbum) {
 													env.searchAlbum.subalbums[thisIndex] = thisAlbum;
@@ -1630,7 +1630,7 @@
 									searchResultsSubalbums[indexWords] = new Subalbums([]);
 									for (indexAlbums = 0; indexAlbums < albumCacheBases[indexWords].length; indexAlbums ++) {
 										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
-										var promise = PhotoFloat.getAlbum(albumCacheBases[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
+										var promise = PhotoFloat.getAlbum(albumCacheBases[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: ! env.options.save_data});
 										promise.then(
 											function(wordAlbum) {
 												env.cache.putAlbum(wordAlbum);

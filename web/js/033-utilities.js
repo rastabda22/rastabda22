@@ -1703,7 +1703,7 @@
 					function(subalbum) {
 						var subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								var toAlbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
+								var toAlbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: ! env.options.save_data});
 								toAlbumPromise.then(
 									function(album) {
 										var collectPromise = album.collectMediaInTree();
@@ -1765,7 +1765,7 @@
 					if (Utilities.nothingIsSelected())
 						Utilities.initializeSelectionAlbum();
 
-					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: ! env.options.save_data});
 					convertSubalbumPromise.then(
 						function(ithAlbum) {
 							self.subalbums[iSubalbum] = ithAlbum;
@@ -1831,7 +1831,7 @@
 						Utilities.initializeSelectionAlbum();
 					resolve_removeSubalbum();
 				} else {
-					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: ! env.options.save_data});
 					convertSubalbumPromise.then(
 						function(ithAlbum) {
 							self.subalbums[iSubalbum] = ithAlbum;
@@ -3267,7 +3267,7 @@
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
 				var name = imgData.mediaHash.split('/').pop();
 				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase);
-				var promise = PhotoFloat.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
+				var promise = PhotoFloat.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: ! env.options.save_data});
 				promise.then(
 					function(foldersAlbum) {
 						matchedMedia.toggleSelectedStatus(foldersAlbum, '#' + id);

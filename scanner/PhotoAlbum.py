@@ -516,7 +516,13 @@ class Album(object):
 
 	@property
 	def must_separate_positions(self):
-		return Options.config['max_media_from_positions_in_json_file'] > 0 and self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']
+		return (
+			self.positions_and_media_in_tree.count_media() > 0 and (
+				Options.config['save_data'] or
+				Options.config['max_media_from_positions_in_json_file'] > 0 and
+				self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']
+			)
+		)
 
 	def to_json_file(self, json_name, positions_json_name, media_json_name, symlinks, positions_symlinks, media_symlinks, complex_identifiers_combination = None):
 		save_begin = "saving album..."
