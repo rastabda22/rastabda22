@@ -2083,7 +2083,7 @@
 			$("#subalbums").is(":visible")
 		) {
 			let firstThumbnail = $("#subalbums .album-button img.thumbnail").first();
-			if (firstThumbnail.attr("src") !== "img/image-placeholder.png") {
+			if (firstThumbnail.attr("src") !== "img/image-placeholder.jpg") {
 				var mustBeSquare = (env.options.album_thumb_type.indexOf("square") > -1);
 				var isSquare = (firstThumbnail.attr("src").substr(- env.options.format.length - 2, 1) === "s");
 				if (isSquare !== mustBeSquare) {

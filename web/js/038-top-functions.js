@@ -2448,7 +2448,7 @@
 				imgHtml =
 					"<img " +
 						"data-src='" + encodeURI(thumbHash) + "' " +
-						"src='img/image-placeholder.png' " +
+						"src='img/image-placeholder.jpg' " +
 						data +
 						"class='thumbnail " + lazyClass + "' " +
 						"height='" + thumbHeight + "' " +
@@ -2665,7 +2665,7 @@
 		$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 
 		if (util.onlyShowNonGeotaggedContent()) {
-			$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.png");
+			$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.jpg");
 		}
 
 		$(
@@ -2863,7 +2863,7 @@
 							"<img src='img/link-arrow.png' class='album-button-random-media-link'>" +
 						"</a>" +
 						"<span class='helper'></span>" +
-						"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
+						"<img src='img/image-placeholder.jpg' class='thumbnail lazyload-album-" + id + "'>" +
 					"</div>"
 				);
 				albumButtonAndCaptionObject.append(imageObject);

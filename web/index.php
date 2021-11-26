@@ -519,8 +519,8 @@
 						</div>
 					</div>
 
-					<img id="prev" width="42" height="88" src="img/prev.png">
-					<img id="next" width="42" height="88" src="img/next.png">
+					<img id="prev" width="42" height="88" src="img/prev.jpg">
+					<img id="next" width="42" height="88" src="img/next.jpg">
 					<a id="media-select-box">
 						<img class="select-box">
 					</a>
