@@ -910,6 +910,9 @@ $(document).ready(function() {
 			ev.stopPropagation();
 			util.addHighlightToItem($(this));
 			tF.toggleSaveData(ev);
+			if (! $(this).hasClass("selected"))
+				// recreate the page so that the missing elements are shown 
+				$(window).hashchange();
 		}
 	);
 	$("ul#right-menu li.slide").off("click").on(
