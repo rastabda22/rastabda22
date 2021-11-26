@@ -165,7 +165,7 @@
 				if (finalZoom > startZoom) {
 					// preload next size photo
 					let nextReduction = util.nextReduction();
-					if (nextReduction !== false) {
+					if (nextReduction !== false && ! env.options.save_data) {
 						$.preloadImages(nextReduction);
 					}
 					$(mediaSelector).css("cursor", "all-scroll");

@@ -989,9 +989,6 @@
 
 		function loadNextPrevMedia(self, containerHeight, containerWidth) {
 
-			// $(mediaSelector).off(loadEvent);
-
-			// if (id === "center") {
 			$("#pinch-in").off("click").on("click", pS.pinchIn);
 			$("#pinch-out").off("click").on("click", pS.pinchOut);
 
@@ -1021,7 +1018,7 @@
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
-			if (album.numsMedia.imagesAndVideosTotal() > 1) {
+			if (album.numsMedia.imagesAndVideosTotal() > 1 && ! env.options.save_data) {
 				env.prevMedia.show(album, 'left');
 				env.nextMedia.show(album, 'right');
 			}
@@ -1032,7 +1029,6 @@
 					util.resizeSingleMediaWithPrevAndNext(self, album);
 				}
 			);
-			// }
 		}
 		// end of loadNextPrevMedia auxiliary function
 
