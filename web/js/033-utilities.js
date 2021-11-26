@@ -3278,6 +3278,9 @@
 	};
 
 	Utilities.addMediaLazyLoader = function() {
+		var threshold = env.options.media_thumb_size;
+		if (env.options.save_data)
+			threshold = 0;
 		$(
 			function() {
 				$("img.lazyload-popup-media").Lazy(
@@ -3288,7 +3291,7 @@
 							console.log(element[0]);
 						},
 						chainable: false,
-						threshold: env.options.media_thumb_size,
+						threshold: threshold,
 						removeAttribute: true,
 						appendScroll: $('#popup-images-wrapper')
 					}
@@ -3299,7 +3302,7 @@
 			function() {
 				$("#album-and-media-container:not(.show-media) #thumbs img.lazyload-media").Lazy(
 					{
-						// threshold: 2 * env.options.media_thumb_size,
+						threshold: threshold,
 						appendScroll: $(window)
 					}
 				);
@@ -3309,7 +3312,7 @@
 			function() {
 				$("#album-and-media-container.show-media #thumbs img.lazyload-media").Lazy(
 					{
-						// threshold: 2 * env.options.media_thumb_size,
+						threshold: threshold,
 						appendScroll: $("#album-view")
 					}
 				);
