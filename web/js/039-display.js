@@ -1076,13 +1076,11 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
-			util.translate();
 			$("#auth-text").hide();
 			// $("#thumbs").show();
 			$("#subalbums").removeClass("hidden");
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
-			$("#loading").show();
 			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
@@ -1096,6 +1094,8 @@ $(document).ready(function() {
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {
+					util.translate();
+					$("#loading").show();
 					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {

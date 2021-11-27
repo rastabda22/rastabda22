@@ -1535,7 +1535,20 @@
 		);
 	};
 
+
+
 	Functions.prototype.getOptions = function(forceReload = false) {
+		function setEnvLanguage() {
+			var userLanguage = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
+			userLanguage = userLanguage.split('-')[0];
+			if (userLanguage && env.translations[userLanguage] !== undefined)
+				env.language = userLanguage;
+			else if (env.options.language && env.translations[env.options.language] !== undefined)
+				env.language = env.options.language;
+			else
+				env.language = "en";
+		};
+
 		return new Promise(
 			function(resolve_getOptions, reject_getOptions) {
 				if (Object.keys(env.options).length > 0 && ! forceReload) {
@@ -1585,6 +1598,8 @@
 							if (env.options.save_data)
 								// do not optimize image formats
 								env.devicePixelRatio = 1;
+
+							setEnvLanguage();
 
 							if (forceReload) {
 								Functions.setBooleanCookie("hideTitle", env.options.hide_title);

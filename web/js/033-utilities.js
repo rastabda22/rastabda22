@@ -257,32 +257,6 @@
 		env.selectionAlbum.ancestorsNames = [env.options.by_selection_string, env.selectionAlbum.cacheBase];
 	};
 
-	Utilities._t = function(id) {
-		env.language = Utilities.getLanguage();
-		if (env.translations.hasOwnProperty(env.language) && env.translations[env.language].hasOwnProperty(id)) {
-			let shortcut;
-			if (env.shortcuts.hasOwnProperty(env.language) && env.shortcuts[env.language].hasOwnProperty(id))
-				shortcut = " [" + Utilities._s(id) + "]";
-			else
-				shortcut = "";
-			if (env.translations[env.language][id]) {
-				return env.translations[env.language][id] + shortcut;
-			} else {
-				return env.translations.en[id] + shortcut;
-			}
-		}
-	};
-
-	Utilities._s = function(id) {
-		env.language = Utilities.getLanguage();
-		if (env.shortcuts.hasOwnProperty(env.language) && env.shortcuts[env.language].hasOwnProperty(id)) {
-			if (env.shortcuts[env.language][id])
-				return env.shortcuts[env.language][id];
-			else
-				return env.shortcuts.en[id];
-		}
-	};
-
 	Utilities.prototype.convertProtectedCacheBaseToCodesSimpleCombination = function(protectedCacheBase) {
 		var protectedDirectory = protectedCacheBase.split("/")[0];
 		var [albumMd5, mediaMd5] = protectedDirectory.substring(env.options.protected_directories_prefix.length).split(',');
@@ -308,38 +282,31 @@
 			return "";
 	};
 
-	Utilities.prototype.translate = function() {
-		env.language = Utilities.getLanguage();
-		for (var key in env.translations.en) {
-			if (env.translations[env.language].hasOwnProperty(key) || env.translations.en.hasOwnProperty(key)) {
-				let keyLanguage = env.language;
-				if (! env.translations[env.language].hasOwnProperty(key))
-					keyLanguage = 'en';
+	Utilities._s = function(key) {
+		return env.shortcuts[env.language][key];
+	};
 
+	Utilities._t = function(key) {
+		let shortcut = env.shortcuts[env.language][key];
+		if (shortcut)
+			shortcut = " [" + shortcut + "]";
+		else
+			shortcut = "";
+		return env.translations[env.language][key] + shortcut;
+	};
+
+	Utilities.prototype.translate = function() {
+		for (var key in env.translations.en) {
+			if (env.translations[env.language].hasOwnProperty(key)) {
 				if (key === '.title-string' && document.title.substr(0, 5) != "<?php")
 					// don't set page title, php has already set it
 					continue;
 				let keyObject = $(key);
 				if (keyObject.length) {
-					let translation = env.translations[keyLanguage][key];
-					if (! env.isMobile.any() && env.shortcuts.hasOwnProperty(keyLanguage) && env.shortcuts[keyLanguage].hasOwnProperty(key))
-						translation += " [" + Utilities._s(key) + "]";
-					keyObject.html(translation);
+					keyObject.html(Utilities._t(key));
 				}
 			}
 		}
-	};
-
-	Utilities.getLanguage = function() {
-		var language = "en";
-		var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
-		userLang = userLang.split('-')[0];
-		if (env.translations[userLang] !== undefined)
-			language = userLang;
-		else if (env.options.language && env.translations[env.options.language] !== undefined)
-			language = env.options.language;
-
-		return language;
 	};
 
 	Album.prototype.guessedPasswordCodes = function() {
@@ -5073,7 +5040,6 @@
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype._s = Utilities._s;
-	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
