@@ -1,3 +1,6 @@
+* option `save_data` now avoids loading positions; functions based on positions won't be available until save data mode is disabled in menu
+* option `save_data` now avoids preloading next/previous image in single media view, and avoids loading more thumbnails then strictly needed
+
 ### version v5.4.4 (November 22, 2021)
 
 * shortcuts are now separated from translations
@@ -11,7 +14,7 @@
 
 ### version v5.4.2 (November 20, 2021)
 
-* new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums (perhaps avoiding to load positions unless explicitly asked in js menu?)
+* new option `save_data`: reduces bandwidth usage by web site avoiding custom fonts and using a fixed random image for subalbums
 * `js_minifier` option: added `mangler` value for uglifyjs.terser with -m option
 * caption height adaptation is now made per line
 * title is hidden by default on mobile when showing a single media
