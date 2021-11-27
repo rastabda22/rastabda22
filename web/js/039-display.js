@@ -904,17 +904,6 @@ $(document).ready(function() {
 			tF.toggleBottomThumbnails(ev);
 		}
 	);
-	$("ul#right-menu li.save-data").off("click").on(
-		"click",
-		function(ev) {
-			ev.stopPropagation();
-			util.addHighlightToItem($(this));
-			tF.toggleSaveData(ev);
-			if (! $(this).hasClass("selected"))
-				// recreate the page so that the missing elements are shown
-				$(window).hashchange();
-		}
-	);
 	$("ul#right-menu li.slide").off("click").on(
 		"click",
 		function(ev) {
@@ -985,6 +974,17 @@ $(document).ready(function() {
 			ev.stopPropagation();
 			util.addHighlightToItem($(this));
 			tF.toggleBigAlbumsShow(ev);
+		}
+	);
+	$("ul#right-menu #save-data").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleSaveData(ev);
+			env.isASaveDataChange = true;
+			// recreate the page, so that the ui elements related to positions are shown or hidden
+			$(window).hashchange();
 		}
 	);
 	$("#search-icon").off("click").on(
@@ -1114,8 +1114,11 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMediaIndex(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
-							if (env.isABrowsingModeChangeFromMouseClick) {
-								env.isABrowsingModeChangeFromMouseClick = false;
+							if (env.isABrowsingModeChangeFromMouseClick || env.isASaveDataChange) {
+								if (env.isABrowsingModeChangeFromMouseClick)
+									env.isABrowsingModeChangeFromMouseClick = false;
+								if (env.isASaveDataChange)
+									env.isASaveDataChange = false;
 								util.openRightMenu();
 							} else if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
 								util.openSearchMenu(album);

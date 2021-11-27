@@ -38,6 +38,7 @@
 			this.mediaLink = "";
 			this.searchWords = [];
 			this.loadedImages = [];
+			this.isASaveDataChange = false;
 			// scrollbarWidth;
 			// contextMenu = false;
 

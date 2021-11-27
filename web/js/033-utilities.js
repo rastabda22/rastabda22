@@ -2926,7 +2926,11 @@
 	Utilities.prototype.addHighlightToItem = function(object) {
 		if(object.attr("id") !== "menu-icon" && object.attr("id") !== "search-icon")
 			Utilities.removeHighligthsToItems();
-		object.addClass("highlighted");
+		if (object.attr("id") === "save-data") {
+			object.parent().addClass("highlighted");
+		} else {
+			object.addClass("highlighted");
+		}
 	};
 
 	Utilities.prototype.highlightedItemObject = function() {

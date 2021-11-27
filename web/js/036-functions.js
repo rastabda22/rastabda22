@@ -550,9 +550,9 @@
 			}
 
 			if (env.options.save_data)
-				$("ul#right-menu li.save-data").addClass("selected");
+				$("ul#right-menu #save-data").addClass("selected");
 			else
-				$("ul#right-menu li.save-data").removeClass("selected");
+				$("ul#right-menu #save-data").removeClass("selected");
 		}
 
 		////////////////// BIG ALBUMS //////////////////////////////
