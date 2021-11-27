@@ -37,6 +37,7 @@
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
 			this.searchWords = [];
+			this.loadedImages = [];
 			// scrollbarWidth;
 			// contextMenu = false;
 

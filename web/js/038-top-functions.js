@@ -1018,7 +1018,7 @@
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
-			if (album.numsMedia.imagesAndVideosTotal() > 1 && ! env.options.save_data) {
+			if (album.numsMedia.imagesAndVideosTotal() > 1) {
 				env.prevMedia.show(album, 'left');
 				env.nextMedia.show(album, 'right');
 			}
@@ -1204,7 +1204,27 @@
 							);
 						}
 					);
-					newMediaObject.attr("src", $(mediaSelector).attr("src"));
+					if (! env.options.save_data || id === "center" || util.isLoaded($(mediaSelector).attr("src"))) {
+						newMediaObject.attr("src", $(mediaSelector).attr("src"));
+						util.setLoaded($(mediaSelector).attr("src"));
+					} else {
+						newMediaObject.attr("data-src", $(mediaSelector).attr("data-src"));
+						newMediaObject.attr("src", $(mediaSelector).attr("src"));
+						newMediaObject.addClass("lazyload-next-prev");
+						$(
+							function() {
+								newMediaObject.Lazy(
+									{
+										threshold: 0,
+										appendScroll: $("#media-box-container"),
+										afterLoad: function(element) {
+											util.setLoaded(newMediaObject.attr("src"));
+										}
+									}
+								);
+							}
+						);
+					}
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
 							$(".media-box .metadata").hide();
@@ -2670,10 +2690,13 @@
 
 		$(
 			function() {
+				var threshold = env.options.album_thumb_size;
+				if (env.options.save_data)
+					threshold = 0;
 				$("img.lazyload-album-" + id).Lazy(
 					{
 						chainable: false,
-						threshold: env.options.media_thumb_size,
+						threshold: threshold,
 						bind: 'event',
 						removeAttribute: true
 					}

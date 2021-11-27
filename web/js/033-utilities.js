@@ -2373,8 +2373,13 @@
 			.attr("width", attrWidth)
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
-			.attr("src", encodeURI(mediaSrc))
 			.attr("alt", singleMediaTitle);
+		if (! env.options.save_data || id === "center" || Utilities.isLoaded(mediaSrc)) {
+			mediaElement.attr("src", encodeURI(mediaSrc));
+		} else {
+			mediaElement.attr("data-src", encodeURI(mediaSrc));
+			mediaElement.attr("src", "img/image-placeholder.jpg");
+		}
 
 		return mediaElement[0].outerHTML;
 	};
@@ -2654,10 +2659,13 @@
 						$("link[rel=image_src]").remove();
 						$('link[rel="video_src"]').remove();
 						$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
-						mediaElement
-							.attr("src", encodeURI(photoSrc))
-							.attr("width", attrWidth)
-							.attr("height", attrHeight);
+						mediaElement.attr("width", attrWidth).attr("height", attrHeight);
+						if (! env.options.save_data || id === "center" || Utilities.isLoaded(photoSrc)) {
+							mediaElement.attr("src", encodeURI(photoSrc));
+						} else {
+							mediaElement.attr("data-src", encodeURI(photoSrc));
+							mediaElement.attr("src", "img/image-placeholder.jpg");
+						}
 					}
 				}
 
@@ -2696,6 +2704,14 @@
 
 			}
 		);
+	};
+
+	Utilities.isLoaded = function(imgSrc) {
+		return env.loadedImages.indexOf(imgSrc) !== -1;
+	};
+
+	Utilities.prototype.setLoaded = function(imgSrc) {
+		env.loadedImages.push(imgSrc);
 	};
 
 	Utilities.onlyShowNonGeotaggedContent = function() {
@@ -5103,6 +5119,7 @@
 	Utilities.prototype.adaptMediaCaptionHeight = Utilities.adaptMediaCaptionHeight;
 	Utilities.prototype.openRightMenu = Utilities.openRightMenu;
 	Utilities.prototype.onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent;
+	Utilities.prototype.isLoaded = Utilities.isLoaded;
 
 	window.Utilities = Utilities;
 }());
