@@ -911,7 +911,7 @@ $(document).ready(function() {
 			util.addHighlightToItem($(this));
 			tF.toggleSaveData(ev);
 			if (! $(this).hasClass("selected"))
-				// recreate the page so that the missing elements are shown 
+				// recreate the page so that the missing elements are shown
 				$(window).hashchange();
 		}
 	);

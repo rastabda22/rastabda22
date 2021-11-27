@@ -1691,9 +1691,9 @@
 																let cacheBase = singleMedia.foldersCacheBase;
 																// let albumCacheBase = PhotoFloat.decodeHash(window.location.hash)[0];
 																// let searchStartCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-																if (Utilities.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
+																if (util.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
 																	cacheBase = singleMedia.dayAlbumCacheBase;
-																else if (Utilities.isByGpsCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasGpsData())
+																else if (util.isByGpsCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasGpsData())
 																	cacheBase = singleMedia.gpsAlbumCacheBase;
 																let matchingIndex = cacheBasesAndMediaToGet.findIndex(cacheBaseAndMedia => cacheBaseAndMedia.cacheBase === cacheBase);
 																if (matchingIndex !== -1)

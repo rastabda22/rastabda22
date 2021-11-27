@@ -4297,7 +4297,7 @@
 		$('.album-caption').each(
 			function() {
 				counter ++;
-				newTop = $(this).parent().offset().top;
+				var newTop = $(this).parent().offset().top;
 				if (top !== false && newTop != top) {
 					// adapt!
 					objects.forEach(
@@ -4351,7 +4351,7 @@
 		$(baseSelector + " .media-caption").each(
 			function() {
 				counter ++;
-				newTop = $(this).offset().top;
+				var newTop = $(this).offset().top;
 				if (top !== false && newTop !== top) {
 					// adapt!
 					objects.forEach(
