@@ -93,6 +93,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 - [x] Photo pre-loading.
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
+- [x] A `save data mode` is available: by gps albums and maps are not available, and any non strictly needed image isn't loaded o preloaded. This mode can be set by the site owner; the user can always set/unset it. Especially suited for slow and _pay-for-usage_ internet connections
 
 ### Control Access to Your Works
 
