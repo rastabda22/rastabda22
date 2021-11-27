@@ -1,3 +1,5 @@
+### version v5.5.0 (November 26, 2021)
+
 * option `save_data` now avoids loading positions; functions based on positions won't be available until save data mode is disabled in menu
 * option `save_data` now avoids preloading next/previous image in single media view, and avoids loading more thumbnails then strictly needed
 * save data menu option is now at the menu bottom instead than inside the display sub-menu
