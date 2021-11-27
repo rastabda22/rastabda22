@@ -548,11 +548,6 @@
 				else
 					$("ul#right-menu li.show-bottom-thumbnails").addClass("selected");
 			}
-
-			if (env.options.save_data)
-				$("ul#right-menu #save-data").addClass("selected");
-			else
-				$("ul#right-menu #save-data").removeClass("selected");
 		}
 
 		////////////////// BIG ALBUMS //////////////////////////////
@@ -1361,6 +1356,14 @@
 		} else {
 			$(selectors).addClass("hidden");
 		}
+
+		////////////////// SAVE DATA MODE //////////////////////////////
+
+		if (env.options.save_data)
+			$("ul#right-menu #save-data").addClass("selected");
+		else
+			$("ul#right-menu #save-data").removeClass("selected");
+
 
 		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
 
