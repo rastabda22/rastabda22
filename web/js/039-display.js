@@ -1016,7 +1016,7 @@ $(document).ready(function() {
 			var ajaxOptions = {
 				type: "GET",
 				dataType: "json",
-				url: util.pathJoin([env.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
+				url: util.pathJoin(["cache", env.options.passwords_subdir, encryptedPassword]),
 				success: function(jsonCode) {
 					passwordObject.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;

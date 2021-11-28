@@ -1623,9 +1623,6 @@
 								Functions.setBooleanCookie("saveData", env.options.save_data);
 							} else {
 								util.translate();
-								// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
-								// options.json is in this directory
-								env.server_cache_path = 'cache';
 
 								env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 

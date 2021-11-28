@@ -48,7 +48,7 @@
 				} else {
 					$.ajax(
 						{
-							url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
+							url: util.pathJoin(["cache", jsonRelativeFileName]),
 							type: "GET",
 							dataType: "json",
 							success: function(albumOrPositionsOrMedia) {

@@ -2382,7 +2382,7 @@
 
 	SingleMedia.prototype.originalMediaPath = function() {
 		if (env.options.browser_unsupported_mime_types.includes(this.mimeType))
-			return Utilities.pathJoin([env.server_cache_path, this.convertedPath]);
+			return Utilities.pathJoin(["cache", this.convertedPath]);
 		else
 			return this.trueOriginalMediaPath();
 	};
@@ -2432,9 +2432,9 @@
 				cacheBase = cacheBase.substring(env.options.byMapStringWithTrailingSeparator.length);
 		}
 		if (this.cacheSubdir)
-			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, cacheBase]);
+			return Utilities.pathJoin(["cache", this.cacheSubdir, cacheBase]);
 		else
-			return Utilities.pathJoin([env.server_cache_path, cacheBase]);
+			return Utilities.pathJoin(["cache", cacheBase]);
 	};
 
 	SingleMedia.prototype.mediaPath = function(size) {
@@ -2464,9 +2464,9 @@
 				cacheBase = cacheBase.substring(env.options.byMapStringWithTrailingSeparator.length);
 		}
 		if (this.cacheSubdir)
-			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, cacheBase]);
+			return Utilities.pathJoin(["cache", this.cacheSubdir, cacheBase]);
 		else
-			return Utilities.pathJoin([env.server_cache_path, cacheBase]);
+			return Utilities.pathJoin(["cache", cacheBase]);
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {
@@ -3097,7 +3097,7 @@
 			// use the album composite image, if it exists; otherwise, use MyPhotoShare logo
 			if (env.currentAlbum.hasOwnProperty("compositeImageSize")) {
 				mediaParameter = Utilities.pathJoin([
-					env.server_cache_path,
+					"cache",
 					env.options.cache_album_subdir,
 					// always use jpg image for sharing
 					env.currentAlbum.cacheBase + ".jpg"
@@ -3122,7 +3122,7 @@
 
 				if (env.currentMedia && env.currentMedia.isVideo()) {
 					mediaParameter = Utilities.pathJoin([
-						env.server_cache_path,
+						"cache",
 						env.currentMedia.cacheSubdir,
 						// always use jpg image for sharing
 						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + ".jpg"
@@ -3134,13 +3134,13 @@
 					mediaHeight = env.currentMedia.metadata.size[1];
 
 					mediaParameter = Utilities.pathJoin([
-						env.server_cache_path,
+						"cache",
 						env.currentMedia.cacheSubdir,
 						// always use jpg image for sharing
 						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg"
 					]);
 					whatsAppParameter = Utilities.pathJoin([
-						env.server_cache_path,
+						"cache",
 						env.currentMedia.cacheSubdir,
 						// always use jpg image for sharing
 						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.options.media_thumb_size + "ts.jpg"
