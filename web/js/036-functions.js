@@ -1549,21 +1549,19 @@
 				env.language = "en";
 		};
 
-		return new Promise(
-			function(resolve_getOptions, reject_getOptions) {
-				if (Object.keys(env.options).length > 0 && ! forceReload) {
-					if (! util.isSearchHash()) {
-						// reset the return link from search
-						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
-						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
-					}
-					resolve_getOptions();
-				} else {
-					var ajaxOptions = {
-						type: "GET",
-						dataType: "json",
-						url: "cache/options.json",
-						success: function(data) {
+		if (Object.keys(env.options).length > 0 && ! forceReload) {
+			if (! util.isSearchHash()) {
+				// reset the return link from search
+				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
+				env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
+			}
+			return Promise.resolve();
+		} else {
+			return new Promise(
+				function(resolve_getOptions, reject_getOptions) {
+					var promise = PhotoFloat.getJsonFile("options.json");
+					promise.then(
+						function(data) {
 							// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
 
 							var uiKeys = [
@@ -1833,17 +1831,25 @@
 
 							resolve_getOptions();
 						},
-						error: function(jqXHR, textStatus, errorThrown) {
+						function(jqXHR, textStatus, errorThrown) {
 							if (errorThrown === "Not Found") {
 								reject_getOptions();
 							}
 						}
-					};
-					$.ajax(ajaxOptions);
+					);
+
+					// var ajaxOptions = {
+					// 	type: "GET",
+					// 	dataType: "json",
+					// 	url: "cache/options.json",
+					// 	success:
+					// 	error:
+					// };
+					// $.ajax(ajaxOptions);
 				}
-			}
-		);
-	};
+			);
+		}
+	}
 
 	Functions.prototype.toggleMetadataFromMouse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
