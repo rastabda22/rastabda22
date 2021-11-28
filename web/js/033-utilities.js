@@ -307,7 +307,7 @@
 				}
 			}
 		}
-		$("ul#right-menu #save-data-tip").attr("title", Utilities._t("#save-data-tip"));
+		$("ul#right-menu #save-data").attr("title", Utilities._t("#save-data-tip"));
 	};
 
 	Album.prototype.guessedPasswordCodes = function() {

@@ -2634,7 +2634,7 @@
 			if ($("#album-and-media-container").hasClass("show-media"))
 				util.scrollBottomMediaToHighlightedThumb(util.addMediaLazyLoader);
 			else if (util.isPopup())
-				util.scrollPopupToHighlightedThumb(util.addMediaLazyLoader);
+				util.scrollPopupToHighlightedThumb();
 			else {
 				util.scrollAlbumViewToHighlightedThumb();
 				util.addMediaLazyLoader();
