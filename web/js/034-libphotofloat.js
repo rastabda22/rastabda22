@@ -6,38 +6,49 @@
 	}
 
 	PhotoFloat.getStopWords = function() {
-		return new Promise(
-			function(resolve_getStopWords) {
-				if (! env.options.search_inside_words && env.options.use_stop_words) {
-					// before getting the file check whether it's in the cache
-					if (env.cache.hasOwnProperty("stopWords") && env.cache.stopWords.length) {
-						resolve_getStopWords();
-					} else {
+		if (! env.options.search_inside_words && env.options.use_stop_words) {
+			// before getting the file check whether it's in the cache
+			if (env.cache.hasOwnProperty("stopWords") && env.cache.stopWords.length) {
+				return Promise.resolve();
+			} else {
+				return new Promise(
+					function(resolve_getStopWords) {
 						env.cache.stopWords = [];
 						// get the file
-						var stopWordsFile = util.pathJoin([env.server_cache_path, 'stopwords.json']);
-						var ajaxOptions = {
-							type: "GET",
-							dataType: "json",
-							url: stopWordsFile,
-							success: function(stopWords) {
+						// var stopWordsFile = util.pathJoin(["cache", 'stopwords.json']);
+						var promise = PhotoFloat.getJsonFile("stopwords.json");
+						promise.then(
+							function(stopWords) {
 								env.cache.stopWords = stopWords.stopWords;
 								resolve_getStopWords();
+							},
+							function(jqXHR) {
+								// TO DO something different should be made here?
+								util.errorThenGoUp(jqXHR.status);
 							}
-						};
-						ajaxOptions.error = function(jqXHR) {
-							// TO DO something different should be made here?
-							util.errorThenGoUp(jqXHR.status);
-						};
-						$.ajax(ajaxOptions);
+						);
+						// var ajaxOptions = {
+						// 	type: "GET",
+						// 	dataType: "json",
+						// 	url: stopWordsFile,
+						// 	success: function(stopWords) {
+						// 		env.cache.stopWords = stopWords.stopWords;
+						// 		resolve_getStopWords();
+						// 	}
+						// };
+						// ajaxOptions.error = function(jqXHR) {
+						// 	// TO DO something different should be made here?
+						// 	util.errorThenGoUp(jqXHR.status);
+						// };
+						// $.ajax(ajaxOptions);
 					}
-				} else {
-					// stop words aren't used
-					env.cache.stopWords = [];
-					resolve_getStopWords();
-				}
+				);
 			}
-		);
+		} else {
+			// stop words aren't used
+			env.cache.stopWords = [];
+			return Promise.resolve();
+		}
 	};
 
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
