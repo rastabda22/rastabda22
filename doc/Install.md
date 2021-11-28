@@ -135,7 +135,7 @@ Enable the new configuration (if you used a configuration file in `/etc/apache2/
 $ sudo a2ensite _mysitename_
 ```
 
-#### Other `apache` tweakings
+##### `apache` tweakings
 
 * Compression of files must be enabled with Mod_deflate.
 ```bash
@@ -153,6 +153,27 @@ $ sudo a2enmod headers
 ```bash
 $ service apache2 restart
 ```
+
+#### Local lightweight web server (for local use when `apache` is not available)
+
+`Apache` is certainly one of the best web server, but it's quite hard to install and configure if you don't know it. Alternatives for using `MyPhotoShare` in local linux contexts is to run a simple and lightweight web server: that's enough in order to give `MyPhotoShare` a try. Actually, everything (or almost everything) of `MyPhotoShare` power will be available this way.
+
+Other alternatives are availables, here we will show how to use `php`:
+
+```bash
+$ sudo apt install php-cli
+$ cd /path/to/my/web/root/where/index.php/resides
+$ php -S localhost:8080
+```
+
+Obviously the albums/ and cache/ directories must be located in /path/to/my/web/root/where/index.php/resides, at least as symlinks.
+
+The line which installs php-cli is needed only if php isn't installed on your system yet.
+
+If port 8080 is already used on your system, use a different one, e.g. 8081, 8000, 8001, etc.
+
+Then open your browser and load the page `http:localhost:8080` (if you have used a different port above, use the same port here). You will get your my `MyPhotoShare` site up and running!
+
 
 ### Get geonames in your language
 
