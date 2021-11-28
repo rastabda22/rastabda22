@@ -52,11 +52,11 @@
 	};
 
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
-		return new Promise(
-			function(resolve_getJsonFile, reject_getJsonFile) {
-				if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
-					reject_getJsonFile();
-				} else {
+		if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
+			return Promise.reject();
+		} else {
+			return new Promise(
+				function(resolve_getJsonFile, reject_getJsonFile) {
 					$.ajax(
 						{
 							url: util.pathJoin(["cache", jsonRelativeFileName]),
@@ -72,8 +72,8 @@
 						}
 					);
 				}
-			}
-		);
+			);
+		}
 	};
 
 	PhotoFloat.getMediaAndPositions = function(theAlbumCacheBase, {mustGetMedia, mustGetPositions}) {
