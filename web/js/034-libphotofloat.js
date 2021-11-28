@@ -2158,6 +2158,7 @@
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
 	PhotoFloat.prototype.convertCacheBaseToId = PhotoFloat.convertCacheBaseToId;
+	PhotoFloat.prototype.getJsonFile = PhotoFloat.getJsonFile;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

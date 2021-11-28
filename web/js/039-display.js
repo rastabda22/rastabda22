@@ -1013,11 +1013,9 @@ $(document).ready(function() {
 			var encryptedPassword = md5(passwordObject.val());
 			passwordObject.val("");
 
-			var ajaxOptions = {
-				type: "GET",
-				dataType: "json",
-				url: util.pathJoin(["cache", env.options.passwords_subdir, encryptedPassword]),
-				success: function(jsonCode) {
+			promise = phFl.getJsonFile(util.pathJoin([env.options.passwords_subdir, encryptedPassword]));
+			promise.then(
+				function(jsonCode) {
 					passwordObject.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;
 
@@ -1056,7 +1054,7 @@ $(document).ready(function() {
 						$(window).hashchange();
 					}
 				},
-				error: function() {
+				function() {
 					passwordObject.css("background-color", "red");
 					passwordObject.on(
 						'input',
@@ -1066,8 +1064,16 @@ $(document).ready(function() {
 						}
 					);
 				}
-			};
-			$.ajax(ajaxOptions);
+			);
+
+			// var ajaxOptions = {
+			// 	type: "GET",
+			// 	dataType: "json",
+			// 	url: util.pathJoin(["cache", env.options.passwords_subdir, encryptedPassword]),
+			// 	success: ,
+			// 	error:
+			// };
+			// $.ajax(ajaxOptions);
 
 			return false;
 		}
