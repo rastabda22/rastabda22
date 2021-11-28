@@ -252,11 +252,12 @@ def get_options(args):
 	for option in default_config.options('options'):
 		usr_config.set("options", option, default_config.get("options", option))
 
-	try:
-		usr_config.readfp(open(args.options_file, "r"))
-	except FileNotFoundError:
-		message("PRE FATAL ERROR", "options file '" + args.options_file + "' doesn't exist or unreadable, quitting", 0)
-		sys.exit(-97)
+	if (args.option_file):
+		try:
+			usr_config.readfp(open(args.options_file, "r"))
+		except FileNotFoundError:
+			message("PRE FATAL ERROR", "options file '" + args.options_file + "' doesn't exist or unreadable, quitting", 0)
+			sys.exit(-97)
 
 	message("PRE Options", "asterisk denotes options changed by config file", 0)
 	next_level()
@@ -503,7 +504,10 @@ def get_options(args):
 	# work with the passwords
 	old_password_codes = get_old_password_codes()
 
-	passwords_file_name = os.path.join(os.path.dirname(args.options_file), config['passwords_file'])
+	try:
+		passwords_file_name = os.path.join(os.path.dirname(args.options_file), config['passwords_file'])
+	except AttributeError:
+		passwords_file_name = ""
 	password_codes = []
 	passwords_md5 = []
 
@@ -555,7 +559,10 @@ def get_options(args):
 
 	# read the excluded patterns file
 	# it must exist and be readable, otherwise skip it
-	excluded_patterns_file_name = os.path.join(os.path.dirname(args.options_file), config['excluded_patterns_file'])
+	try:
+		excluded_patterns_file_name = os.path.join(os.path.dirname(args.options_file), config['excluded_patterns_file'])
+	except AttributeError:
+		excluded_patterns_file_name = ""
 
 	try:
 		with open(excluded_patterns_file_name, 'r') as excluded_patterns_file:

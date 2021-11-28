@@ -23,8 +23,9 @@ def main():
 		description='Scan a media tree in order to generate cache files suitable for showing a beautiful web gallery',
 	)
 	parser.add_argument(
-		"options_file",
-		help="the config file, if it's the only positional argument, or the album path, if two positional arguments are supplied"
+		"option_file",
+		nargs='?',
+		help="the config file"
 	)
 	parser.add_argument(
 		"-w",
@@ -44,8 +45,19 @@ def main():
 		dest="cache_path",
 		help="the full cache path; supersedes the value in the options file"
 	)
-	parser.add_argument("--version", action="version", version='%(prog)s v5.5.0')
+	parser.add_argument(
+		"--version",
+		action="version",
+		version='%(prog)s v5.5.0'
+	)
 	args = parser.parse_args()
+
+	if (not args.option_file and not args.web_root_path):
+		print("FATAL ERROR: either the options file or the web_root_path parameter must be given")
+		print()
+		parser.print_help()
+		sys.exit(-97)
+
 
 	Options.get_options(args)
 

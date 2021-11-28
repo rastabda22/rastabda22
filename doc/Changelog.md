@@ -1,3 +1,6 @@
+* the scanner can now run with the only `--web_root_path` parameter, without options file
+* bug fixes and trimmings
+
 ### version v5.5.0 (November 26, 2021)
 
 * option `save_data` now avoids loading positions; functions based on positions won't be available until save data mode is disabled in menu

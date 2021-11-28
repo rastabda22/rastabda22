@@ -172,6 +172,12 @@ The line which installs php-cli is needed only if php isn't installed on your sy
 
 If port 8080 is already used on your system, use a different one, e.g. 8081, 8000, 8001, etc.
 
+The scanner must have been run, obviously. If you haven't run it yet, the simplest way to run it is with the command:
+
+```bash
+$ /path/to/myphotoshare/directory/bin/scanner --web_root_path /path/to/my/web/root/where/index.php/resides
+```
+
 Then open your browser and load the page `http:localhost:8080` (if you have used a different port above, use the same port here). You will get your my `MyPhotoShare` site up and running!
 
 
