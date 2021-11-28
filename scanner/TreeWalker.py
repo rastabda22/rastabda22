@@ -2265,8 +2265,8 @@ class TreeWalker:
 		options_to_save['version'] = Options.version
 		options_to_save['json_version'] = Options.json_version
 
-		with open(json_options_file, 'w') as options_file:
-			json.dump(options_to_save, options_file)
+		with open(json_options_file, 'w') as option_file:
+			json.dump(options_to_save, option_file)
 		indented_message("json options file saved!", "", 5)
 
 

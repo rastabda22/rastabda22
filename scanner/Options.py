@@ -254,9 +254,9 @@ def get_options(args):
 
 	if (args.option_file):
 		try:
-			usr_config.readfp(open(args.options_file, "r"))
+			usr_config.readfp(open(args.option_file, "r"))
 		except FileNotFoundError:
-			message("PRE FATAL ERROR", "options file '" + args.options_file + "' doesn't exist or unreadable, quitting", 0)
+			message("PRE FATAL ERROR", "options file '" + args.option_file + "' doesn't exist or unreadable, quitting", 0)
 			sys.exit(-97)
 
 	message("PRE Options", "asterisk denotes options changed by config file", 0)
@@ -505,8 +505,10 @@ def get_options(args):
 	old_password_codes = get_old_password_codes()
 
 	try:
-		passwords_file_name = os.path.join(os.path.dirname(args.options_file), config['passwords_file'])
+		passwords_file_name = os.path.join(os.path.dirname(args.option_file), config['passwords_file'])
 	except AttributeError:
+		passwords_file_name = ""
+	except TypeError:
 		passwords_file_name = ""
 	password_codes = []
 	passwords_md5 = []
@@ -560,8 +562,10 @@ def get_options(args):
 	# read the excluded patterns file
 	# it must exist and be readable, otherwise skip it
 	try:
-		excluded_patterns_file_name = os.path.join(os.path.dirname(args.options_file), config['excluded_patterns_file'])
+		excluded_patterns_file_name = os.path.join(os.path.dirname(args.option_file), config['excluded_patterns_file'])
 	except AttributeError:
+		excluded_patterns_file_name = ""
+	except TypeError:
 		excluded_patterns_file_name = ""
 
 	try:
