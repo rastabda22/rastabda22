@@ -157,6 +157,22 @@ If you prefer to keep control and understand how it works, follow the [Setup and
 
 ## Start Your Media Gallery in 6 Easy Steps
 
+### Quick 'n dirty setup, in order to give `MyPhotoShare` a try:
+
+1. `cd`
+1. `wget https://gitlab.com/paolobenve/myphotoshare/-/archive/vX.Y.Z/myphotoshare-vX.Y.Z.zip`: be shure su replace "X.Y.Z" with the version number of latest release, you can know what they are at `https://gitlab.com/paolobenve/myphotoshare/-/releases`
+1. `unzip myphotoshare-vX.Y.Z.zip`: this will unzip `MyPhotoShare`'s files, within `myphotoshare-vX.Y.Z` directory
+1. `cd myphotoshare-vX.Y.Z`
+1. `ln -s /path/to/your/albums web/albums`
+1. `bin/scanner --web-root-path web`: this command runs the scanner, generating the `web/cache` directory with all its content
+1. `cd web`
+1. `sudo apt install php-cli` on debian/ubuntu: this installs a web server on your pc, it's needed to display your gallery. No need to do this if php is already installed
+1. `php -S localhost:8080`: this runs the local web server (you could have to change the port)
+
+Now, in your browser, open `http://localhost:8080`: you'll see the `MyPhotoShare` beautiful gallery!
+
+### Installing on a production server
+
 1. You must have a web server to display your gallery.
 1. [Install MyPhotoShare](#install-it).
 1. Adapt the configuration file [`myphotoshare.conf`](myphotoshare.conf.defaults) to your liking. At a minimum, you must change 3 settings to locate where is the web root, where are the media albums, and where the cache files are written.
