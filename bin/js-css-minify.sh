@@ -1,16 +1,17 @@
 #!/bin/bash
 
-PROJECT_DIR="$(dirname $(realpath $0))"
+PROJECT_DIR="$(dirname $(realpath $0))/.."
 DEFAULT_CONF="$PROJECT_DIR/myphotoshare.conf.defaults"
 CONF="$1"
 
 if [ -z "$CONF" ]; then
-	# The script must be launched with the user's config file
+	# The script would be better launched with the user's config file
 	( >&2 echo )
 	( >&2 echo "Usage: ./$0 MYPHOTOSHARE_CONFIG_FILE" )
 	( >&2 echo )
-	( >&2 echo "Quitting" )
-	exit 1
+	( >&2 echo "config file not provided: DO NOT DO THIS ON PRODUCTION INSTALLATIONS" )
+	( >&2 echo "Keeping on using default options in myphotoshare.conf.defaults" )
+	CONF=$DEFAULT_CONF
 elif [ ! -f "$CONF" ]; then
 	( >&2 echo )
 	( >&2 echo "Error: file '$CONF' does not exist" )
