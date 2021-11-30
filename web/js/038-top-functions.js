@@ -3347,7 +3347,51 @@
 					id: 'mapbox.streets'
 				}
 			).addTo(env.mymap);
+
 			L.control.scale().addTo(env.mymap);
+
+			if (Modernizr.geolocation && window.location.protocol === "https:") {
+				L.Control.myLocationButton = L.Control.extend({
+					onAdd: function(map) {
+						var img = L.DomUtil.create('img');
+
+						img.src = 'img/current-location.png';
+						img.style.width = '50px';
+
+						return img;
+					},
+
+					onRemove: function(map) {
+						// Nothing to do here
+					}
+				});
+
+				L.control.myLocationButton = function(opts) {
+					return new L.Control.myLocationButton(opts);
+				}
+
+				L.control.myLocationButton(
+					{
+						position: 'bottomright'
+					}
+				).addTo(env.mymap);
+				$(".leaflet-bottom.leaflet-right").off("click").on(
+					"click",
+					function(ev) {
+						ev.stopPropagation();
+						navigator.geolocation.getCurrentPosition(
+							function success(position) {
+								var myLat = position.coords.latitude;
+								var myLng = position.coords.longitude;
+
+								env.mymap.panTo(new L.LatLng(myLat, myLng));
+
+							}
+						);
+
+					}
+				);
+			}
 
 			if (
 				env.currentMedia !== null && ! env.currentMedia.hasGpsData() &&
