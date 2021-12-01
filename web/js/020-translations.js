@@ -324,7 +324,6 @@
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
 				"#click-for-your-position": "Center the map on your position",
 				"#error-getting-location": "Error getting you position",
-
 			},
 			it: {
 				"#root-album": "album radice",
@@ -817,7 +816,6 @@
 				"#how-to-download-selection": "Puedes descargar la selección mostrándola,<br />más arriba en el submenu Selección",
 				"#click-for-your-position": "Centra el mapa en tu posición",
 				"#error-getting-location": "Error al recuperar tu posición",
-				",
 			},
 			fr: {
 				"#root-album": "album racine",
