@@ -3375,6 +3375,7 @@
 						position: 'bottomright'
 					}
 				).addTo(env.mymap);
+				$(".leaflet-bottom.leaflet-right").attr("title", util._t("#click-for-your-position"));
 				$(".leaflet-bottom.leaflet-right").off("click").on(
 					"click",
 					function(ev) {
@@ -3385,10 +3386,8 @@
 								var myLng = position.coords.longitude;
 
 								env.mymap.panTo(new L.LatLng(myLat, myLng));
-
 							}
 						);
-
 					}
 				);
 			}

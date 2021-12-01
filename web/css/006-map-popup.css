@@ -77,6 +77,10 @@
 	padding: 4px 2px 0 1px;
 }
 
+.leaflet-bottom.leaflet-right img {
+	cursor: pointer;
+}
+
 .modal-close, #mapdiv .leaflet-popup-close-button, #auth-close {
 	top: -20px;
 }

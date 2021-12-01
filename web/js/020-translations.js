@@ -322,6 +322,8 @@
 				"#description-hide": "hide",
 				"#description-show": "show",
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
+				"#click-for-your-position": "Center the map on your position",
+
 			},
 			it: {
 				"#root-album": "album radice",
@@ -566,6 +568,7 @@
 				"#description-hide": "nascondi",
 				"#description-show": "mostra",
 				"#how-to-download-selection": "Per scaricare la selezione bisogna mostrarla,<br />vedi più sopra nel sottomenù Selezione",
+				"#click-for-your-position": "Centra la mappa sulla tua posizione",
 			},
 			es: {
 				"#root-album": "álbum raíz",
@@ -810,6 +813,7 @@
 				"#description-hide": "esconde",
 				"#description-show": "muestra",
 				"#how-to-download-selection": "Puedes descargar la selección mostrándola,<br />más arriba en el submenu Selección",
+				"#click-for-your-position": "Centra el mapa en tu posición",
 			},
 			fr: {
 				"#root-album": "album racine",
@@ -1053,6 +1057,7 @@
 				"#description-hide": "cacher",
 				"#description-show": "afficher",
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
+				"#click-for-your-position": "Center the map on your position",
 			}
 		};
 	};
