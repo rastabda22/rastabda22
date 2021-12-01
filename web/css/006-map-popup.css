@@ -89,6 +89,17 @@
 
 #error-getting-current-location-little {
 		font-size: 30%;
+		display: none;
+		font-weight: normal;
+		font-style: normal;
+		line-height: 1.5em;
+}
+
+#error-getting-current-location-question-mark {
+		font-size: 30%;
+		color: white;
+		background-color: gray;
+		cursor: pointer;
 }
 
 .modal-close, #mapdiv .leaflet-popup-close-button, #auth-close {

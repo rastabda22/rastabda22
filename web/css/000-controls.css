@@ -715,12 +715,17 @@ video {
 .error, .browsing-mode-message, .sort-message, .selection-message, #error-overlay, #auth-text, .search-failed, .messages {
 	position: fixed;
 	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+	/* left: 0; */
+	/* width: 100%;
+	height: 100%; */
 	display: none;
 	height: auto;
 	padding: 15px;
+	left: 5%;
+	right: 5%;
+	width: 85%;
+	border: 10px solid lightgray;
+	margin: 0 auto;
 }
 .error, .browsing-mode-message, .sort-message, .selection-message, #auth-text, .search-failed, .messages {
 	margin-top: 20%;

@@ -3350,7 +3350,7 @@
 
 			L.control.scale().addTo(env.mymap);
 
-			if (Modernizr.geolocation && window.location.protocol === "https:") {
+			if (true || Modernizr.geolocation && window.location.protocol === "https:") {
 				L.Control.myLocationButton = L.Control.extend({
 					onAdd: function(map) {
 						var img = L.DomUtil.create('img');
@@ -3368,7 +3368,7 @@
 
 				L.control.myLocationButton = function(opts) {
 					return new L.Control.myLocationButton(opts);
-				}
+				};
 
 				L.control.myLocationButton(
 					{
@@ -3381,8 +3381,7 @@
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						$("#error-getting-current-location").stop();
-						$("#error-getting-current-location").hide();
+						$("#error-getting-current-location").stop().hide();
 						navigator.geolocation.getCurrentPosition(
 							function geolocationSuccess(position) {
 								env.mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
@@ -3391,15 +3390,28 @@
 								ev.stopPropagation();
 								$("#error-getting-current-location").empty();
 								$("#error-getting-current-location").html(
-									util._t("#error-getting-current-location") +
+									util._t("#error-getting-current-location") + " <span id='error-getting-current-location-question-mark'>?</span>" +
 									env.br +
-									"<span id='error-getting-current-location-little'>(" + err.message + ")</span>"
+									"<div id='error-getting-current-location-little'>" + "(" + err.message + ")</div>"
 								);
-								// alert(err.code + " " + err.message);
 								$("#error-getting-current-location").stop().fadeIn(
 									1000,
 									function() {
 										$("#error-getting-current-location").stop().fadeOut(5000);
+									}
+								);
+								$("#error-getting-current-location-question-mark, #error-getting-current-location").off().on(
+									"click",
+									function(ev) {
+										ev.stopPropagation();
+										$("#error-getting-current-location").stop().fadeIn(100);
+										$("#error-getting-current-location-question-mark, #error-getting-current-location").off("click").on(
+											"click",
+											function() {
+												$("#error-getting-current-location").hide();
+											}
+										);
+										$("#error-getting-current-location-little").show();
 									}
 								);
 							},
