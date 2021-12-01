@@ -3378,7 +3378,7 @@
 				$(".leaflet-bottom.leaflet-right").attr("title", util._t("#click-for-your-position"));
 				$(".leaflet-bottom.leaflet-right").off("click").on(
 					"click",
-					function(ev) {
+					function yourLocationGot(ev) {
 						ev.stopPropagation();
 						navigator.geolocation.getCurrentPosition(
 							function success(position) {
@@ -3386,6 +3386,17 @@
 								var myLng = position.coords.longitude;
 
 								env.mymap.panTo(new L.LatLng(myLat, myLng));
+							}
+						);
+					},
+					function yourLocationError(ev) {
+						ev.stopPropagation();
+						$("#error-getting").stop().remove();
+						$(".leaflet-bottom.leaflet-right img").before("<span id='error-getting'>" + util._t("#error-getting-location") + "</span>");
+						$("#error-getting").stop().fadeOut(
+							5000,
+							function() {
+								$("#error-getting").remove();
 							}
 						);
 					}

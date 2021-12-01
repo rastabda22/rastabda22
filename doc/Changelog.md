@@ -2,6 +2,7 @@
 * `js-css-minify.sh` can now be run without config file (for testing purposes, in production environments a config file is to be used)
 * bug fixes and trimmings
 * modified documentation: added a quick 'n dirty procedure that permits to give `MyPhotoShare` a try on a local pc with very little effort
+* map: added a button for centering the map in the user location
 
 ### version v5.5.0 (November 26, 2021)
 
