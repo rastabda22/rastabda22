@@ -87,6 +87,10 @@
 	background-color: white;
 }
 
+#error-getting-current-location-little {
+		font-size: 30%;
+}
+
 .modal-close, #mapdiv .leaflet-popup-close-button, #auth-close {
 	top: -20px;
 }

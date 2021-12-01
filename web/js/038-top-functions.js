@@ -3380,19 +3380,31 @@
 					"click",
 					function(ev) {
 						ev.stopPropagation();
+						ev.preventDefault();
+						$("#error-getting-current-location").stop();
+						$("#error-getting-current-location").hide();
 						navigator.geolocation.getCurrentPosition(
 							function geolocationSuccess(position) {
 								env.mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
 							},
 							function geolocationError(err) {
 								ev.stopPropagation();
-								alert(err.code + " " + err.message);
+								$("#error-getting-current-location").empty();
+								$("#error-getting-current-location").html(
+									util._t("#error-getting-current-location") +
+									env.br +
+									"<span id='error-getting-current-location-little'>(" + err.message + ")</span>"
+								);
+								// alert(err.code + " " + err.message);
 								$("#error-getting-current-location").stop().fadeIn(
 									1000,
 									function() {
-										$("#error-getting-current-location").stop().fadeOut(3000);
+										$("#error-getting-current-location").stop().fadeOut(5000);
 									}
 								);
+							},
+							{
+								timeout: 1000
 							}
 						);
 					}
