@@ -323,7 +323,7 @@
 				"#description-show": "show",
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
 				"#click-for-your-position": "Center the map on your position",
-				"#error-getting-location": "Error getting your position",
+				"#error-getting-current-location": "Error getting your position",
 			},
 			it: {
 				"#root-album": "album radice",
@@ -569,7 +569,7 @@
 				"#description-show": "mostra",
 				"#how-to-download-selection": "Per scaricare la selezione bisogna mostrarla,<br />vedi più sopra nel sottomenù Selezione",
 				"#click-for-your-position": "Centra la mappa sulla tua posizione",
-				"#error-getting-location": "Errore nel recuperare la tua posizione",
+				"#error-getting-current-location": "Errore nel recuperare la tua posizione",
 			},
 			es: {
 				"#root-album": "álbum raíz",
@@ -815,7 +815,7 @@
 				"#description-show": "muestra",
 				"#how-to-download-selection": "Puedes descargar la selección mostrándola,<br />más arriba en el submenu Selección",
 				"#click-for-your-position": "Centra el mapa en tu posición",
-				"#error-getting-location": "Error al recuperar tu posición",
+				"#error-getting-current-location": "Error al recuperar tu posición",
 			},
 			fr: {
 				"#root-album": "album racine",
@@ -1060,7 +1060,7 @@
 				"#description-show": "afficher",
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
 				"#click-for-your-position": "Center the map on your position",
-				"#error-getting-location": "Error getting your position",
+				"#error-getting-current-location": "Error getting your position",
 			}
 		};
 	};

@@ -3382,21 +3382,16 @@
 						ev.stopPropagation();
 						navigator.geolocation.getCurrentPosition(
 							function success(position) {
-								var myLat = position.coords.latitude;
-								var myLng = position.coords.longitude;
-
-								env.mymap.panTo(new L.LatLng(myLat, myLng));
+								env.mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
 							}
 						);
 					},
 					function yourLocationError(ev) {
 						ev.stopPropagation();
-						$("#error-getting").stop().remove();
-						$(".leaflet-bottom.leaflet-right img").before("<span id='error-getting'>" + util._t("#error-getting-location") + "</span>");
-						$("#error-getting").stop().fadeOut(
-							5000,
+						$("#error-getting-current-location").stop().fadeIn(
+							1000,
 							function() {
-								$("#error-getting").remove();
+								$("#error-getting-current-location").stop().fadeOut(3000);
 							}
 						);
 					}

@@ -719,6 +719,8 @@ video {
 	width: 100%;
 	height: 100%;
 	display: none;
+	height: auto;
+	padding: 15px;
 }
 .error, .browsing-mode-message, .sort-message, .selection-message, #auth-text, .search-failed, .messages {
 	margin-top: 20%;
