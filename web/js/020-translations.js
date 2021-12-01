@@ -323,7 +323,7 @@
 				"#description-show": "show",
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
 				"#click-for-your-position": "Center the map on your position",
-				"#error-getting-location": "Error getting you position",
+				"#error-getting-location": "Error getting your position",
 			},
 			it: {
 				"#root-album": "album radice",
