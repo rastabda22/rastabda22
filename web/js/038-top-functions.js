@@ -3350,7 +3350,7 @@
 
 			L.control.scale().addTo(env.mymap);
 
-			if (true || Modernizr.geolocation && window.location.protocol === "https:") {
+			if (Modernizr.geolocation && window.location.protocol === "https:") {
 				L.Control.myLocationButton = L.Control.extend({
 					onAdd: function(map) {
 						var img = L.DomUtil.create('img');
