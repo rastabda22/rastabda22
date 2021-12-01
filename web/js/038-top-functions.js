@@ -3378,20 +3378,21 @@
 				$(".leaflet-bottom.leaflet-right").attr("title", util._t("#click-for-your-position"));
 				$(".leaflet-bottom.leaflet-right").off("click").on(
 					"click",
-					function yourLocationGot(ev) {
+					function(ev) {
 						ev.stopPropagation();
 						navigator.geolocation.getCurrentPosition(
-							function success(position) {
+							function geolocationSuccess(position) {
 								env.mymap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
-							}
-						);
-					},
-					function yourLocationError(ev) {
-						ev.stopPropagation();
-						$("#error-getting-current-location").stop().fadeIn(
-							1000,
-							function() {
-								$("#error-getting-current-location").stop().fadeOut(3000);
+							},
+							function geolocationError(err) {
+								ev.stopPropagation();
+								alert(err.code + " " + err.message);
+								$("#error-getting-current-location").stop().fadeIn(
+									1000,
+									function() {
+										$("#error-getting-current-location").stop().fadeOut(3000);
+									}
+								);
 							}
 						);
 					}
