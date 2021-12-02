@@ -512,7 +512,10 @@ class Album(object):
 
 	@property
 	def must_separate_media(self):
-		return Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
+		return (
+			not Options.config['save_data'] and 
+			Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
+		)
 
 	@property
 	def must_separate_positions(self):
