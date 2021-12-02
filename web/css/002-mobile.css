@@ -19,15 +19,28 @@
 		z-index: 1;
 	}
 	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, .messages {
-		margin-top: 15%;
+		left: 1%;
+		right: 1%;
+		width: 80%;
+		border: 10px solid lightgray;
+		margin: 0 auto;
+		margin-top: 20%;
+		font-size: 2em;
 	}
 
 	#auth-question {
 		font-size: 1em;
 	}
 
-	#menu-icon {
-		font-size: 140%;
+	#right-menu #menu-icon {
+		font-size: 164%;
+		padding: .1em .4em .1em .2em;
+	}
+
+	#right-menu #search-icon {
+		height: 31px;
+		width: 27px;
+		padding: .1em .3em .1em .3em;
 	}
 
 	#padlock {
@@ -40,6 +53,7 @@
 		height: 23px;
 		float: right;
 		padding-bottom: 10px;
+		padding-right: 10px;
 	}
 
 	#menu-and-padlock {
@@ -48,7 +62,7 @@
 	}
 
 	#my-modal .modal-close {
-	    top: 22px !important;
+	    top: 47px !important;
 	    right: 22px !important;
 	}
 

@@ -712,6 +712,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
+
 .error, .browsing-mode-message, .sort-message, .selection-message, #error-overlay, #auth-text, .search-failed, .messages {
 	position: fixed;
 	top: 0;
@@ -727,6 +728,7 @@ video {
 	border: 10px solid lightgray;
 	margin: 0 auto;
 }
+
 .error, .browsing-mode-message, .sort-message, .selection-message, #auth-text, .search-failed, .messages {
 	margin-top: 20%;
 	text-align: center;
