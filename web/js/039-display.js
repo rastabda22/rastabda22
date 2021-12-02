@@ -1180,7 +1180,32 @@ $(document).ready(function() {
 		}
 	);
 
-	// execution starts here
-	$(window).hashchange();
+	// Execution starts here
+	// An array of promises is used in order to prepare for new formats (avif, jxl)
+	// they aren't supported yet because Pillow doesn't support them
+	var formatPromises = [];
+	var webpPromise = new Promise(
+		function(resolve_webpPromise) {
+			Modernizr.on(
+				"webp",
+				function(webpSupported) {
+					if (webpSupported) {
+						// format supported
+						$("html").addClass("webp");
+					} else {
+						// not-supported
+						$("html").addClass("notwebp");
+					}
+					resolve_webpPromise();
+				}
+			);
+		}
+	);
+	formatPromises.push(webpPromise);
 
+	Promise.all(formatPromises).then(
+		function() {
+			$(window).hashchange();
+		}
+	);
 });
