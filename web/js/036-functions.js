@@ -1823,7 +1823,7 @@
 							env.options.format = "jpg";
 							for (let i = 0; i < env.options.cache_images_formats.length; i ++) {
 								let format = env.options.cache_images_formats[i];
-								if ($("html").hasClass(format)) {
+								if ($("html").hasClass(format) || ! $("html").hasClass("not" + format)) {
 									env.options.format = format;
 									break;
 								}
@@ -1837,15 +1837,6 @@
 							}
 						}
 					);
-
-					// var ajaxOptions = {
-					// 	type: "GET",
-					// 	dataType: "json",
-					// 	url: "cache/options.json",
-					// 	success:
-					// 	error:
-					// };
-					// $.ajax(ajaxOptions);
 				}
 			);
 		}
