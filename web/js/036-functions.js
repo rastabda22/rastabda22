@@ -1547,7 +1547,7 @@
 				env.language = env.options.language;
 			else
 				env.language = "en";
-		};
+		}
 
 		if (Object.keys(env.options).length > 0 && ! forceReload) {
 			if (! util.isSearchHash()) {
@@ -1582,16 +1582,6 @@
 							for (var key in data)
 								if (data.hasOwnProperty(key) && (! forceReload || uiKeys.indexOf(key) !== -1))
 									env.options[key] = data[key];
-
-							// decide what format to use for cache images
-							env.options.format = "jpg";
-							for (let i = 0; i < env.options.cache_images_formats.length; i ++) {
-								let format = env.options.cache_images_formats[i];
-								if ($("html").hasClass(format)) {
-									env.options.format = format;
-									break;
-								}
-							}
 
 							if (env.options.save_data)
 								// do not optimize image formats
@@ -1829,6 +1819,16 @@
 									$("#powered-by").attr("title", util._t("#software-version") + ": " + env.options.version + " - " + util._t("#json-version") + ": " + env.options.json_version.toString());
 							}
 
+							// decide what format to use for cache images
+							env.options.format = "jpg";
+							for (let i = 0; i < env.options.cache_images_formats.length; i ++) {
+								let format = env.options.cache_images_formats[i];
+								if ($("html").hasClass(format)) {
+									env.options.format = format;
+									break;
+								}
+							}
+
 							resolve_getOptions();
 						},
 						function(jqXHR, textStatus, errorThrown) {
@@ -1849,7 +1849,7 @@
 				}
 			);
 		}
-	}
+	};
 
 	Functions.prototype.toggleMetadataFromMouse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {

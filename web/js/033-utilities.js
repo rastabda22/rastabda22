@@ -2381,10 +2381,14 @@
 	};
 
 	SingleMedia.prototype.originalMediaPath = function() {
-		if (env.options.browser_unsupported_mime_types.includes(this.mimeType))
-			return Utilities.pathJoin(["cache", this.convertedPath]);
-		else
+		if (
+			! env.options.browser_unsupported_mime_types.includes(this.mimeType) ||
+			this.mimeType === "image/webp" && $("html").hasClass("webp")
+		) {
 			return this.trueOriginalMediaPath();
+		} else {
+			return Utilities.pathJoin(["cache", this.convertedPath]);
+		}
 	};
 
 	SingleMedia.prototype.trueOriginalMediaPath = function() {
