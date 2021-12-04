@@ -896,19 +896,14 @@
 
 	TopFunctions.trackPiwik = function(id) {
 		// trigger piwik tracking. It's here because it needs document.title
-		if (env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
+		if (true || env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
+			_paq=[];
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			let titleText, splittedTitle;
-			if (id === "center") {
-				titleText = $(".media-box#center .title-string")[0].textContent;
-			} else {
-				// id is "album"
-				titleText = $("#album-view .title-string .title-main")[0].innerText;
-			}
-			splittedTitle = titleText.split("»");
-			if (splittedTitle.length > 1)
-				splittedTitle.shift();
-			titleText = splittedTitle.join(" » ");
+			splittedTitle = document.title.split("«");
+			splittedTitle = splittedTitle.map(text => text.trim())
+			titleText = splittedTitle.join(" « ");
+
 			_paq.push(['setDocumentTitle', titleText]);
 			_paq.push(['trackPageView']);
 		}
