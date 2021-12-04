@@ -896,8 +896,7 @@
 
 	TopFunctions.trackPiwik = function(id) {
 		// trigger piwik tracking. It's here because it needs document.title
-		if (true || env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
-			_paq=[];
+		if (env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			let titleText, splittedTitle;
 			splittedTitle = document.title.split("«");
