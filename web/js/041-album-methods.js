@@ -2473,7 +2473,6 @@
 					$("#thumbs").addClass("hidden");
 				}
 
-				util.addMediaLazyLoader();
 				env.windowWidth = $(window).innerWidth();
 
 				f.updateMenu();
@@ -2481,6 +2480,8 @@
 					this.bindSubalbumSortEvents();
 				if (env.currentAlbum.media.length)
 					this.bindMediaSortEvents();
+
+				util.addMediaLazyLoader();
 			}
 
 
