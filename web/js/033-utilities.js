@@ -1742,7 +1742,7 @@
 		);
 	};
 
-	Utilities.addMediaLazyLoader = function() {
+	Utilities.prototype.addMediaLazyLoader = function() {
 		var threshold = env.options.media_thumb_size;
 		if (env.options.save_data)
 			threshold = 0;
@@ -3112,7 +3112,6 @@
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
 	Utilities.prototype.closeMenu = Utilities.closeMenu;
 	Utilities.prototype.openSearchMenu = Utilities.openSearchMenu;
-	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
 	Utilities.prototype.openInNewTab = Utilities.openInNewTab;
 	Utilities.prototype.isMap = Utilities.isMap;
