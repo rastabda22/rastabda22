@@ -1,8 +1,12 @@
+### version v5.5.1 (December 5, 2021)
+
 * the scanner can now run with the only `--web_root_path` parameter, without options file
 * `js-css-minify.sh` can now be run without config file (for testing purposes, in production environments a config file is to be used)
 * bug fixes and trimmings
 * modified documentation: added a quick 'n dirty procedure that permits to give `MyPhotoShare` a try on a local pc with very little effort
 * map: added a button for centering the map on the user location
+* js scripts reorganized: all class methods belong to class prototype
+* revert page title for piwik/matomo usage
 
 ### version v5.5.0 (November 26, 2021)
 

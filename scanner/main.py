@@ -48,7 +48,7 @@ def main():
 	parser.add_argument(
 		"--version",
 		action="version",
-		version='%(prog)s v5.5.0'
+		version='%(prog)s v5.5.1'
 	)
 	args = parser.parse_args()
 
