@@ -1,6 +1,10 @@
 # Known issues
 
-Updated: 2019-01-30
+Updated: 2021-12-05
+
+#### Placeholder is sometimes shown instead of media thumbnail
+
+When browsing the albums, sometimes the user sees the media placeholders instead of the media themselves (#334).
 
 #### Issues related to previous scanner versions
 
