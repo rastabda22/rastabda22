@@ -1311,9 +1311,9 @@
 						}
 					}
 					if (currentObjectIsASubalbums)
-					util.scrollToHighlightedSubalbum(newObject);
+						util.scrollToHighlightedSubalbum(newObject);
 					else
-					util.scrollAlbumViewToHighlightedThumb(newObject);
+						util.scrollAlbumViewToHighlightedThumb(newObject);
 
 					// adapt subalbums and media caption height
 					util.adaptSubalbumCaptionHeight();
