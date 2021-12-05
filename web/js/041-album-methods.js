@@ -3441,6 +3441,9 @@
 
 				if (env.options.save_data) {
 					let randomMedia = ithSubalbum.randomMedia[parseInt(Math.floor(Math.random() * ithSubalbum.randomMedia.length))];
+					var randomMediaFromCache = env.cache.getSingleMedia(randomMedia);
+					if (randomMediaFromCache !== false)
+						randomMedia = randomMediaFromCache;
 					self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
 				} else {
 					self.pickRandomMediaAndInsertIt(iSubalbum);
