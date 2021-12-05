@@ -74,11 +74,8 @@ class TreeWalker:
 
 		next_level()
 		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
-
-		# permit searching the title and description of the root album too
-		self.add_album_to_tree_by_search(folders_album)
-
 		back_level()
+
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
@@ -89,6 +86,9 @@ class TreeWalker:
 
 			message("changes have occurred in the album tree", "I must keep working!", 3)
 			next_level()
+
+			# permit searching the title and description of the root album too
+			self.add_album_to_tree_by_search(folders_album)
 
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
 			self.origin_album.nums_protected_media_in_sub_tree_non_geotagged.merge(folders_album.nums_protected_media_in_sub_tree_non_geotagged)
