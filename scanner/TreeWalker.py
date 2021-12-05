@@ -2107,6 +2107,9 @@ class TreeWalker:
 		# pick a maximum of max_album_share_thumbnails_number random images in album and subalbums
 		# and generate a square composite image
 
+		if album.nums_media_in_sub_tree.total() == 0:
+			return [None, None]
+
 		map_width = None
 
 		# determine the number of images to use
