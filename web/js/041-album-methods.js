@@ -3451,8 +3451,6 @@
 				}
 			}
 
-			if (! util.aSingleMediaIsHighlighted())
-				util.scrollToHighlightedSubalbum();
 			if (populateSubalbums)
 				env.albumInSubalbumDiv = self;
 			$("#loading").hide();
@@ -3474,6 +3472,9 @@
 
 			util.highlightSearchedWords();
 		}
+
+		if (! util.aSingleMediaIsHighlighted())
+			util.scrollToHighlightedSubalbum();
 	};
 
 }());

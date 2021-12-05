@@ -161,7 +161,12 @@ $(document).ready(function() {
 					if (env.currentMedia === null && e.key === "Enter") {
 						highlightedObject.click();
 						return false;
-					} else if (env.currentMedia === null && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
+					} else if (
+						env.currentMedia === null &&
+						(e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp") && (
+							env.currentAlbum.subalbums.length || env.currentAlbum.numsMedia.imagesAndVideosTotal()
+						)
+					) {
 						let nextObjectFunction;
 						if (e.key === "ArrowLeft" || e.key === "ArrowUp")
 							nextObjectFunction = util.prevObjectForHighlighting;
