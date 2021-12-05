@@ -1,23 +1,10 @@
 $(document).ready(function() {
 
 	/*
-	 * The display is not yet object oriented. It's procedural code
-	 * broken off into functions. It makes use of libphotofloat's
-	 * PhotoFloat class for the network and management logic.
-	 *
-	 * All of this could potentially be object oriented, but presently
-	 * it should be pretty readable and sufficient. The only thing to
-	 * perhaps change in the future would be to consolidate calls to
-	 * jQuery selectors. And perhaps it'd be nice to move variable
-	 * declarations to the top, to stress that JavaScript scope is
-	 * for an entire function and always hoisted.
-	 *
 	 * None of the globals here polutes the global scope, as everything
 	 * is enclosed in an anonymous function.
 	 *
 	 */
-
-	/* Globals */
 
 	var env = new Env();
 	window.env = env;
@@ -26,7 +13,6 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	// var map = new MapFunctions();
 	var tF = new TopFunctions();
 
 	if ($(".media-box#center").length) {
@@ -1013,7 +999,7 @@ $(document).ready(function() {
 			var encryptedPassword = md5(passwordObject.val());
 			passwordObject.val("");
 
-			promise = phFl.getJsonFile(util.pathJoin([env.options.passwords_subdir, encryptedPassword]));
+			var promise = phFl.getJsonFile(util.pathJoin([env.options.passwords_subdir, encryptedPassword]));
 			promise.then(
 				function(jsonCode) {
 					passwordObject.css("background-color", "rgb(200, 200, 200)");

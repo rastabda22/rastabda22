@@ -1481,60 +1481,6 @@
 		return true;
 	};
 
-	Album.prototype.isUndefinedOrFalse = function(property) {
-		return ! this.hasOwnProperty(property) || ! this[property];
-	};
-
-	Album.prototype.isUndefinedOrTrue = function(property) {
-		return ! this.hasOwnProperty(property) || this[property];
-	};
-
-
-	// this function refer to the need that the html showed be sorted
-	Album.prototype.needAlbumNameSort = function() {
-		return this.isUndefinedOrFalse("albumNameSort") && env.albumNameSort;
-	};
-
-	Album.prototype.needAlbumDateSort = function() {
-		return this.isUndefinedOrTrue("albumNameSort") && ! env.albumNameSort;
-	};
-
-	Album.prototype.needAlbumDateReverseSort = function() {
-		return this.needAlbumDateSort && (
-			this.isUndefinedOrTrue("albumReverseSort") && ! env.albumReverseSort ||
-			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
-		);
-	};
-
-	Album.prototype.needAlbumNameReverseSort = function() {
-		return this.needAlbumNameSort() && (
-			this.isUndefinedOrTrue("albumReverseSort") && ! env.albumReverseSort ||
-			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
-		);
-	};
-
-	Album.prototype.needMediaNameSort = function() {
-		return this.isUndefinedOrFalse("mediaNameSort") && env.mediaNameSort;
-	};
-
-	Album.prototype.needMediaDateSort = function() {
-		return this.isUndefinedOrTrue("mediaNameSort") && ! env.mediaNameSort;
-	};
-
-	Album.prototype.needMediaDateReverseSort = function() {
-		return this.needMediaDateSort && (
-			this.isUndefinedOrTrue("mediaReverseSort") && ! env.mediaReverseSort ||
-			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
-		);
-	};
-
-	Album.prototype.needMediaNameReverseSort = function() {
-		return this.needMediaNameSort() && (
-			this.isUndefinedOrTrue("mediaReverseSort") && ! env.mediaReverseSort ||
-			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
-		);
-	};
-
 
 
 	Functions.prototype.getOptions = function(forceReload = false) {
@@ -1559,7 +1505,7 @@
 		} else {
 			return new Promise(
 				function(resolve_getOptions, reject_getOptions) {
-					var promise = PhotoFloat.getJsonFile("options.json");
+					var promise = phFl.getJsonFile("options.json");
 					promise.then(
 						function(data) {
 							// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels

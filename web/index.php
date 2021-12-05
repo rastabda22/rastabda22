@@ -146,7 +146,13 @@
 			<script type="text/javascript" src="js/036-functions.js"></script>
 			<script type="text/javascript" src="js/037-map.js"></script>
 			<script type="text/javascript" src="js/038-top-functions.js"></script>
-			<script type="text/javascript" src="js/039-display.js"></script>
+			<script type="text/javascript" src="js/041-album-methods.js"></script>
+			<script type="text/javascript" src="js/042-media-methods.js"></script>
+			<script type="text/javascript" src="js/043-single-media-methods.js"></script>
+			<script type="text/javascript" src="js/044-subalbum-methods.js"></script>
+			<script type="text/javascript" src="js/045-positions-and-media-methods.js"></script>
+			<script type="text/javascript" src="js/046-other-methods.js"></script>
+			<script type="text/javascript" src="js/050-display.js"></script>
 
 		<?php }
 

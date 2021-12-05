@@ -8,29 +8,6 @@
 	function MapFunctions() {
 	}
 
-	PositionsAndMedia.prototype.averagePosition = function() {
-		var averageLatLng = L.latLng(0, 0);
-		var lat, lng, countTotal = 0;
-		for (var i = 0; i < this.length; i ++) {
-			lat = this[i].lat;
-			lng = this[i].lng;
-			if (this[i].hasOwnProperty("count")) {
-				lat *= this[i].count;
-				lng *= this[i].count;
-			}
-			averageLatLng.lat += lat;
-			averageLatLng.lng += lng;
-			if (this[i].hasOwnProperty("count"))
-				countTotal += this[i].count;
-			else
-				countTotal += 1;
-		}
-		averageLatLng.lat /= countTotal;
-		averageLatLng.lng /= countTotal;
-
-		return averageLatLng;
-	};
-
 	MapFunctions.prototype.updatePopup = function() {
 		util.setMediaOptions();
 		// f.setOptions();
@@ -170,82 +147,6 @@
 
 		$(".media-popup .leaflet-popup-content").css("max-height", parseInt(env.windowHeight * 0.8)).css("max-width", parseInt(env.windowWidth * 0.8));
 		MapFunctions.setPopupPosition();
-	};
-
-	Album.prototype.addMediaFromPositionsToMapAlbum = function(positionsAndMedia, resolve_imageLoad) {
-
-		var mediaListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
-		var photosByAlbum = {}, positionsAndMediaElement;
-		var self = this;
-
-		// in order to add the html code for the images to a string,
-		// we group the photos by album: this way we rationalize the process of getting them
-		for (indexPositions = 0; indexPositions < positionsAndMedia.length; indexPositions ++) {
-			positionsAndMediaElement = positionsAndMedia[indexPositions];
-			markerClass = getMarkerClass(positionsAndMediaElement);
-			for (indexPhoto = 0; indexPhoto < positionsAndMediaElement.mediaList.length; indexPhoto ++) {
-				mediaListElement = positionsAndMediaElement.mediaList[indexPhoto];
-				if (! photosByAlbum.hasOwnProperty(mediaListElement.foldersCacheBase)) {
-					photosByAlbum[mediaListElement.foldersCacheBase] = [];
-				}
-				photosByAlbum[mediaListElement.foldersCacheBase].push(
-					{
-						element: mediaListElement,
-						markerClass: markerClass
-					}
-				);
-			}
-		}
-
-		// ok, now we can interate over the object we created and add the media to the map album
-		var cacheBasesPromises = [];
-		for (var foldersCacheBase in photosByAlbum) {
-			if (photosByAlbum.hasOwnProperty(foldersCacheBase)) {
-				let cacheBasePromise = new Promise(
-					function(resolve_cacheBasePromise) {
-						let photosInAlbum = photosByAlbum[foldersCacheBase];
-						var getAlbumPromise = phFl.getAlbum(foldersCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: ! env.options.save_data});
-						getAlbumPromise.then(
-							function(theAlbum) {
-								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
-									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
-										if (theAlbum.media[mediaIndex].cacheBase === photosInAlbum[photoIndex].element.cacheBase) {
-											theAlbum.media[mediaIndex].generateCaptionsForPopup(theAlbum);
-											self.media.push(theAlbum.media[mediaIndex]);
-											self.sizesOfAlbum.sum(theAlbum.media[mediaIndex].fileSizes);
-											self.sizesOfSubTree.sum(theAlbum.media[mediaIndex].fileSizes);
-										}
-									}
-								}
-								resolve_cacheBasePromise();
-							},
-							function() {
-								console.trace();
-							}
-						);
-					}
-				);
-				cacheBasesPromises.push(cacheBasePromise);
-			}
-		}
-		Promise.all(cacheBasesPromises).then(
-			function() {
-				self.numsMedia = self.media.imagesAndVideosCount();
-				self.positionsAndMediaInTree.mergePositionsAndMedia(positionsAndMedia);
-				self.numPositionsInTree = self.positionsAndMediaInTree.length;
-				resolve_imageLoad(self);
-			}
-		);
-		// end of function addMediaFromPositionsToMapAlbum body
-
-		function getMarkerClass(positionAndCount) {
-			var imgClass =
-				"popup-img-" +
-				(positionAndCount.lat / 1000).toString().replace('.', '') +
-				'-' +
-				(positionAndCount.lng / 1000).toString().replace('.', '');
-			return imgClass;
-		}
 	};
 
 	L.NumberedDivIcon = L.Icon.extend({

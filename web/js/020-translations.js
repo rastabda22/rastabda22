@@ -67,7 +67,7 @@
 			}
 		};
 
-		for (lang in shortcuts) {
+		for (let lang in shortcuts) {
 			shortcuts[lang][".metadata-hide"] = shortcuts[lang][".metadata-show"];
 			shortcuts[lang][".exit-fullscreen"] = shortcuts[lang][".enter-fullscreen"];
 		}
@@ -76,7 +76,7 @@
 	};
 
 	Translations.prototype.getTranslations = function() {
-		var shortcuts = this.getShortcuts();
+		// var shortcuts = this.getShortcuts();
 
 		return {
 			en: {
@@ -176,7 +176,6 @@
 				"#from-map": "Album by map",
 				"#in": "in",
 				"#place-icon-title": "Show the map for ",
-				// "#place-icon-title-end": " [press " + shortcuts.en[".map-link"] + " to show the map]",
 				"#show-on-map": "Show media location on the map",
 				"#suggest-position-on-map": "Suggest a position on the map",
 				"#click-to-suggest-position-on-map": "Click to suggest a position on the map",
@@ -422,7 +421,6 @@
 				"#from-map": "Album dalla mappa",
 				"#in": "in",
 				"#place-icon-title": "Mostra la cartina per ",
-				// "#place-icon-title-end": " [premi " + shortcuts.en[".map-link"] + " per vedere la cartina]",
 				"#show-on-map": "Mostra la posizione della foto sulla cartina",
 				"#suggest-position-on-map": "Suggerisci una posizione sulla cartina",
 				"#click-to-suggest-position-on-map": "Clicca per suggerire una posizione sulla cartina",
@@ -661,7 +659,6 @@
 				"#error-nonexistent-selection-album": "Álbum de selección que no existe, voy al álbum anterior",
 				"#warning-no-geolocated-media": "Ninguna imágen o bien ninguna imágen geolocalizada<br />Muestro el contenido del álbum",
 				"#place-icon-title": "Muestra en el mapa para ",
-				// "#place-icon-title-end": " [presione " + shortcuts.en[".map-link"] + " para ver el mapa]",
 				"#show-on-map": "Muestra la posición de la foto en el mapa",
 				"#suggest-position-on-map": "Sugiera una posición en el mapa",
 				"#click-to-suggest-position-on-map": "Presione para sugerir una posición en el mapa",
@@ -914,7 +911,6 @@
 				"#from-map": "Album par carte",
 				"#in": "dans",
 				"#place-icon-title": "Afficher la carte pour ",
-				// "#place-icon-title-end": " [appuyer sur " + shortcuts.en[".map-link"] + " pour afficher la carte]",
 				"#show-on-map": "Afficher la position des médias sur la carte",
 				"#suggest-position-on-map": "Suggest a position on the map",
 				"#click-to-suggest-position-on-map": "Click to suggest a position on the map",

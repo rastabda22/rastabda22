@@ -1,6 +1,5 @@
 (function() {
 
-	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var swipeSpeed = 350;
 	var pinchSpeed = 500;
@@ -676,59 +675,6 @@
 		return true;
 	};
 
-	SingleMedia.prototype.swipeRight = function() {
-		var self = this;
-		$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd').on(
-			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
-			function() {
-				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
-				$("#media-box-container").css("transition-duration", "0s");
-
-				// remove right image and move html code to left side
-				$(".media-box#right").remove();
-				// $("#media-box-container").css("transform", "translate(0px,0)");
-				$(".media-box#center").attr('id', 'right');
-				$(".media-box#left").attr('id', 'center');
-				util.mediaBoxGenerator('left');
-				$(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
-
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumCacheBase, collectionCacheBase);
-			}
-		);
-
-		$("#pinch-container").addClass("hidden");
-		PinchSwipe.swipeMedia(0);
-	};
-
-	SingleMedia.prototype.swipeLeft = function() {
-		var self = this;
-		$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd').on(
-			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
-			function() {
-				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
-				$("#media-box-container").css("transition-duration", "0s");
-
-				// remove left image and move html code to right side
-				$(".media-box#left").remove();
-				$("#media-box-container").css("transform", "translate(0px,0)");
-				$(".media-box#center").attr('id', 'left');
-				$(".media-box#right").attr('id', 'center');
-				util.mediaBoxGenerator('right');
-				$(".media-box#right").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
-				// this translation avoid the flickering when inserting the right image into the DOM
-				// if (! env.isMobile(any))
-				$("#media-box-container").css("transform", "translate(-" + env.windowWidth + "px, 0px)");
-
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumCacheBase, collectionCacheBase);
-			}
-		);
-
-		$("#pinch-container").addClass("hidden");
-		PinchSwipe.swipeMedia(env.windowWidth * 2);
-	};
-
 	PinchSwipe.swipeUp = function(dest) {
 		// Actually swiping up is passing from an album to a media, so there is no animation
 		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
@@ -774,6 +720,7 @@
 	PinchSwipe.prototype.pinchOut = PinchSwipe.pinchOut;
 	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
+	PinchSwipe.prototype.swipeMedia = PinchSwipe.swipeMedia;
 	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 
 	window.PinchSwipe = PinchSwipe;
