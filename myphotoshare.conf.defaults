@@ -111,13 +111,13 @@ default_cache_album = reductions_and_thumbnails
 cache_album_subdir = _composite_images
 
 # cache subdirectory for by date json files
-by_date_album_subdir = _date_albums
+by_date_album_subdir = _by_date_albums
 
 # cache subdirectory for by gps json files
-by_gps_album_subdir = _gps_albums
+by_gps_album_subdir = _by_gps_albums
 
 # cache subdirectory for search json files
-by_search_album_subdir = _search_albums
+by_search_album_subdir = _by_search_albums
 
 # Filename where user-defined metadata is stored in albums
 metadata_filename = album.ini
