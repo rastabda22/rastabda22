@@ -2098,7 +2098,7 @@ class SingleMedia(object):
 			indented_message("reduction/thumbnail older than original media", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
 			files = "'" + json_files[0] + "' and others"
-			json_file = os.path.join(thumbs_path, self.album.json_file)
+			json_file = os.path.join(thumbs_path, self.album.json_file(""))
 			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + files, 5)
 		elif (
 			format == "jpg" and Options.config['recreate_jpg'] or
@@ -2592,7 +2592,6 @@ class SingleMedia(object):
 			indented_message("transcoded video older than original video", transcode_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(transcode_path) >= json_files_min_mtime:
 			files = "'" + json_files[0] + "' and others"
-			# json_file = os.path.join(thumbs_path, self.album.json_file)
 			indented_message("transcoded video newer than json files", transcode_path + ", " + files, 5)
 		elif file_mtime(transcode_path) < self.datetime_file:
 			indented_message("transcoded video older than original video", transcode_path, 5)
