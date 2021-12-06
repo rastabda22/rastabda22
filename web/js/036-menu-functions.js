@@ -1669,7 +1669,7 @@
 										var center = env.mymap.getCenter();
 										var popupUrl = location.href.substring(0, location.href.length - location.hash.length) +
 															'?url=' + encodeURIComponent(location.href) +
-															'&photo=' + encodeURIComponent(env.currentMedia.albumName + '/' + env.currentMedia.name) +
+															'&photo=' + encodeURIComponent(util.pathJoin([env.currentMedia.albumName, env.currentMedia.name])) +
 															'&lat=' + encodeURIComponent(center.lat) +
 															'&lng=' + encodeURIComponent(center.lng) +
 															// the following line is needed in order to bypass the browser (?) cache;

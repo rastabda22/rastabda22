@@ -165,17 +165,17 @@ class Album(object):
 		else:
 			return self.path
 
-	@property
-	def json_file(self):
-		return self.cache_base + ".json"
-
-	@property
-	def positions_json_file(self):
-		return self.cache_base + ".positions.json"
-
-	@property
-	def media_json_file(self):
-		return self.cache_base + ".media.json"
+	def json_file(self, media_or_positions, number = None):
+		json_file = self.cache_base
+		if number is not None:
+			json_file += "." + str(number)
+		if media_or_positions != "":
+			json_file += "." + media_or_positions
+		json_file += ".json"
+		if json_file.find(Options.config['by_search_string']) == 0:
+			# add the search subdirectory directory
+			json_file = os.path.join(Options.config['search_album_subdir'], json_file)
+		return json_file
 
 	@property
 	def subdir(self):
@@ -513,7 +513,7 @@ class Album(object):
 	@property
 	def must_separate_media(self):
 		return (
-			not Options.config['save_data'] and 
+			not Options.config['save_data'] and
 			Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
 		)
 

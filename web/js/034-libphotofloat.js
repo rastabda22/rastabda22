@@ -168,6 +168,12 @@
 		return new Promise(
 			function(resolve_getSingleUnprotectedCacheBase, reject_getSingleUnprotectedCacheBase) {
 				var jsonFile = unprotectedCacheBase + ".json";
+				if (jsonFile.indexOf(env.options.by_search_string) === 0) {
+					jsonFile = Utilities.pathJoin([
+						env.options.search_album_subdir,
+						jsonFile
+					]);
+				}
 
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
@@ -216,7 +222,7 @@
 		);
 	};
 
-	PhotoFloat.protectedDirectoriesToGet = function() {
+	PhotoFloat.prototype.protectedDirectoriesToGet = function() {
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword, protectedDirectory;
 		var result = [];
 

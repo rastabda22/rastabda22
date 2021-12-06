@@ -204,6 +204,11 @@ class TreeWalker:
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
+		search_subdir = os.path.join(Options.config['cache_path'], Options.config['search_album_subdir'])
+		if search_subdir not in self.created_dirs:
+			make_dir(search_subdir, "search subdir")
+			self.created_dirs.append(search_subdir)
+
 		if album.cache_base == Options.config['folders_string']:
 			message("saving all physical albums to json files...", "", 3)
 			next_level()
@@ -268,17 +273,17 @@ class TreeWalker:
 		separate_positions = album.must_separate_positions
 
 		if complex_identifiers_combination is None:
-			json_name = album.json_file
+			json_name = album.json_file("")
 			if separate_media:
-				json_media_name = album.media_json_file
+				json_media_name = album.json_file("media")
 			if separate_positions:
-				json_positions_name = album.positions_json_file
+				json_positions_name = album.json_file("positions")
 		else:
-			json_name = album.cache_base + ".0.json"
+			json_name = album.json_file("", 0)
 			if separate_media:
-				json_media_name = album.cache_base + ".0.media.json"
+				json_media_name = album.json_file("media", 0)
 			if separate_positions:
-				json_positions_name = album.cache_base + ".0.positions.json"
+				json_positions_name = album.json_file("positions", 0)
 
 		symlinks = []
 		positions_symlinks = []
@@ -311,20 +316,25 @@ class TreeWalker:
 				make_dir(first_dir, "protected content directory")
 				self.created_dirs.append(first_dir)
 
+			search_subdir = os.path.join(first_dir, Options.config['search_album_subdir'])
+			if search_subdir not in self.created_dirs:
+				make_dir(search_subdir, "protected search subdir")
+				self.created_dirs.append(search_subdir)
+
 			number, json_name_with_path = determine_symlink_number_and_name(os.path.join(
 				first_dir,
-				album.cache_base
+				album.json_file("")[0:-5]
 			))
 			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
 			if separate_media:
 				json_media_name = os.path.join(
 					Options.config['protected_directories_prefix'] + first_md5_product,
-					album.cache_base + "." + str(number) + ".media.json"
+					album.json_file("media", number)
 				)
 			if separate_positions:
 				json_positions_name = os.path.join(
 					Options.config['protected_directories_prefix'] + first_md5_product,
-					album.cache_base + "." + str(number) + ".positions.json"
+					album.json_file("positions", number)
 				)
 			symlink_codes_and_numbers.append({
 				'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(first_md5_product),
@@ -344,21 +354,27 @@ class TreeWalker:
 						make_dir(complex_dir, "protected content directory")
 						self.created_dirs.append(complex_dir)
 
+					search_subdir = os.path.join(complex_dir, Options.config['search_album_subdir'])
+					if search_subdir not in self.created_dirs:
+						make_dir(search_subdir, "protected search subdir")
+						self.created_dirs.append(search_subdir)
+
+
 					number, symlink_with_path = determine_symlink_number_and_name(os.path.join(
 						complex_dir,
-						album.cache_base
+						album.json_file("")[0:-5]
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
 					if separate_media:
 						media_symlink = os.path.join(
 							Options.config['protected_directories_prefix'] + complex_md5,
-							album.cache_base + "." + str(number) + ".media.json"
+							album.json_file("media", number)
 						)
 						media_symlinks.append(media_symlink)
 					if separate_positions:
 						positions_symlink = os.path.join(
 							Options.config['protected_directories_prefix'] + complex_md5,
-							album.cache_base + "." + str(number) + ".positions.json"
+							album.json_file("positions", number)
 						)
 						positions_symlinks.append(positions_symlink)
 
@@ -2134,7 +2150,7 @@ class TreeWalker:
 			composite_image_name = album.cache_base + ".jpg"
 			composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
 			self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
-			json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
+			json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file(""))
 			if (
 				os.path.exists(composite_image_path) and
 				file_mtime(composite_image_path) > max_file_date and
@@ -2328,6 +2344,8 @@ class TreeWalker:
 				deletable_files_re = r"\.(jpg|png|webp)$"
 			elif subdir == Options.config['passwords_subdir']:
 				deletable_files_re = r"[a-f0-9]{32}"
+			elif subdir == Options.config['search_album_subdir']:
+				deletable_files_re = r"\.json$"
 			elif re.search(protected_directory_re, subdir):
 				deletable_files_re = r"\.json$"
 			else:

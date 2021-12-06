@@ -1,3 +1,6 @@
+* send by search json files to a separate directory, new option `search_album_subdir`
+* bug fixes
+
 ### version v5.5.1 (December 5, 2021)
 
 * the scanner can now run with the only `--web_root_path` parameter, without options file

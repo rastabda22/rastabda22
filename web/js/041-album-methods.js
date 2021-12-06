@@ -960,7 +960,7 @@
 											}
 											let fileName = name;
 											if (subalbum)
-												fileName = subalbum + "/" + fileName;
+												fileName = util.pathJoin([subalbum, fileName]);
 											$("#downloading-media #file-name").html(fileName);
 											zip.file(fileName, data, {binary:true});
 											resolveMediaPromise();
@@ -1452,7 +1452,9 @@
 						// so we must try until a protected directory has the protected album we need
 
 						var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
-						var protectedCacheBase = protectedDirectory + '/' + self.cacheBase + '.0';
+						var protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.0']);
+						if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.search_album_subdir, self.cacheBase + '.0']);
 
 						var promise = self.addContentWithExternalMediaAndPositionsFromProtectedCacheBase(protectedCacheBase, {getMedia: false, getPositions: false});
 						promise.then(
@@ -1670,7 +1672,9 @@
 							let numProtectedCacheBases = self.getNumProtectedCacheBases(codesSimpleCombination);
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
-								let protectedCacheBase = protectedDirectory + '/' + self.cacheBase + '.' + iCacheBase;
+								let protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.' + iCacheBase]);
+								if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.search_album_subdir, self.cacheBase + '.' + iCacheBase]);
 								self.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
 								// if (! self.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 								// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
@@ -1930,12 +1934,13 @@
 				if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
 					normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 				if (
-					! (
+					(
 						! env.options.search_tags_only &&
-						normalizedWords.some(element => element.includes(normalizedWord)) ||
-						env.options.search_tags_only &&
-						ithMedia.metadata.hasOwnProperty("tags") &&
-						normalizedTags.some(element => element.includes(normalizedWord))
+						! normalizedWords.some(element => element.includes(normalizedWord)) ||
+						env.options.search_tags_only && (
+							! ithMedia.metadata.hasOwnProperty("tags") ||
+							! normalizedTags.some(element => element.includes(normalizedWord))
+						)
 					) || ! (
 						! env.options.search_current_album ||
 						util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
