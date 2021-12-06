@@ -3,7 +3,7 @@
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var mapF = new MapFunctions();
-	var f = new Functions();
+	var menuF = new MenuFunctions();
 
 	/* constructor */
 	function TopFunctions() {
@@ -41,7 +41,7 @@
 				var titlesForTitleComponents = [];
 				var classesForTitleComponents = [];
 
-				// f.updateMenu();
+				// menuF.updateMenu();
 
 				if (id === "album") {
 					$(".media-box#" + id + " .title").addClass("hidden");
@@ -910,11 +910,11 @@
 			env.options.hide_descriptions = true;
 			env.options.hide_tags = true;
 		}
-		f.setBooleanCookie("hideTitle", env.options.hide_title);
-		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
-		f.setBooleanCookie("hideTags", env.options.hide_tags);
-		f.updateMenu();
+		menuF.setBooleanCookie("hideTitle", env.options.hide_title);
+		menuF.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
+		menuF.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+		menuF.setBooleanCookie("hideTags", env.options.hide_tags);
+		menuF.updateMenu();
 
 		if (util.isPopup()) {
 			mapF.updatePopup();
@@ -970,8 +970,8 @@
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_title = ! env.options.hide_title;
-			f.setBooleanCookie("hideTitle", env.options.hide_title);
-			f.updateMenu();
+			menuF.setBooleanCookie("hideTitle", env.options.hide_title);
+			menuF.updateMenu();
 			if (env.options.hide_title) {
 				$(".title").addClass("hidden-by-option");
 			} else {
@@ -1011,8 +1011,8 @@
 	TopFunctions.toggleBottomThumbnails = function(ev) {
 		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
-			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-			f.updateMenu();
+			menuF.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
+			menuF.updateMenu();
 			if (env.options.hide_bottom_thumbnails) {
 				$("#album-and-media-container.show-media #thumbs").addClass("hidden-by-option");
 			} else {
@@ -1054,8 +1054,15 @@
 	TopFunctions.toggleSaveData = function(ev) {
 		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.save_data = ! env.options.save_data;
-			f.setBooleanCookie("saveData", env.options.save_data);
-			f.updateMenu();
+			menuF.setBooleanCookie("saveData", env.options.save_data);
+
+			if (env.options.save_data)
+				// do not optimize image formats
+				env.devicePixelRatio = 1;
+			else
+				env.devicePixelRatio =  window.devicePixelRatio || 1;
+
+			menuF.updateMenu();
 		}
 		return false;
 	};
@@ -1063,7 +1070,7 @@
 	TopFunctions.toggleDescriptions = function(ev) {
 		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
-			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+			menuF.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
 			if (util.isPopup() || env.currentMedia === null && env.currentAlbum.media.length) {
 				util.setMediaOptions();
@@ -1075,7 +1082,7 @@
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
-			f.updateMenu();
+			menuF.updateMenu();
 			if (util.isPopup()) {
 				mapF.updatePopup();
 				util.adaptMediaCaptionHeight(true);
@@ -1090,7 +1097,7 @@
 	TopFunctions.toggleTags = function(ev) {
 		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_tags = ! env.options.hide_tags;
-			f.setBooleanCookie("hideTags", env.options.hide_tags);
+			menuF.setBooleanCookie("hideTags", env.options.hide_tags);
 
 			if (util.isPopup() || env.currentMedia === null && env.currentAlbum.media.length) {
 				util.setMediaOptions();
@@ -1102,7 +1109,7 @@
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
-			f.updateMenu();
+			menuF.updateMenu();
 			if (util.isPopup()) {
 				mapF.updatePopup();
 				util.adaptMediaCaptionHeight(true);
@@ -1117,8 +1124,8 @@
 	TopFunctions.toggleSlideMode = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
-			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
-			f.updateMenu();
+			menuF.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
+			menuF.updateMenu();
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			util.setSubalbumsOptions();
 			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
@@ -1135,9 +1142,9 @@
 				env.options.spacing = 0;
 			else
 				env.options.spacing = env.options.spacingSavedValue;
-			f.setCookie("spacing", env.options.spacing);
-			f.updateMenu();
-			// f.setOptions();
+			menuF.setCookie("spacing", env.options.spacing);
+			menuF.updateMenu();
+			// menuF.setOptions();
 			util.setMediaOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
@@ -1153,8 +1160,8 @@
 	TopFunctions.toggleAlbumNames = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
-			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
-			f.updateMenu();
+			menuF.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
+			menuF.updateMenu();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptSubalbumCaptionHeight();
@@ -1166,9 +1173,9 @@
 		ev.stopPropagation();
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
-			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
-			f.updateMenu();
-			// f.setOptions();
+			menuF.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
+			menuF.updateMenu();
+			// menuF.setOptions();
 			util.setTitleOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
@@ -1180,9 +1187,9 @@
 	TopFunctions.toggleMediaNames = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
-			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
-			f.updateMenu();
-			// f.setOptions();
+			menuF.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
+			menuF.updateMenu();
+			// menuF.setOptions();
 			util.setMediaOptions();
 			// util.setSubalbumsOptions();
 			if (env.currentAlbum.media.length)
@@ -1199,8 +1206,8 @@
 	TopFunctions.toggleAlbumsSquare = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.album_thumb_type = env.options.album_thumb_type.indexOf("square") > -1 ? "album_fit" : "album_square";
-			f.setCookie("albumThumbType", env.options.album_thumb_type);
-			f.updateMenu();
+			menuF.setCookie("albumThumbType", env.options.album_thumb_type);
+			menuF.updateMenu();
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			util.setSubalbumsOptions();
 			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
@@ -1213,8 +1220,8 @@
 	TopFunctions.toggleMediaSquare = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.media_thumb_type = env.options.media_thumb_type.indexOf("square") > -1 ? "media_fixed_height" : "media_square";
-			f.setCookie("mediaThumbType", env.options.media_thumb_type);
-			f.updateMenu();
+			menuF.setCookie("mediaThumbType", env.options.media_thumb_type);
+			menuF.updateMenu();
 			if (env.currentAlbum.media.length) {
 				let highlightedSingleMediaId = $("#thumbs .highlighted img.thumbnail").attr("id");
 				env.currentAlbum.showMedia();
@@ -1236,159 +1243,165 @@
 		return false;
 	};
 
-	TopFunctions.prototype.restoreDisplaySettings = function(ev) {
-		var oldOptions = {};
-		oldOptions.hide_title = env.options.hide_title;
-		oldOptions.show_album_media_count = env.options.show_album_media_count;
+	TopFunctions.prototype.restoreSettings = function(ev) {
 
-		oldOptions.albums_slide_style = env.options.albums_slide_style;
-		oldOptions.album_thumb_type = env.options.album_thumb_type;
-		oldOptions.show_album_names_below_thumbs = env.options.show_album_names_below_thumbs;
+		// menuF.setBooleanCookie("hideTitle", env.options.hide_title);
+		// menuF.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+		// menuF.setBooleanCookie("hideTags", env.options.hide_tags);
+		// menuF.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
+		// menuF.setBooleanCookie("saveData", env.options.save_data);
+		// menuF.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
+		// menuF.setBooleanCookie("spacing", env.options.thumb_spacing);
+		// menuF.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
+		// menuF.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
+		// menuF.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
+		// menuF.setCookie("albumThumbType", env.options.album_thumb_type);
+		// menuF.setCookie("mediaThumbType", env.options.media_thumb_type);
 
-		oldOptions.media_thumb_type = env.options.media_thumb_type;
-		oldOptions.show_media_names_below_thumbs = env.options.show_media_names_below_thumbs;
+		// var oldOptions = {};
+		// oldOptions.hide_title = env.options.hide_title;
+		// oldOptions.show_album_media_count = env.options.show_album_media_count;
+		//
+		// oldOptions.albums_slide_style = env.options.albums_slide_style;
+		// oldOptions.album_thumb_type = env.options.album_thumb_type;
+		// oldOptions.show_album_names_below_thumbs = env.options.show_album_names_below_thumbs;
+		//
+		// oldOptions.media_thumb_type = env.options.media_thumb_type;
+		// oldOptions.show_media_names_below_thumbs = env.options.show_media_names_below_thumbs;
+		//
+		// oldOptions.hide_descriptions = env.options.hide_descriptions;
+		// oldOptions.hide_tags = env.options.hide_tags;
+		// oldOptions.spacing = env.options.spacing;
+		// oldOptions.hide_bottom_thumbnails = env.options.hide_bottom_thumbnails;
+		// oldOptions.save_data = env.options.save_data;
+		// // oldOptions.default_album_name_sort = env.options.default_album_name_sort;
+		// // oldOptions.default_album_reverse_sort = env.options.default_album_reverse_sort;
+		// // oldOptions.default_media_name_sort = env.options.default_media_name_sort;
+		// // oldOptions.default_media_reverse_sort = env.options.default_media_reverse_sort;
+		// var promise = menuF.getOptions(true);
+		// promise.then(
+		// 	function optionsHaveBeenReset() {
+		// 		// menuF.setOptions();
 
-		oldOptions.hide_descriptions = env.options.hide_descriptions;
-		oldOptions.hide_tags = env.options.hide_tags;
-		oldOptions.spacing = env.options.spacing;
-		oldOptions.hide_bottom_thumbnails = env.options.hide_bottom_thumbnails;
-		oldOptions.save_data = env.options.save_data;
-		// oldOptions.default_album_name_sort = env.options.default_album_name_sort;
-		// oldOptions.default_album_reverse_sort = env.options.default_album_reverse_sort;
-		// oldOptions.default_media_name_sort = env.options.default_media_name_sort;
-		// oldOptions.default_media_reverse_sort = env.options.default_media_reverse_sort;
-		var promise = f.getOptions(true);
-		promise.then(
-			function optionsHaveBeenReset() {
-				// f.setOptions();
+		if (env.defaultOptions.default_album_name_sort !== env.options.default_album_name_sort) {
+			env.options.default_album_name_sort = env.defaultOptions.default_album_name_sort;
+			menuF.setBooleanCookie("albumNameSortRequested", env.options.default_album_name_sort);
+			env.currentAlbum.sortAlbumsMedia();
+		}
+		if (env.defaultOptions.default_album_reverse_sort !== env.options.default_album_reverse_sort) {
+			env.options.default_album_reverse_sort = env.defaultOptions.default_album_reverse_sort;
+			menuF.setBooleanCookie("albumReverseSortCookie", env.options.default_album_reverse_sort);
+			env.currentAlbum.sortAlbumsMedia();
+		}
+		if (env.defaultOptions.default_media_name_sort !== env.options.default_media_name_sort) {
+			env.options.default_media_name_sort = env.defaultOptions.default_media_name_sort;
+			menuF.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
+			env.currentAlbum.sortAlbumsMedia();
+			if (util.isPopup())
+				env.mapAlbum.sortAlbumsMedia();
+		}
+		if (env.defaultOptions.default_media_reverse_sort !== env.options.default_media_reverse_sort) {
+			env.options.default_media_reverse_sort = env.defaultOptions.default_media_reverse_sort;
+			menuF.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
+			env.currentAlbum.sortAlbumsMedia();
+			if (util.isPopup())
+				env.mapAlbum.sortAlbumsMedia();
+		}
 
-				if (oldOptions.show_album_media_count !== env.options.show_album_media_count) {
-					env.options.show_album_media_count = oldOptions.show_album_media_count;
-					TopFunctions.toggleMediaCount(ev);
-				}
-				if (oldOptions.hide_title !== env.options.hide_title) {
-					env.options.hide_title = oldOptions.hide_title;
-					TopFunctions.toggleTitle(ev);
-				}
+		if (env.defaultOptions.show_album_media_count !== env.options.show_album_media_count) {
+			// env.options.show_album_media_count = env.defaultOptions.show_album_media_count;
+			TopFunctions.toggleMediaCount(ev);
+		}
+		if (env.defaultOptions.hide_title !== env.options.hide_title) {
+			// env.options.hide_title = env.defaultOptions.hide_title;
+			TopFunctions.toggleTitle(ev);
+		}
 
-				if (oldOptions.albums_slide_style !== env.options.albums_slide_style) {
-					env.options.albums_slide_style = oldOptions.albums_slide_style;
-					TopFunctions.toggleSlideMode(ev);
-				}
-				if (oldOptions.album_thumb_type !== env.options.album_thumb_type) {
-					env.options.album_thumb_type = oldOptions.album_thumb_type;
-					TopFunctions.toggleAlbumsSquare(ev);
-				}
-				if (oldOptions.show_album_names_below_thumbs !== env.options.show_album_names_below_thumbs) {
-					env.options.show_album_names_below_thumbs = oldOptions.show_album_names_below_thumbs;
-					TopFunctions.toggleAlbumNames(ev);
-				}
+		if (env.defaultOptions.albums_slide_style !== env.options.albums_slide_style) {
+			// env.options.albums_slide_style = env.defaultOptions.albums_slide_style;
+			TopFunctions.toggleSlideMode(ev);
+		}
+		if (env.defaultOptions.album_thumb_type !== env.options.album_thumb_type) {
+			// env.options.album_thumb_type = env.defaultOptions.album_thumb_type;
+			TopFunctions.toggleAlbumsSquare(ev);
+		}
+		if (env.defaultOptions.show_album_names_below_thumbs !== env.options.show_album_names_below_thumbs) {
+			// env.options.show_album_names_below_thumbs = env.defaultOptions.show_album_names_below_thumbs;
+			TopFunctions.toggleAlbumNames(ev);
+		}
 
-				if (oldOptions.media_thumb_type !== env.options.media_thumb_type) {
-					env.options.media_thumb_type = oldOptions.media_thumb_type;
-					TopFunctions.toggleMediaSquare(ev);
-				}
-				if (oldOptions.show_media_names_below_thumbs !== env.options.show_media_names_below_thumbs) {
-					env.options.show_media_names_below_thumbs = oldOptions.show_media_names_below_thumbs;
-					TopFunctions.toggleMediaNames(ev);
-				}
+		if (env.defaultOptions.media_thumb_type !== env.options.media_thumb_type) {
+			// env.options.media_thumb_type = env.defaultOptions.media_thumb_type;
+			TopFunctions.toggleMediaSquare(ev);
+		}
+		if (env.defaultOptions.show_media_names_below_thumbs !== env.options.show_media_names_below_thumbs) {
+			// env.options.show_media_names_below_thumbs = env.defaultOptions.show_media_names_below_thumbs;
+			TopFunctions.toggleMediaNames(ev);
+		}
 
-				if (oldOptions.hide_descriptions !== env.options.hide_descriptions) {
-					env.options.hide_descriptions = oldOptions.hide_descriptions;
-					TopFunctions.toggleDescriptions(ev);
-				}
-				if (oldOptions.hide_tags !== env.options.hide_tags) {
-					env.options.hide_tags = oldOptions.hide_tags;
-					TopFunctions.toggleTags(ev);
-				}
-				if (oldOptions.spacing !== env.options.spacing) {
-					env.options.spacing = oldOptions.spacing;
-					TopFunctions.toggleSpacing(ev);
-				}
-				if (oldOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails) {
-					env.options.hide_bottom_thumbnails = oldOptions.hide_bottom_thumbnails;
-					TopFunctions.toggleBottomThumbnails(ev);
-				}
-				if (oldOptions.save_data !== env.options.save_data) {
-					env.options.save_data = oldOptions.save_data;
-					TopFunctions.toggleSaveData(ev);
-				}
+		if (env.defaultOptions.hide_descriptions !== env.options.hide_descriptions) {
+			// env.options.hide_descriptions = env.defaultOptions.hide_descriptions;
+			TopFunctions.toggleDescriptions(ev);
+		}
+		if (env.defaultOptions.hide_tags !== env.options.hide_tags) {
+			// env.options.hide_tags = env.defaultOptions.hide_tags;
+			TopFunctions.toggleTags(ev);
+		}
+		if (env.defaultOptions.thumb_spacing !== env.options.spacing) {
+			// env.options.spacing = env.defaultOptions.spacing;
+			TopFunctions.toggleSpacing(ev);
+		}
+		if (env.defaultOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails) {
+			// env.options.hide_bottom_thumbnails = env.defaultOptions.hide_bottom_thumbnails;
+			TopFunctions.toggleBottomThumbnails(ev);
+		}
+		if (env.defaultOptions.save_data !== env.options.save_data) {
+			// env.options.save_data = env.defaultOptions.save_data;
+			TopFunctions.toggleSaveData(ev);
+		}
 
-				if (env.currentMedia === null && env.currentAlbum.subalbums.length && $("#subalbums").is(":visible")) {
-					util.adaptSubalbumCaptionHeight();
-				}
+		if (env.defaultOptions.search_inside_words !== env.options.search_inside_words) {
+			util.toggleInsideWordsSearch();
+		}
+		if (env.defaultOptions.search_any_word !== env.options.search_any_word) {
+			util.toggleAnyWordSearch();
+		}
+		if (env.defaultOptions.search_case_sensitive !== env.options.search_case_sensitive) {
+			util.toggleCaseSensitiveSearch();
+		}
+		if (env.defaultOptions.search_accent_sensitive !== env.options.search_accent_sensitive) {
+			util.toggleAccentSensitiveSearch();
+		}
+		if (env.defaultOptions.search_tags_only !== env.options.search_tags_only) {
+			util.toggleTagsOnlySearch();
+		}
+		if (env.defaultOptions.search_current_album !== env.options.search_current_album) {
+			util.toggleCurrentAbumSearch();
+		}
 
-				$("#ui-settings-restored").stop().fadeIn(
-					200,
-					function() {
-						$("#ui-settings-restored").fadeOut(2500);
-					}
-				);
+		if (env.defaultOptions.show_big_virtual_folders !== env.options.show_big_virtual_folders) {
+			util.toggleBigAlbumsShow();
+		}
 
-				f.updateMenu();
+		menuF.updateMenu();
+		menuF.setOptions();
+
+		if (env.currentMedia === null && env.currentAlbum.subalbums.length && $("#subalbums").is(":visible")) {
+			util.adaptSubalbumCaptionHeight();
+		}
+		if (env.currentMedia === null && env.currentAlbum.media.length && $("#thumbs").is(":visible")) {
+			util.adaptMediaCaptionHeight();
+		}
+
+		$("#settings-restored").stop().fadeIn(
+			200,
+			function() {
+				$("#settings-restored").fadeOut(2500);
 			}
 		);
+		// 	}
+		// );
 		return false;
-	};
-
-	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
-		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			if ($("#message-too-many-images").is(":visible")) {
-				$("#message-too-many-images").css("display", "");
-			}
-			$("#loading").show();
-			env.options.show_big_virtual_folders = ! env.options.show_big_virtual_folders;
-			if (env.options.show_big_virtual_folders)
-				$("#show-hide-them:hover").css("color", "").css("cursor", "");
-			else
-				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
-			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
-			f.updateMenu();
-			env.currentAlbum.showMedia();
-			$("#loading").hide();
-		}
-		return false;
-	};
-
-	TopFunctions.toggleFullscreen = function(e) {
-		function afterToggling(isFullscreen) {
-			if (! isFullscreen) {
-				$(".enter-fullscreen").hide();
-				$(".exit-fullscreen").show();
-				env.fullScreenStatus = true;
-			} else {
-				$(".enter-fullscreen").show();
-				$(".exit-fullscreen").hide();
-				env.fullScreenStatus = false;
-			}
-			$("#loading").hide();
-
-			if (env.currentMedia !== null) {
-				let isFullScreenToggling = true;
-				util.resizeSingleMediaWithPrevAndNext(env.currentMedia, env.currentAlbum, isFullScreenToggling);
-			}
-		}
-
-		if (Modernizr.fullscreen) {
-			e.preventDefault();
-
-			$("#fullscreen-wrapper").fullScreen(
-				{
-					callback: function(isFullscreen) {
-						afterToggling(isFullscreen);
-					}
-				}
-			);
-		} else {
-			afterToggling();
-		}
-	};
-
-	TopFunctions.toggleFullscreenFromMouse = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			TopFunctions.toggleFullscreen(ev);
-			return false;
-		}
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
@@ -1778,7 +1791,6 @@
 		);
 	};
 
-	TopFunctions.prototype.toggleFullscreen = TopFunctions.toggleFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
 	TopFunctions.prototype.playClickElement = TopFunctions.playClickElement;

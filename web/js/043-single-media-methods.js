@@ -2,7 +2,7 @@
 
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
-	var f = new Functions();
+	var menuF = new MenuFunctions();
 	var pS = new PinchSwipe();
 	var tF = new TopFunctions();
 
@@ -707,7 +707,7 @@
 					if (self.isImage()) {
 						if (env.currentZoom === env.initialZoom) {
 							if (! event.data.pinch) {
-								f.pinchSwipeInitialization();
+								pS.initialize();
 								util.setPinchButtonsPosition();
 							}
 							util.setPinchButtonsVisibility();
@@ -801,14 +801,14 @@
 					$('.modal-close')[0].click();
 				}
 			}
-			f.updateMenu();
+			menuF.updateMenu();
 			if (env.currentAlbum.isSelection() && env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia())
 				tF.setTitle("album", null);
 		} else {
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
 			this.addToSelection(album, clickedSelector);
-			f.updateMenu();
+			menuF.updateMenu();
 		}
 	};
 
@@ -972,9 +972,9 @@
 				var mediaBoxInnerObject = $(".media-box#" + id + " .media-box-inner");
 				// empty the img container: another image will be put in there
 
-				if (self.isVideo() && ! f.videoOK()) {
+				if (self.isVideo() && ! util.videoOK()) {
 					mediaBoxInnerObject.empty();
-					f.addVideoUnsupportedMarker(id);
+					util.addVideoUnsupportedMarker(id);
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
@@ -1143,10 +1143,11 @@
 				}
 
 				if (id === "center") {
-					$(".media-box#center .metadata-show").off("click").on("click", f.toggleMetadataFromMouse);
-					$(".media-box#center .metadata-hide").off("click").on("click", f.toggleMetadataFromMouse);
-					$(".media-box#center .metadata").off("click").on("click", f.toggleMetadataFromMouse);
-					$(".media-box#center .fullscreen").off("click").on("click", tF.toggleFullscreenFromMouse);
+					$(".media-box#center .metadata-show").off("click").on("click", menuF.toggleMetadataFromMouse);
+					$(".media-box#center .metadata-hide").off("click").on("click", menuF.toggleMetadataFromMouse);
+					$(".media-box#center .metadata").off("click").on("click", menuF.toggleMetadataFromMouse);
+					$(".media-box#center .enter-fullscreen").off("click").on("click", menuF.toggleFullscreenFromMouse);
+					$(".media-box#center .exit-fullscreen").off("click").on("click", menuF.toggleFullscreenFromMouse);
 
 					// set social buttons events
 					if (env.currentMedia.isVideo())
@@ -1165,7 +1166,7 @@
 				var fileSize = self.fileSizes[0].images;
 				if (self.isVideo())
 					fileSize = self.fileSizes[0].videos;
-				text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
+				text += "<tr><td class='metadata-data-file-size'></td><td>" + util.humanFileSize(fileSize) + "</td></tr>";
 				if (self.metadata.size !== undefined)
 					text += "<tr><td class='metadata-data-size'></td><td>" + self.metadata.size[0] + " x " + self.metadata.size[1] + "</td></tr>";
 				if (self.metadata.make !== undefined)
@@ -1236,7 +1237,7 @@
 					util.correctElementPositions();
 					util.setMediaOptions();
 
-					f.updateMenu();
+					menuF.updateMenu();
 				}
 
 				util.translate();

@@ -12,7 +12,7 @@ $(document).ready(function() {
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var pS = new PinchSwipe();
-	var f = new Functions();
+	var menuF = new MenuFunctions();
 	var tF = new TopFunctions();
 
 	if ($(".media-box#center").length) {
@@ -76,13 +76,13 @@ $(document).ready(function() {
 				env.popupRefreshType = "previousAlbum";
 				env.mapRefreshType = "none";
 				// the menu must be updated here in order to have the browsing mode shortcuts workng
-				f.updateMenu();
+				menuF.updateMenu();
 				return false;
 			} else if (env.currentZoom > env.initialZoom || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && env.fullScreenStatus) {
-				tF.toggleFullscreen(e);
+				menuF.toggleFullscreen(e);
 				return false;
 			} else if (upLink) {
 				if (env.currentMedia !== null && env.currentMedia.isVideo())
@@ -328,10 +328,10 @@ $(document).ready(function() {
 						return false;
 					} else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && ! isPopup) {
 					// } else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && env.currentMedia !== null) {
-						tF.toggleFullscreen(e);
+						menuF.toggleFullscreen(e);
 						return false;
 					} else if (e.key.toLowerCase() === util._s(".metadata-hide") && env.currentMedia !== null) {
-						f.toggleMetadata();
+						menuF.toggleMetadata();
 						return false;
 					} else if (e.key.toLowerCase() === util._s(".original-link") && env.currentMedia !== null) {
 						$("#center .original-link")[0].click();
@@ -951,12 +951,12 @@ $(document).ready(function() {
 			tF.toggleMediaSquare(ev);
 		}
 	);
-	$("ul#right-menu li.restore").off("click").on(
+	$("ul#right-menu #restore").off("click").on(
 		"click",
 		function(ev) {
 			ev.stopPropagation();
 			util.addHighlightToItem($(this));
-			tF.restoreDisplaySettings(ev);
+			tF.restoreSettings(ev);
 		}
 	);
 	$("ul#right-menu #show-big-albums").off("click").on(
@@ -964,7 +964,7 @@ $(document).ready(function() {
 		function(ev) {
 			ev.stopPropagation();
 			util.addHighlightToItem($(this));
-			tF.toggleBigAlbumsShow(ev);
+			util.toggleBigAlbumsShow(ev);
 		}
 	);
 	$("ul#right-menu #save-data").off("click").on(
@@ -1088,7 +1088,7 @@ $(document).ready(function() {
 				$('.modal-close')[0].click();
 			}
 
-			var optionsPromise = f.getOptions();
+			var optionsPromise = menuF.getOptions();
 			optionsPromise.then(
 				function() {
 					util.translate();
@@ -1098,7 +1098,7 @@ $(document).ready(function() {
 					if (! util.isSearchHash()) {
 						// restore current album search flag to its default value
 						env.options.search_current_album = true;
-						f.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
+						menuF.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}
 
 					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {

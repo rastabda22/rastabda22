@@ -143,7 +143,7 @@
 			<script type="text/javascript" src="js/033-utilities.js"></script>
 			<script type="text/javascript" src="js/034-libphotofloat.js"></script>
 			<script type="text/javascript" src="js/035-pinch-swipe.js"></script>
-			<script type="text/javascript" src="js/036-functions.js"></script>
+			<script type="text/javascript" src="js/036-menu-functions.js"></script>
 			<script type="text/javascript" src="js/037-map.js"></script>
 			<script type="text/javascript" src="js/038-top-functions.js"></script>
 			<script type="text/javascript" src="js/041-album-methods.js"></script>
@@ -617,7 +617,6 @@
 						<li class='ui show-tags active'></li>
 						<li class='ui spaced active'></li>
 						<li class='ui show-bottom-thumbnails active'></li>
-						<li class='ui restore active'></li>
 					</ul>
 				</li>
 
@@ -673,6 +672,10 @@
 				<li class='first-level save-data active'>
 					<span id="save-data" class='save-data caption'></span>
 				</li>
+
+				<li class='first-level restore active'>
+					<span id="restore" class='restore caption'></span>
+				</li>
 			</ul>
 
 
@@ -683,7 +686,7 @@
 			<div id="sending-email" class="messages"></div>
 			<div id="you-can-suggest-photo-position" class="messages"></div>
 			<div id="sending-photo-position" class="messages"></div>
-			<div id="ui-settings-restored" class="messages"></div>
+			<div id="settings-restored" class="messages"></div>
 
 
 			<div id="folders-browsing" class="browsing-mode-message"></div>

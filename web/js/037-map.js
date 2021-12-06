@@ -2,7 +2,7 @@
 
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
-	var f = new Functions();
+	var menuF = new MenuFunctions();
 
 	/* constructor */
 	function MapFunctions() {
@@ -10,7 +10,7 @@
 
 	MapFunctions.prototype.updatePopup = function() {
 		util.setMediaOptions();
-		// f.setOptions();
+		// menuF.setOptions();
 		env.popup.setContent($(".media-popup .leaflet-popup-content").html());
 		MapFunctions.calculatePopupSizes();
 		$(".media-popup .leaflet-popup-content").css("max-width", env.maxWidthForPopupContent + "px");
@@ -30,7 +30,7 @@
 
 		util.highlightSearchedWords();
 
-		f.updateMenu();
+		menuF.updateMenu();
 	};
 
 	MapFunctions.calculatePopupSizes = function() {

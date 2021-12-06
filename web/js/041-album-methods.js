@@ -3,7 +3,7 @@
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var mapF = new MapFunctions();
-	var f = new Functions();
+	var menuF = new MenuFunctions();
 	var tF = new TopFunctions();
 
   Album.prototype.generatePositionsAndMedia = function() {
@@ -1133,20 +1133,20 @@
 		}
 	};
 
-	Album.prototype.initializeSortProperties = function() {
-		// this function sets the subalbum and media properties that attest the lists status
-		// json files have subalbums and media sorted according to the options
-
-		if (this.albumNameSort === undefined)
-			this.albumNameSort = env.options.default_album_name_sort;
-		if (this.albumReverseSort === undefined)
-			this.albumReverseSort = env.options.default_album_reverse_sort;
-
-		if (this.mediaNameSort === undefined)
-			this.mediaNameSort = env.options.default_media_name_sort;
-		if (this.mediaReverseSort === undefined)
-			this.mediaReverseSort = env.options.default_media_reverse_sort;
-	};
+	// Album.prototype.initializeSortProperties = function() {
+	// 	// this function sets the subalbum and media properties that attest the lists status
+	// 	// json files have subalbums and media sorted according to the options
+	//
+	// 	if (this.albumNameSort === undefined)
+	// 		this.albumNameSort = env.options.default_album_name_sort;
+	// 	if (this.albumReverseSort === undefined)
+	// 		this.albumReverseSort = env.options.default_album_reverse_sort;
+	//
+	// 	if (this.mediaNameSort === undefined)
+	// 		this.mediaNameSort = env.options.default_media_name_sort;
+	// 	if (this.mediaReverseSort === undefined)
+	// 		this.mediaReverseSort = env.options.default_media_reverse_sort;
+	// };
 
   Album.prototype.initializeIncludedFilesByCodesSimpleCombinationProperty = function(codesSimpleCombination, number) {
 		if (typeof codesSimpleCombination !== "undefined") {
@@ -2338,7 +2338,7 @@
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
 					}
-					f.updateMenu();
+					menuF.updateMenu();
 				}
 			);
 		} else {
@@ -2347,7 +2347,7 @@
 				function subalbumAdded() {
 					env.selectingSelectors = env.selectingSelectors.filter(selector => selector !== clickedSelector);
 
-					f.updateMenu();
+					menuF.updateMenu();
 				}
 			);
 		}
@@ -2396,7 +2396,7 @@
 
 		var isAlbumWithOneMedia = env.currentAlbum.isAlbumWithOneMedia();
 
-		// f.setOptions();
+		// menuF.setOptions();
 
 		let menuIconTitle = util._t("#menu-icon-title");
 		if (! env.isMobile.any())
@@ -2475,7 +2475,7 @@
 
 				env.windowWidth = $(window).innerWidth();
 
-				f.updateMenu();
+				menuF.updateMenu();
 				if (env.currentAlbum.subalbums.length)
 					this.bindSubalbumSortEvents();
 				if (env.currentAlbum.media.length)
@@ -2552,7 +2552,7 @@
 		}
 
 		// // options function must be called again in order to set elements previously absent
-		// f.setOptions();
+		// menuF.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
 			$(window).off("load").on("load", util.socialButtons());
@@ -2624,10 +2624,10 @@
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumNameSort = false;
-			f.setBooleanCookie("albumNameSortRequested", false);
-			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			menuF.setBooleanCookie("albumNameSortRequested", false);
+			// menuF.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
 			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
@@ -2642,9 +2642,9 @@
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumNameSort = true;
-			f.setBooleanCookie("albumNameSortRequested", true);
+			menuF.setBooleanCookie("albumNameSortRequested", true);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
@@ -2659,9 +2659,9 @@
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumReverseSort = ! env.albumReverseSort;
-			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
+			menuF.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
 			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
@@ -2676,9 +2676,9 @@
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.mediaNameSort = false;
-			f.setBooleanCookie("mediaNameSortRequested", false);
+			menuF.setBooleanCookie("mediaNameSortRequested", false);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 			let inThumbs = true;
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();
@@ -2709,9 +2709,9 @@
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.mediaNameSort = true;
-			f.setBooleanCookie("mediaNameSortRequested", true);
+			menuF.setBooleanCookie("mediaNameSortRequested", true);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 			let inThumbs = true;
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();
@@ -2738,9 +2738,9 @@
 		ev.stopPropagation();
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.mediaReverseSort = ! env.mediaReverseSort;
-			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
+			menuF.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
-			f.updateMenu(this);
+			menuF.updateMenu(this);
 			let inThumbs = true;
 			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showMedia();

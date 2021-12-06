@@ -1,6 +1,7 @@
 (function() {
 	var lastSelectionAlbumIndex = 0;
 	var lastMapAlbumIndex = 0;
+
 	/* constructor */
 	function Utilities() {
 	}
@@ -577,7 +578,7 @@
 		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "darkgray");
 
-		Functions.updateMenu(album);
+		MenuFunctions.updateMenu(album);
 	};
 
 	Utilities.prototype.toggleSearchMenu = function(ev, album) {
@@ -599,7 +600,7 @@
 
 		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "darkgray");
-		Functions.updateMenu(album);
+		MenuFunctions.updateMenu(album);
 	};
 
 	Utilities.prototype.toggleRightMenu = function(ev, album) {
@@ -1113,7 +1114,7 @@
 			function() {
 				if (self.isImage()) {
 					// if (env.currentZoom === env.initialZoom)
-					Functions.pinchSwipeInitialization();
+					PinchSwipe.initialize();
 					Utilities.setPinchButtonsPosition();
 					Utilities.setPinchButtonsVisibility();
 				}
@@ -2881,15 +2882,89 @@
 			return '';
 	};
 
+	Utilities.prototype.videoOK = function() {
+		if (! Modernizr.video || ! Modernizr.video.h264)
+			return false;
+		else
+			return true;
+	};
+
+	Utilities.prototype.addVideoUnsupportedMarker = function(id) {
+		if (! Modernizr.video) {
+			$(".media-box#" + id + " .media-box-inner").html('<div class="video-unsupported-html5"></div>');
+			return false;
+		}
+		else if (! Modernizr.video.h264) {
+			$(".media-box#" + id + " .media-box-inner").html('<div class="video-unsupported-h264"></div>');
+			return false;
+		} else
+			return true;
+	};
+
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
 		$("body, html").css("overflow", "auto");
 	};
 
+	Utilities.prototype.humanFileSize = function(size) {
+		// from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+	    var i = Math.floor(Math.log(size) / Math.log(1024));
+	    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+	};
+
+	Utilities.prototype.getAlbumNameFromCacheBase = function(cacheBase) {
+		return new Promise(
+			function(resolve_getAlbumNameFromAlbumHash) {
+				let getAlbumPromise = PhotoFloat.getAlbum(cacheBase, Utilities.noOp, {getMedia: false, getPositions: false});
+				getAlbumPromise.then(
+					function(theAlbum) {
+						var path;
+						var splittedPath = theAlbum.path.split('/');
+						if (splittedPath[0] === env.options.folders_string) {
+							splittedPath[0] = "";
+						} else if (splittedPath[0] === env.options.by_date_string) {
+							splittedPath[0] = "(" + Utilities._t("#by-date") + ")";
+						} else if (splittedPath[0] === env.options.by_gps_string) {
+							splittedPath = theAlbum.ancestorsNames;
+							splittedPath[0] = "(" + Utilities._t("#by-gps") + ")";
+						} else if (splittedPath[0] === env.options.by_map_string) {
+							splittedPath = ["(" + Utilities._t("#by-map") + ")"];
+						}
+						path = splittedPath.join('/');
+
+						resolve_getAlbumNameFromAlbumHash(path);
+					},
+					function() {
+						console.trace();
+					}
+				);
+			}
+		);
+	};
+
+	Utilities.toggleBigAlbumsShow = function(ev) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			if ($("#message-too-many-images").is(":visible")) {
+				$("#message-too-many-images").css("display", "");
+			}
+			$("#loading").show();
+			env.options.show_big_virtual_folders = ! env.options.show_big_virtual_folders;
+			if (env.options.show_big_virtual_folders)
+				$("#show-hide-them:hover").css("color", "").css("cursor", "");
+			else
+				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
+			menuF.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
+			menuF.updateMenu();
+			env.currentAlbum.showMedia();
+			$("#loading").hide();
+		}
+		return false;
+	};
+
 	Utilities.prototype.toggleInsideWordsSearch = function() {
 		env.options.search_inside_words = ! env.options.search_inside_words;
-		Functions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
+		MenuFunctions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
@@ -2897,8 +2972,8 @@
 
 	Utilities.prototype.toggleAnyWordSearch = function() {
 		env.options.search_any_word = ! env.options.search_any_word;
-		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
+		MenuFunctions.updateMenu();
 		if (env.searchWords.length < 2)
 			return;
 		if ($("#search-field").val().trim())
@@ -2908,8 +2983,8 @@
 
 	Utilities.prototype.toggleCaseSensitiveSearch = function() {
 		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
-		Functions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
+		MenuFunctions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
@@ -2918,8 +2993,8 @@
 
 	Utilities.prototype.toggleAccentSensitiveSearch = function() {
 		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
-		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
+		MenuFunctions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
@@ -2927,8 +3002,8 @@
 
 	Utilities.prototype.toggleTagsOnlySearch = function() {
 		env.options.search_tags_only = ! env.options.search_tags_only;
-		Functions.setBooleanCookie("searchTagsOnly", env.options.search_tags_only);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchTagsOnly", env.options.search_tags_only);
+		MenuFunctions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
@@ -2936,8 +3011,8 @@
 
 	Utilities.prototype.toggleCurrentAbumSearch = function() {
 		env.options.search_current_album = ! env.options.search_current_album;
-		Functions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
-		Functions.updateMenu();
+		MenuFunctions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
+		MenuFunctions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
@@ -3060,6 +3135,11 @@
 		var bottomOffset1 = topOffset1 + object1.outerHeight();
 		var bottomOffset2 = topOffset2 + object2.outerHeight();
 		return ((topOffset2 + bottomOffset2) / 2 - (topOffset1 + bottomOffset1) / 2);
+	};
+
+	Utilities.prototype.tenYears = function() {
+		// returns the expire interval for the cookies, in seconds
+		return 10 * 365 * 24 * 60 * 60;
 	};
 
 	/* make static methods callable as member functions */
