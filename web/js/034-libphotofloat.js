@@ -778,8 +778,10 @@
 											promise.then(
 												function(thisAlbum) {
 													env.searchAlbum.subalbums[thisIndex] = thisAlbum;
-													env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisAlbum.positionsAndMediaInTree);
-													env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+													if (! env.options.save_data) {
+														env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisAlbum.positionsAndMediaInTree);
+														env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+													}
 													// thisAlbum.positionsAndMediaInTree = positionsGot;
 													// thisAlbum.numPositionsInTree = album.positionsAndMediaInTree.length;
 													// thisAlbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;

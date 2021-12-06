@@ -364,7 +364,7 @@
 	};
 
 
-	Utilities.mediaOrSubalbumsUnionForSearches = function(a, b) {
+	Utilities.prototype.mediaOrSubalbumsUnionForSearches = function(a, b) {
 		if (! a.length) {
 			a.push(... b);
 			return;
