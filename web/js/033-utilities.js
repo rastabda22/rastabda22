@@ -2942,7 +2942,7 @@
 		);
 	};
 
-	Utilities.toggleBigAlbumsShow = function(ev) {
+	Utilities.prototype.toggleBigAlbumsShow = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if ($("#message-too-many-images").is(":visible")) {
 				$("#message-too-many-images").css("display", "");
