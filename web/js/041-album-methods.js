@@ -215,30 +215,32 @@
 			self = this;
 
 		var codes = [];
-		Object.keys(self.numsProtectedMediaInSubTree).forEach(
-			function(codesComplexCombination) {
-				if (codesComplexCombination === ",")
-					return;
-				let combinations = codesComplexCombination.replace(',', '-').split('-');
-				var indexOfVoidString = combinations.indexOf("");
-				if (indexOfVoidString !== -1)
-					combinations.splice(indexOfVoidString, 1);
+		if (self.hasOwnProperty("numsProtectedMediaInSubTree")) {
+			Object.keys(self.numsProtectedMediaInSubTree).forEach(
+				function(codesComplexCombination) {
+					if (codesComplexCombination === ",")
+						return;
+					let combinations = codesComplexCombination.replace(',', '-').split('-');
+					var indexOfVoidString = combinations.indexOf("");
+					if (indexOfVoidString !== -1)
+						combinations.splice(indexOfVoidString, 1);
 
-				combinations.forEach(
-					function(combination) {
-						var codesFromCombination = combination.split('-');
-						if (typeof codesList === "string")
-							codesFromCombination = [codesFromCombination];
-						codesFromCombination.forEach(
-							function(code) {
-								if (! codes.includes(code))
-									codes.push(code);
-							}
-						);
-					}
-				);
-			}
-		);
+					combinations.forEach(
+						function(combination) {
+							var codesFromCombination = combination.split('-');
+							if (typeof codesList === "string")
+								codesFromCombination = [codesFromCombination];
+							codesFromCombination.forEach(
+								function(code) {
+									if (! codes.includes(code))
+										codes.push(code);
+								}
+							);
+						}
+					);
+				}
+			);
+		}
 		return codes;
 	};
 

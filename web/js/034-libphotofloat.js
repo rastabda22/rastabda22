@@ -816,8 +816,13 @@
 				}
 
 				function buildSearchResult() {
+					function rootSearchAlbumNonExistent() {
+						util.noResults(env.searchAlbum, resolve_parseHash, '#nothing-to-search');
+					}
+
 					// get the search root album before getting the search words ones
-					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: false, getPositions: false});
+					// var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: false, getPositions: false});
+					var promise = PhotoFloat.getAlbum(env.options.by_search_string, rootSearchAlbumNonExistent, {getMedia: false, getPositions: false});
 					promise.then(
 						function(bySearchRootAlbum) {
 							env.searchAlbum.removedStopWords = removedStopWords;

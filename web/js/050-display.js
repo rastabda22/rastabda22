@@ -555,10 +555,11 @@ $(document).ready(function() {
 		var wordsStringOriginal, wordsString;
 		if (env.options.search_tags_only) {
 			wordsStringOriginal = util.encodeNonLetters($("#search-field").val()).normalize().replace(/  /g, ' ').trim();
-		} else if (env.options.search_numbers) {
-			wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}\p{N}]/ug, ' ').replace(/  /g, ' ').trim();
 		} else {
 			wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}]/ug, ' ').replace(/  /g, ' ').trim();
+		}
+		if (! env.options.search_numbers) {
+			wordsStringOriginal = wordsStringOriginal.replace(/[\p{N}]/ug, ' ').replace(/  /g, ' ').trim();
 		}
 		wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out

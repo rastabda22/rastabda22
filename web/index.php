@@ -403,6 +403,7 @@
 	";
 		?>
 		<div id="fullscreen-wrapper">
+			<div id="nothing-to-search" class="search-failed"></div>
 			<div id="no-search-string" class="search-failed"></div>
 			<div id="no-search-string-after-stopwords-removed" class="search-failed"></div>
 			<div id="no-results" class="search-failed"></div>

@@ -9,7 +9,7 @@
 	function TopFunctions() {
 	}
 
-	TopFunctions.prototype.setTitle = function(id, singleMedia, self) {
+	TopFunctions.setTitle = function(id, singleMedia, self) {
 		return new Promise(
 			function (resolve_setTitle) {
 				function searchCacheBaseIsCurrentAlbumOnly(collectionCacheBase) {
@@ -1807,6 +1807,7 @@
 	TopFunctions.prototype.toggleBottomThumbnails = TopFunctions.toggleBottomThumbnails;
 	TopFunctions.prototype.toggleSaveData = TopFunctions.toggleSaveData;
 	TopFunctions.prototype.updateMapAlbumOnMapClick = TopFunctions.updateMapAlbumOnMapClick;
+	TopFunctions.prototype.setTitle = TopFunctions.setTitle;
 
 	window.TopFunctions = TopFunctions;
 }());
