@@ -162,6 +162,7 @@ echo
 echo "== Minifying js files in $PROJECT_DIR/web/js directory with $MINIFY_JS =="
 echo
 CAT_LIST=""
+CAT_LIST_MINIFIED=""
 rm -f *.min.js
 if [ $? -ne 0 ]; then
 	( >&2 echo "Can't write files. Aborting..." )
@@ -175,7 +176,8 @@ while read jsfile; do
 	case $jsfile in
 		000-jquery-*)
 		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery/jquery.min.js ]; then
-			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery/jquery.min.js"
+			CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED /usr/share/javascript/jquery/jquery.min.js"
+			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery/jquery.js"
 			echo "... Found system jquery; using it."
 			continue
 		fi
@@ -183,7 +185,8 @@ while read jsfile; do
 
 		003-mousewheel*)
 		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js ]; then
-			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js"
+			CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js"
+			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js"
 			echo "... Found system jquery-mousewheel; using it."
 			continue
 		fi
@@ -193,7 +196,8 @@ while read jsfile; do
 		# Currently, there is no minified library in the Debian package... So this test is
 		# skipped and will be used in future Debian versions
 		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js ]; then
-			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js"
+			CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js"
+			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js"
 			echo "... Found system jquery-fullscreen; using it."
 			continue
 		fi
@@ -201,7 +205,8 @@ while read jsfile; do
 
 		005-modernizr*)
 		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/modernizr/modernizr.min.js ]; then
-			CAT_LIST="$CAT_LIST /usr/share/javascript/modernizr/modernizr.min.js"
+			CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED /usr/share/javascript/modernizr/modernizr.min.js"
+			CAT_LIST="$CAT_LIST /usr/share/javascript/modernizr/modernizr.js"
 			echo "... Found system modernizr; using it."
 			continue
 		fi
@@ -209,7 +214,8 @@ while read jsfile; do
 
 		007-jquery-lazyload*)
 		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js ]; then
-			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js"
+			CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js"
+			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-lazyload/jquery.lazyload.js"
 			echo "... Found system jquery-lazyload; using it."
 			continue
 		fi
@@ -238,13 +244,15 @@ while read jsfile; do
 			echo "Doing nothing on file $jsfile"
 			newfile=$jsfile
 	esac
-	CAT_LIST="$CAT_LIST $newfile"
+	CAT_LIST_MINIFIED="$CAT_LIST_MINIFIED $newfile"
+	CAT_LIST="$CAT_LIST $jsfile"
 done << EOF
 $(ls -1 *.js | grep -Ev "min.js$")
 EOF
 
 # merge all into one single file
-cat $CAT_LIST > scripts.min.js
+cat $CAT_LIST_MINIFIED > scripts.min.js
+cat $CAT_LIST > scripts.not.min.js
 
 
 # minify all .css-files
