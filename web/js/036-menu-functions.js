@@ -1763,7 +1763,7 @@
 
 	MenuFunctions.toggleFullscreen = function(e) {
 		function afterToggling(isFullscreen) {
-			if (! isFullscreen) {
+			if (isFullscreen) {
 				$(".enter-fullscreen").hide();
 				$(".exit-fullscreen").show();
 				env.fullScreenStatus = true;
