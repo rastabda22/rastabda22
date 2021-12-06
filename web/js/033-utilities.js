@@ -482,7 +482,7 @@
 	};
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
-	Utilities.sortBy = function(albumOrMediaList, fieldArray) {
+	Utilities.prototype.sortBy = function(albumOrMediaList, fieldArray) {
 		albumOrMediaList.sort(
 			function(a,b) {
 				var aValue, bValue, iField;
