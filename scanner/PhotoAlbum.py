@@ -172,9 +172,17 @@ class Album(object):
 		if media_or_positions != "":
 			json_file += "." + media_or_positions
 		json_file += ".json"
-		if json_file.find(Options.config['by_search_string']) == 0:
-			# add the search subdirectory directory
-			json_file = os.path.join(Options.config['search_album_subdir'], json_file)
+
+		if json_file.find(Options.config['by_date_string']) == 0:
+			# add the by date subdirectory
+			json_file = os.path.join(Options.config['by_date_album_subdir'], json_file)
+		elif json_file.find(Options.config['by_gps_string']) == 0:
+			# add the by gps subdirectory
+			json_file = os.path.join(Options.config['by_gps_album_subdir'], json_file)
+		elif json_file.find(Options.config['by_search_string']) == 0:
+			# add the search subdirectory
+			json_file = os.path.join(Options.config['by_search_album_subdir'], json_file)
+
 		return json_file
 
 	@property

@@ -1453,8 +1453,12 @@
 
 						var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 						var protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.0']);
-						if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
-							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.search_album_subdir, self.cacheBase + '.0']);
+						if (self.cacheBase.indexOf(env.options.by_gps_string) === 0)
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + '.0']);
+						else if (self.cacheBase.indexOf(env.options.by_date_string) === 0)
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + '.0']);
+						else if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + '.0']);
 
 						var promise = self.addContentWithExternalMediaAndPositionsFromProtectedCacheBase(protectedCacheBase, {getMedia: false, getPositions: false});
 						promise.then(
@@ -1673,8 +1677,12 @@
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
 								let protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.' + iCacheBase]);
-								if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
-									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.search_album_subdir, self.cacheBase + '.' + iCacheBase]);
+								if (self.cacheBase.indexOf(env.options.by_date_string) === 0)
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + '.' + iCacheBase]);
+								else if (self.cacheBase.indexOf(env.options.by_gps_string) === 0)
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + '.' + iCacheBase]);
+								else if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + '.' + iCacheBase]);
 								self.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
 								// if (! self.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 								// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};

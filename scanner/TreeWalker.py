@@ -204,10 +204,20 @@ class TreeWalker:
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
-		search_subdir = os.path.join(Options.config['cache_path'], Options.config['search_album_subdir'])
-		if search_subdir not in self.created_dirs:
-			make_dir(search_subdir, "search subdir")
-			self.created_dirs.append(search_subdir)
+		by_date_subdir = os.path.join(Options.config['cache_path'], Options.config['by_date_album_subdir'])
+		if by_date_subdir not in self.created_dirs:
+			make_dir(by_date_subdir, "by date subdir")
+			self.created_dirs.append(by_date_subdir)
+
+		by_gps_subdir = os.path.join(Options.config['cache_path'], Options.config['by_gps_album_subdir'])
+		if by_gps_subdir not in self.created_dirs:
+			make_dir(by_gps_subdir, "by gps subdir")
+			self.created_dirs.append(by_gps_subdir)
+
+		by_search_subdir = os.path.join(Options.config['cache_path'], Options.config['by_search_album_subdir'])
+		if by_search_subdir not in self.created_dirs:
+			make_dir(by_search_subdir, "search subdir")
+			self.created_dirs.append(by_search_subdir)
 
 		if album.cache_base == Options.config['folders_string']:
 			message("saving all physical albums to json files...", "", 3)
@@ -316,10 +326,20 @@ class TreeWalker:
 				make_dir(first_dir, "protected content directory")
 				self.created_dirs.append(first_dir)
 
-			search_subdir = os.path.join(first_dir, Options.config['search_album_subdir'])
-			if search_subdir not in self.created_dirs:
-				make_dir(search_subdir, "protected search subdir")
-				self.created_dirs.append(search_subdir)
+			by_date_subdir = os.path.join(first_dir, Options.config['by_date_album_subdir'])
+			if by_date_subdir not in self.created_dirs:
+				make_dir(by_date_subdir, "protected by date subdir")
+				self.created_dirs.append(by_date_subdir)
+
+			by_gps_subdir = os.path.join(first_dir, Options.config['by_gps_album_subdir'])
+			if by_gps_subdir not in self.created_dirs:
+				make_dir(by_gps_subdir, "protected by gps subdir")
+				self.created_dirs.append(by_gps_subdir)
+
+			by_search_subdir = os.path.join(first_dir, Options.config['by_search_album_subdir'])
+			if by_search_subdir not in self.created_dirs:
+				make_dir(by_search_subdir, "protected search subdir")
+				self.created_dirs.append(by_search_subdir)
 
 			number, json_name_with_path = determine_symlink_number_and_name(os.path.join(
 				first_dir,
@@ -354,10 +374,20 @@ class TreeWalker:
 						make_dir(complex_dir, "protected content directory")
 						self.created_dirs.append(complex_dir)
 
-					search_subdir = os.path.join(complex_dir, Options.config['search_album_subdir'])
-					if search_subdir not in self.created_dirs:
-						make_dir(search_subdir, "protected search subdir")
-						self.created_dirs.append(search_subdir)
+					by_date_subdir = os.path.join(complex_dir, Options.config['by_date_album_subdir'])
+					if by_date_subdir not in self.created_dirs:
+						make_dir(by_date_subdir, "protected by date subdir")
+						self.created_dirs.append(by_date_subdir)
+
+					by_gps_subdir = os.path.join(complex_dir, Options.config['by_gps_album_subdir'])
+					if by_gps_subdir not in self.created_dirs:
+						make_dir(by_gps_subdir, "protected by gps subdir")
+						self.created_dirs.append(by_gps_subdir)
+
+					by_search_subdir = os.path.join(complex_dir, Options.config['by_search_album_subdir'])
+					if by_search_subdir not in self.created_dirs:
+						make_dir(by_search_subdir, "protected search subdir")
+						self.created_dirs.append(by_search_subdir)
 
 
 					number, symlink_with_path = determine_symlink_number_and_name(os.path.join(
@@ -2344,7 +2374,11 @@ class TreeWalker:
 				deletable_files_re = r"\.(jpg|png|webp)$"
 			elif subdir == Options.config['passwords_subdir']:
 				deletable_files_re = r"[a-f0-9]{32}"
-			elif subdir == Options.config['search_album_subdir']:
+			elif subdir == Options.config['by_date_album_subdir']:
+				deletable_files_re = r"\.json$"
+			elif subdir == Options.config['by_gps_album_subdir']:
+				deletable_files_re = r"\.json$"
+			elif subdir == Options.config['by_search_album_subdir']:
 				deletable_files_re = r"\.json$"
 			elif re.search(protected_directory_re, subdir):
 				deletable_files_re = r"\.json$"

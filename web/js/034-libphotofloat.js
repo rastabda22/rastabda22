@@ -168,9 +168,19 @@
 		return new Promise(
 			function(resolve_getSingleUnprotectedCacheBase, reject_getSingleUnprotectedCacheBase) {
 				var jsonFile = unprotectedCacheBase + ".json";
-				if (jsonFile.indexOf(env.options.by_search_string) === 0) {
-					jsonFile = Utilities.pathJoin([
-						env.options.search_album_subdir,
+				if (jsonFile.indexOf(env.options.by_date_string) === 0) {
+					jsonFile = util.pathJoin([
+						env.options.by_date_album_subdir,
+						jsonFile
+					]);
+				} else if (jsonFile.indexOf(env.options.by_gps_string) === 0) {
+					jsonFile = util.pathJoin([
+						env.options.by_gps_album_subdir,
+						jsonFile
+					]);
+				} if (jsonFile.indexOf(env.options.by_search_string) === 0) {
+					jsonFile = util.pathJoin([
+						env.options.by_search_album_subdir,
 						jsonFile
 					]);
 				}

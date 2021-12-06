@@ -1,4 +1,6 @@
-* send by search json files to a separate directory, new option `search_album_subdir`
+* send by search json files to a separate directory, new option `by_search_album_subdir`
+* similarly, by gps json file, new option `by_gps_album_subdir`
+* similarly, by date json file, new option `by_date_album_subdir`
 * bug fixes
 
 ### version v5.5.1 (December 5, 2021)

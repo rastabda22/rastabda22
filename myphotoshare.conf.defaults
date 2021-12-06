@@ -105,13 +105,19 @@ js_minifier = jsmin3
 ###########################################################
 
 # default cache subfolder to use when no subdir is generated
-default_cache_album = media_reductions
+default_cache_album = reductions_and_thumbnails
 
 # cache subfolder for composite images: where the album composite images will be saved
-cache_album_subdir = cache_album
+cache_album_subdir = _composite_images
 
-# cache subfolder for search json files
-search_album_subdir = search_albums
+# cache subdirectory for by date json files
+by_date_album_subdir = _date_albums
+
+# cache subdirectory for by gps json files
+by_gps_album_subdir = _gps_albums
+
+# cache subdirectory for search json files
+by_search_album_subdir = _search_albums
 
 # Filename where user-defined metadata is stored in albums
 metadata_filename = album.ini
@@ -259,10 +265,10 @@ passwords_file = myphotoshare.passwords
 # the cache subdir where the passwords files are stored by the scanner
 # changing it to a more complex value may suppose a stronger security,
 # but it's not so, because this value must be saved in the `options.json` file
-passwords_subdir = pwd
+passwords_subdir = _pwd
 
 # the prefix for the protected directories where json files are stored
-protected_directories_prefix = protected_
+protected_directories_prefix = _protected_
 
 # put here the email address for requesting the password(s)
 # requires php
