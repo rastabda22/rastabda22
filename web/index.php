@@ -558,7 +558,7 @@
 					<span id="padlock" class="protection">
 						<img width="12px" height="16px" src="img/padlock.png" />
 					</span>
-					<span id="info-icon">i</span>
+					<span class="info-icon info-icon-shortcut"></span>
 				</li>
 				<li class="search active hidden-by-menu-selection">
 					<form class="caption">
@@ -668,7 +668,7 @@
 				</li>
 
 				<li class='first-level protection active'>
-					<span id="protected-content-unveil" class='protection caption'></span>
+					<span class='protection caption protected-content-unveil'></span>
 				</li>
 
 				<li class='first-level save-data active'>

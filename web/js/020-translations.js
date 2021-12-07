@@ -6,74 +6,74 @@
 	Translations.getShortcuts = function() {
 		var shortcuts = {
 			en: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				"#info-icon": "i",
-				".metadata-show": "m",
+				".next-media-title-shortcut": "n",
+				".prev-media-title-shortcut": "p",
+				".info-icon-shortcut": "i",
+				".metadata-show-shortcut": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
+				".original-link-shortcut": "o",
+				".download-link-shortcut": "d",
+				".map-link-shortcut": "s",
+				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				".select.everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
+				".hide-everytyhing-shortcut": "h",
+				".select.everything-shortcut": "a",
+				".menu-icon-title-shortcut": "e",
+				".protected-content-unveil-shortcut": "u"
 			},
 			it: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				"#info-icon": "i",
-				".metadata-show": "m",
+				".next-media-title-shortcut": "n",
+				".prev-media-title-shortcut": "p",
+				".info-icon-shortcut": "i",
+				".metadata-show-shortcut": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
+				".original-link-shortcut": "o",
+				".download-link-shortcut": "d",
+				".map-link-shortcut": "s",
+				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				".select.everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
+				".hide-everytyhing-shortcut": "h",
+				".select.everything-shortcut": "a",
+				".menu-icon-title-shortcut": "e",
+				".protected-content-unveil-shortcut": "u"
 			},
 			es: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				"#info-icon": "i",
-				".metadata-show": "m",
+				".next-media-title-shortcut": "n",
+				".prev-media-title-shortcut": "p",
+				".info-icon-shortcut": "i",
+				".metadata-show-shortcut": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
+				".original-link-shortcut": "o",
+				".download-link-shortcut": "d",
+				".map-link-shortcut": "s",
+				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				".select.everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
+				".hide-everytyhing-shortcut": "h",
+				".select.everything-shortcut": "a",
+				".menu-icon-title-shortcut": "e",
+				".protected-content-unveil-shortcut": "u"
 			},
 			fr: {
-				"#next-media-title": "n",
-				"#prev-media-title": "p",
-				"#info-icon": "i",
-				".metadata-show": "m",
+				".next-media-title-shortcut": "n",
+				".prev-media-title-shortcut": "p",
+				".info-icon-shortcut": "i",
+				".metadata-show-shortcut": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
-				".original-link": "o",
-				".download-link": "d",
-				".map-link": "s",
-				".enter-fullscreen": "f",
+				".original-link-shortcut": "o",
+				".download-link-shortcut": "d",
+				".map-link-shortcut": "s",
+				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
-				"#hide-everytyhing": "h",
-				".select.everything": "a",
-				"#menu-icon-title": "e",
-				"#protected-content-unveil": "u"
+				".hide-everytyhing-shortcut": "h",
+				".select.everything-shortcut": "a",
+				".menu-icon-title-shortcut": "e",
+				".protected-content-unveil-shortcut": "u"
 			}
 		};
 
 		for (let lang in shortcuts) {
-			shortcuts[lang][".metadata-hide"] = shortcuts[lang][".metadata-show"];
-			shortcuts[lang][".exit-fullscreen"] = shortcuts[lang][".enter-fullscreen"];
+			shortcuts[lang][".metadata-hide-shortcut"] = shortcuts[lang][".metadata-show-shortcut"];
+			shortcuts[lang][".exit-fullscreen-shortcut"] = shortcuts[lang][".enter-fullscreen-shortcut"];
 		}
 
 		return shortcuts;
@@ -87,8 +87,8 @@
 				"#root-album": "root album",
 				"#tags": "Tags",
 				"#padlock-img-alt-text": "padlock",
-				"#next-media-title": "Next",
-				"#prev-media-title": "Previous",
+				".next-media-title": "Next",
+				".prev-media-title": "Previous",
 				"#pinch-in-title": "Zoom in [+]",
 				"#pinch-out-title": "Zoom out [-]",
 				".metadata-show": "Show Metadata",
@@ -197,9 +197,9 @@
 				"#selector": "Selector",
 				"#images": "images",
 				".not-specified": "(not specified)",
-				"#menu-icon-title": "search and options menu",
-				"#menu-icon-title-end": "esc to close",
-				"#info-icon-title": "Keep pressed to show contestual help",
+				".menu-icon-title": "search and options menu",
+				".menu-icon-title-end": "esc to close",
+				".info-icon-title": "Keep pressed to show contestual help",
 				"#too-many-images": "Too many media",
 				"#too-many-images-limit-is": "limit for date and location albums is",
 				"#show-them": "show them",
@@ -229,7 +229,7 @@
 				".non-geotagged-only.caption": "Hide geotagged media",
 				"#hide-geotagged-media": "Hide geotagged media",
 				".hidden-geotagged-media": "Non-geotagged media only",
-				"#protected-content-unveil": "Unveil protected content",
+				".protected-content-unveil": "Unveil protected content",
 				"#current-album-is": "current album is ",
 				"#refine-search": "refine current search",
 				".album-sort.caption": "Sort albums",
@@ -334,8 +334,8 @@
 				"#root-album": "album radice",
 				"#tags": "Etichette",
 				"#padlock-img-alt-text": "lucchetto",
-				"#next-media-title": "Prossima",
-				"#prev-media-title": "Precedente",
+				".next-media-title": "Prossima",
+				".prev-media-title": "Precedente",
 				"#pinch-in-title": "Zoom avanti [+]",
 				"#pinch-out-title": "Zoom indietro [-]",
 				".metadata-show": "metadati",
@@ -444,9 +444,9 @@
 				"#selector": "Selettore",
 				"#images": "immagini",
 				".not-specified": "(non specificato)",
-				"#menu-icon-title": "menu ricerca e opzioni",
-				"#menu-icon-title-end": "esc per chiudere",
-				"#info-icon-title": "Tieni schiacciato per mostrare l'aiuto contestuale",
+				".menu-icon-title": "menu ricerca e opzioni",
+				".menu-icon-title-end": "esc per chiudere",
+				".info-icon-title": "Tieni schiacciato per mostrare l'aiuto contestuale",
 				"#too-many-images": "Troppe immagini/video",
 				"#too-many-images-limit-is": "il limite degli album per data e per luogo è",
 				"#show-them": "mostrale",
@@ -476,7 +476,7 @@
 				".non-geotagged-only.caption": "Nascondi le immagini/video geolocalizzate",
 				"#hide-geotagged-media": "Nascondi le immagini/video geolocalizzate",
 				".hidden-geotagged-media": "Solo immagini/video non geolocalizzati",
-				"#protected-content-unveil": "Svela contenuti protetti",
+				".protected-content-unveil": "Svela contenuti protetti",
 				"#current-album-is": "l'album corrente è ",
 				"#refine-search": "perfeziona la ricerca corrente",
 				".album-sort.caption": "Ordina gli albums",
@@ -581,8 +581,8 @@
 				"#root-album": "álbum raíz",
 				"#tags": "Etiquetas",
 				"#padlock-img-alt-text": "candado",
-				"#next-media-title": "Siguiente",
-				"#prev-media-title": "Anterior",
+				".next-media-title": "Siguiente",
+				".prev-media-title": "Anterior",
 				"#pinch-in-title": "Zoom adelante [+]",
 				"#pinch-out-title": "Zoom atrás [-]",
 				".metadata-show": "metadatos",
@@ -684,9 +684,9 @@
 				"#selector": "Selector",
 				"#images": "imágenes",
 				".not-specified": "(sin especificar)",
-				"#menu-icon-title": "menú búsqueda y opciones",
-				"#menu-icon-title-end": "esc para cerrar",
-				"#info-icon-title": "Mantenga presionado para ver la ayuda contestual",
+				".menu-icon-title": "menú búsqueda y opciones",
+				".menu-icon-title-end": "esc para cerrar",
+				".info-icon-title": "Mantenga presionado para ver la ayuda contestual",
 				"#too-many-images": "Demasiadas imágenes/videos",
 				"#too-many-images-limit-is": "el límite por los álbumes por fecha y por lugar es",
 				"#show-them": "muéstralas",
@@ -723,7 +723,7 @@
 				".non-geotagged-only.caption": "Esconde las imágenes/videos sin geolocalización",
 				"#hide-geotagged-media": "Esconde las imágenes/videos sin geolocalización",
 				".hidden-geotagged-media": "Sólo imágenes/videos sin geolocalización",
-				"#protected-content-unveil": "Revela contenidos protegidos",
+				".protected-content-unveil": "Revela contenidos protegidos",
 				"#current-album-is": "el álbum corriente es ",
 				"#refine-search": "perfectiona la búsqueda corriente",
 				".album-sort.caption": "Ordena los álbums",
@@ -828,8 +828,8 @@
 				"#root-album": "album racine",
 				"#tags": "Étiquettes",
 				"#padlock-img-alt-text": "cadenas",
-				"#next-media-title": "Suivant",
-				"#prev-media-title": "Précédent",
+				".next-media-title": "Suivant",
+				".prev-media-title": "Précédent",
 				"#pinch-in-title": "Zoom avant [+]",
 				"#pinch-out-title": "Zoom arrière [-]",
 				".metadata-show": "Afficher les métadonnées",
@@ -938,9 +938,9 @@
 				"#selector": "Sélecteur",
 				"#images": "images",
 				".not-specified": "(non précisé)",
-				"#menu-icon-title": "menu recherche et options",
-				"#menu-icon-title-end": "esc pour fermer",
-				"#info-icon-title": "Keep pressed to show contestual help",
+				".menu-icon-title": "menu recherche et options",
+				".menu-icon-title-end": "esc pour fermer",
+				".info-icon-title": "Keep pressed to show contestual help",
 				"#too-many-images": "Trop d'images/vidéos",
 				"#too-many-images-limit-is": "la limite pour les albums de dates et de lieux est",
 				"#show-them": "montre-les",
@@ -970,7 +970,7 @@
 				".non-geotagged-only.caption": "Hide geotagged media",
 				"#hide-geotagged-media": "Hide geotagged media",
 				".hidden-geotagged-media": "Non-geotagged media only",
-				"#protected-content-unveil": "Révéler le contenu protégé",
+				".protected-content-unveil": "Révéler le contenu protégé",
 				"#current-album-is": "l'album actuel est ",
 				"#refine-search": "Affiner la recherche en cours",
 				".album-sort.caption": "Trier les albums",
@@ -1074,7 +1074,7 @@
 
 		// let shortcuts = Translations.getShortcuts();
 		// for (let lang in translations) {
-		// 	translations[lang]["#info-icon"] = shortcuts[lang]["#info-icon"];
+		// 	translations[lang][".info-icon"] = shortcuts[lang][".info-icon"];
 		// }
 
 		return translations;

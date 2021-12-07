@@ -270,7 +270,7 @@
 	};
 
 	Utilities._t = function(key) {
-		let shortcut = env.shortcuts[env.language][key];
+		let shortcut = env.shortcuts[env.language][key + "-shortcut"];
 		if (shortcut)
 			shortcut = " [" + shortcut + "]";
 		else
@@ -285,9 +285,15 @@
 					// don't set page title, php has already set it
 					continue;
 				let keyObject = $(key);
-				if (keyObject.length) {
+				if (keyObject.length)
 					keyObject.html(Utilities._t(key));
-				}
+			}
+		}
+		for (var key in env.shortcuts.en) {
+			if (env.shortcuts[env.language].hasOwnProperty(key)) {
+				let keyObject = $(key);
+				if (keyObject.length)
+					keyObject.html(Utilities._s(key));
 			}
 		}
 		$("ul#right-menu #save-data").attr("title", Utilities._t("#save-data-tip"));

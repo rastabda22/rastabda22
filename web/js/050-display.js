@@ -224,7 +224,7 @@ $(document).ready(function() {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
 						return false;
-					} else if (e.key === util._s("#hide-everytyhing")) {
+					} else if (e.key === util._s(".hide-everytyhing-shortcut")) {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 						return false;
@@ -251,7 +251,7 @@ $(document).ready(function() {
 							$("video#media-center")[0].pause();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === util._s("#next-media-title") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						(e.key.toLowerCase() === util._s(".next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -259,7 +259,7 @@ $(document).ready(function() {
 						// env.nextMedia.swipeLeft();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === util._s("#prev-media-title") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						(e.key.toLowerCase() === util._s(".prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -322,18 +322,18 @@ $(document).ready(function() {
 								return false;
 							}
 						}
-					} else if (e.key.toLowerCase() === util._s(".download-link")) {
+					} else if (e.key.toLowerCase() === util._s(".download-link-shortcut")) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && ! isPopup) {
-					// } else if (e.key.toLowerCase() === util._s(".enter-fullscreen") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".enter-fullscreen-shortcut") && ! isPopup) {
+					// } else if (e.key.toLowerCase() === util._s(".enter-fullscreen-shortcut") && env.currentMedia !== null) {
 						menuF.toggleFullscreen(e);
 						return false;
-					} else if (e.key.toLowerCase() === util._s(".metadata-hide") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".metadata-hide-shortcut") && env.currentMedia !== null) {
 						menuF.toggleMetadata();
 						return false;
-					} else if (e.key.toLowerCase() === util._s(".original-link") && env.currentMedia !== null) {
+					} else if (e.key.toLowerCase() === util._s(".original-link-shortcut") && env.currentMedia !== null) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
@@ -356,7 +356,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === util._s(".map-link") &&
+						e.key.toLowerCase() === util._s(".map-link-shortcut") &&
 					 	! isPopup &&
 						! util.onlyShowNonGeotaggedContent() &&
 						(
@@ -372,18 +372,18 @@ $(document).ready(function() {
 							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key.toLowerCase() === util._s("#protected-content-unveil") &&
+						e.key.toLowerCase() === util._s(".protected-content-unveil-shortcut") &&
 						env.currentAlbum !== null
 					) {
 						if (
 							env.currentAlbum.hasVeiledProtectedContent()
 						) {
-							$("#protected-content-unveil")[0].click();
+							$(".protected-content-unveil")[0].click();
 							return false;
 						}
 					}
 
-					if (e.key.toLowerCase() === util._s(".select.everything")) {
+					if (e.key.toLowerCase() === util._s(".select.everything-shortcut")) {
 						if (! e.shiftKey) {
 							// select everything
 							$(".select.everything:not(.hidden):not(.selected)").click();
@@ -497,7 +497,7 @@ $(document).ready(function() {
 			// "e" opens the menu, and closes it if focus is not in input field
 			if (
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey &&
-				e.key.toLowerCase() === util._s("#menu-icon-title") && (
+				e.key.toLowerCase() === util._s(".menu-icon-title-shortcut") && (
 					! $("#right-menu").hasClass("expanded") ||
 					$(".search").hasClass("hidden-by-menu-selection")
 				)
@@ -509,7 +509,7 @@ $(document).ready(function() {
 		}
 
 		// "i" opens the contestual help
-		if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s("#info-icon")) {
+		if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
 			util.fillContextualHelp();
 			$("#contextual-help").stop().fadeIn(500);
 			return false;
@@ -521,7 +521,7 @@ $(document).ready(function() {
 	$(document).off("keyup").on(
 		"keyup",
 		function(e) {
-			if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s("#info-icon")) {
+			if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
 				$("#contextual-help").stop().fadeOut(500);
 				return false;
 			}
@@ -530,11 +530,11 @@ $(document).ready(function() {
 
 	util.setLinksVisibility();
 
-	let nextTitle  = util._t("#next-media-title");
-	let prevTitle  = util._t("#prev-media-title");
+	let nextTitle  = util._t(".next-media-title");
+	let prevTitle  = util._t(".prev-media-title");
 	if (! env.isMobile.any()) {
-		nextTitle  += " [" + util._s("#next-media-title") + "]";
-		prevTitle  += " [" + util._s("#prev-media-title") + "]";
+		nextTitle  += " [" + util._s(".next-media-title-shortcut") + "]";
+		prevTitle  += " [" + util._s(".prev-media-title-shortcut") + "]";
 	}
 	$("#next").attr("title", nextTitle).attr("alt", ">");
 	$("#prev").attr("title", prevTitle).attr("alt", "<");
@@ -877,7 +877,7 @@ $(document).ready(function() {
 		}
 	);
 
-	$("#protected-content-unveil").off("click").on("click", util.showAuthForm);
+	$(".protected-content-unveil").off("click").on("click", util.showAuthForm);
 
 	// binds the click events to the sort buttons
 
@@ -1005,7 +1005,7 @@ $(document).ready(function() {
 		}
 	);
 
-	$("#info-icon").off("mouseenter").on(
+	$(".info-icon").off("mouseenter").on(
 		"mouseenter",
 		function() {
 			util.fillContextualHelp();
@@ -1164,7 +1164,7 @@ $(document).ready(function() {
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
 									if (album.isEmpty || album.hasVeiledProtectedContent())
-										$("#protected-content-unveil")[0].click();
+										$(".protected-content-unveil")[0].click();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
@@ -1174,7 +1174,7 @@ $(document).ready(function() {
 											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												$("#protected-content-unveil")[0].click();
+												$(".protected-content-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}
