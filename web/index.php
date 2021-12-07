@@ -558,6 +558,7 @@
 					<span id="padlock" class="protection">
 						<img width="12px" height="16px" src="img/padlock.png" />
 					</span>
+					<span id="info-icon">i</span>
 				</li>
 				<li class="search active hidden-by-menu-selection">
 					<form class="caption">
@@ -688,6 +689,7 @@
 			<div id="you-can-suggest-photo-position" class="messages"></div>
 			<div id="sending-photo-position" class="messages"></div>
 			<div id="settings-restored" class="messages"></div>
+			<div id="contextual-help" class="messages"></div>
 
 
 			<div id="folders-browsing" class="browsing-mode-message"></div>

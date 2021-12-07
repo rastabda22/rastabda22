@@ -8,6 +8,7 @@
 			en: {
 				"#next-media-title": "n",
 				"#prev-media-title": "p",
+				"#info-icon": "i",
 				".metadata-show": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link": "o",
@@ -23,6 +24,7 @@
 			it: {
 				"#next-media-title": "n",
 				"#prev-media-title": "p",
+				"#info-icon": "i",
 				".metadata-show": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link": "o",
@@ -38,6 +40,7 @@
 			es: {
 				"#next-media-title": "n",
 				"#prev-media-title": "p",
+				"#info-icon": "i",
 				".metadata-show": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link": "o",
@@ -53,6 +56,7 @@
 			fr: {
 				"#next-media-title": "n",
 				"#prev-media-title": "p",
+				"#info-icon": "i",
 				".metadata-show": "m",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link": "o",
@@ -78,7 +82,7 @@
 	Translations.prototype.getTranslations = function() {
 		// var shortcuts = this.getShortcuts();
 
-		return {
+		var translations = {
 			en: {
 				"#root-album": "root album",
 				"#tags": "Tags",
@@ -195,6 +199,7 @@
 				".not-specified": "(not specified)",
 				"#menu-icon-title": "search and options menu",
 				"#menu-icon-title-end": "esc to close",
+				"#info-icon-title": "Keep pressed to show contestual help",
 				"#too-many-images": "Too many media",
 				"#too-many-images-limit-is": "limit for date and location albums is",
 				"#show-them": "show them",
@@ -441,6 +446,7 @@
 				".not-specified": "(non specificato)",
 				"#menu-icon-title": "menu ricerca e opzioni",
 				"#menu-icon-title-end": "esc per chiudere",
+				"#info-icon-title": "Tieni schiacciato per mostrare l'aiuto contestuale",
 				"#too-many-images": "Troppe immagini/video",
 				"#too-many-images-limit-is": "il limite degli album per data e per luogo è",
 				"#show-them": "mostrale",
@@ -680,6 +686,7 @@
 				".not-specified": "(sin especificar)",
 				"#menu-icon-title": "menú búsqueda y opciones",
 				"#menu-icon-title-end": "esc para cerrar",
+				"#info-icon-title": "Mantenga presionado para ver la ayuda contestual",
 				"#too-many-images": "Demasiadas imágenes/videos",
 				"#too-many-images-limit-is": "el límite por los álbumes por fecha y por lugar es",
 				"#show-them": "muéstralas",
@@ -933,6 +940,7 @@
 				".not-specified": "(non précisé)",
 				"#menu-icon-title": "menu recherche et options",
 				"#menu-icon-title-end": "esc pour fermer",
+				"#info-icon-title": "Keep pressed to show contestual help",
 				"#too-many-images": "Trop d'images/vidéos",
 				"#too-many-images-limit-is": "la limite pour les albums de dates et de lieux est",
 				"#show-them": "montre-les",
@@ -1063,6 +1071,13 @@
 				"#error-getting-current-location": "Error getting your position",
 			}
 		};
+
+		// let shortcuts = Translations.getShortcuts();
+		// for (let lang in translations) {
+		// 	translations[lang]["#info-icon"] = shortcuts[lang]["#info-icon"];
+		// }
+
+		return translations;
 	};
 
 	Translations.prototype.getShortcuts = Translations.getShortcuts;

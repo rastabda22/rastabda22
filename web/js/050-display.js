@@ -508,8 +508,25 @@ $(document).ready(function() {
 			}
 		}
 
+		// "i" opens the contestual help
+		if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s("#info-icon")) {
+			util.fillContextualHelp();
+			$("#contextual-help").stop().fadeIn(500);
+			return false;
+		}
+
 		return true;
 	});
+
+	$(document).off("keyup").on(
+		"keyup",
+		function(e) {
+			if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s("#info-icon")) {
+				$("#contextual-help").stop().fadeOut(500);
+				return false;
+			}
+		}
+	);
 
 	util.setLinksVisibility();
 
@@ -987,6 +1004,20 @@ $(document).ready(function() {
 			util.toggleSearchMenu(ev);
 		}
 	);
+
+	$("#info-icon").off("mouseenter").on(
+		"mouseenter",
+		function() {
+			util.fillContextualHelp();
+			$("#contextual-help").stop().fadeIn(500);
+		}
+	).off("mouseleave").on(
+		"mouseleave",
+		function() {
+			$("#contextual-help").stop().fadeOut(500);
+		}
+	);
+
 	$("#menu-icon").off("click").on(
 		"click",
 		function(ev) {

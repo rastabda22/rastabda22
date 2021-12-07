@@ -2417,6 +2417,10 @@
 		if (! env.isMobile.any())
 			menuIconTitle += ", " + util._t("#menu-icon-title-end");
 		$("#menu-icon").attr("title", menuIconTitle);
+
+		let infoIconTitle = util._t("#info-icon-title");
+		$("#info-icon").attr("title", infoIconTitle);
+
 		if (env.currentMedia === null)
 			env.currentAlbum.sortAlbumsMedia();
 
