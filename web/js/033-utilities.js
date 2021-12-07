@@ -270,7 +270,7 @@
 	};
 
 	Utilities._t = function(key) {
-		let shortcut = env.shortcuts[env.language][key + "-shortcut"];
+		let shortcut = env.shortcuts[env.language][":not(#contextual-help) " + key + "-shortcut"];
 		if (shortcut)
 			shortcut = " [" + shortcut + "]";
 		else
@@ -297,78 +297,6 @@
 			}
 		}
 		$("ul#right-menu #save-data").attr("title", Utilities._t("#save-data-tip"));
-	};
-
-	Utilities.prototype.fillContextualHelp = function() {
-		var content;
-		var isAlbumWithOneMedia = env.currentAlbum.isAlbumWithOneMedia();
-
-		if ($("#auth-text").is(":visible")) {
-			// messageOrDialog
-			content = "";
-		} else if ($("#menu-icon").hasClass("expanded")) {
-			if ($("#right-menu .highlighted").hasClass("expandable")) {
-				if ($("#right-menu li.highlighted").hasClass("expanded"))
-					// rightMenuOnExpandableExpanded
-					content = "rightMenuOnExpandableExpanded";
-				else
-					// rightMenuOnExpandable
-					content = "rightMenuOnExpandable";
-			} else {
-				if ($("#right-menu li.highlighted").hasClass("active"))
-					// rightMenuOnCommand
-					content = "rightMenuOnCommand";
-				else
-					// rightMenuOnNonActive
-					content = "rightMenuOnNonActive";
-			}
-		} else if ($("#search-icon").hasClass("expanded")) {
-			if ($(".search").hasClass("highlighted"))
-				// searchMenuOnTextArea
-				content = "searchMenuOnTextArea";
-			else
-				// searchMenuOnOption
-				content = "searchMenuOnOption";
-		} else if (Utilities.isMap()) {
-			// map
-			content = "map";
-		} else if (Utilities.isPopup()) {
-			// popup
-			content = "popup";
-		} else if (env.currentMedia === null) {
-			if (env.currentAlbum.cacheBase === env.options.folders_string) {
-				if (isAlbumWithOneMedia)
-					// homePageWithsingeMediaAndNoSubalbums
-					content = "homePageWithsingeMediaAndNoSubalbums";
-				else
-					// homePage
-					content = "homePage";
-			} else if (env.currentAlbum.cacheBase.indexOf(env.options.by_map_string) === 0) {
-				if (isAlbumWithOneMedia)
-					// mapAlbumWithsingeMediaAndNoSubalbums
-					content = "mapAlbumWithsingeMediaAndNoSubalbums";
-				else
-					// mapAlbum
-					content = "mapAlbum";
-			} else {
-				if (isAlbumWithOneMedia)
-					// albumWithsingeMediaAndNoSubalbums
-					content = "albumWithsingeMediaAndNoSubalbums";
-				else
-					// album
-					content = "album";
-			}
-		} else {
-			if (isAlbumWithOneMedia)
-				// singleMediaWithNoMoreMediaNorSubalbums
-				content = "singleMediaWithNoMoreMediaNorSubalbums";
-			else
-				// singeMedia
-				content = "singleMedia";
-		}
-
-		if (content)
-			$("#contextual-help").html(content);
 	};
 
 	Utilities.prototype.windowVerticalScrollbarWidth = function() {

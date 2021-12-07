@@ -74,6 +74,7 @@
 		for (let lang in shortcuts) {
 			shortcuts[lang][".metadata-hide-shortcut"] = shortcuts[lang][".metadata-show-shortcut"];
 			shortcuts[lang][".exit-fullscreen-shortcut"] = shortcuts[lang][".enter-fullscreen-shortcut"];
+			shortcuts[lang][".open-menu-shortcut"] = shortcuts[lang][".menu-icon-title-shortcut"];
 		}
 
 		return shortcuts;
@@ -329,6 +330,20 @@
 				"#how-to-download-selection": "In order to download the selection,<br />please show it from the Selection submenu",
 				"#click-for-your-position": "Center the map on your position",
 				"#error-getting-current-location": "Error getting your position",
+				"#contextual-help .shortcuts .table-title": "Shortcuts",
+				"#contextual-help .shortcuts .table-title-scope": "Scope",
+				"#contextual-help .shortcuts .table-title-shortcut": "Shortcut",
+				"#contextual-help .shortcuts .table-title-action": "Action",
+				"#contextual-help .shortcuts .scope.any": "Any",
+				"#contextual-help .shortcuts .scope.album": "Album",
+				"#contextual-help .shortcuts .scope.album": "Album",
+				"#contextual-help .shortcuts .scope.single-media": "Single media",
+				"#contextual-help .shortcuts .shortcut-help.esc": "Quit current action, go up in the albums tree, hide map, ecc.",
+				"#contextual-help .shortcuts .shortcut-help.open-menu": "Open right menu",
+				"#contextual-help .shortcuts .shortcut-help.map-link": "Show the map (when there are geo data)",
+				"#contextual-help .shortcuts .shortcut-help.enter-fullscreen": "Enter/exit full screen mode",
+				"#contextual-help .shortcuts .shortcut-help.select.everything": "Select all subalbums and all media",
+				"#contextual-help .shortcuts .shortcut-help.download-link": "Dowload original media",
 			},
 			it: {
 				"#root-album": "album radice",

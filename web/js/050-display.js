@@ -47,9 +47,13 @@ $(document).ready(function() {
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
 				return false;
+			} else if ($("#contextual-help").is(":visible")) {
+				$("#contextual-help").stop().fadeOut(500);
+				$("#album-and-media-container").stop().fadeIn(500);
+				return false;
 			} else if ($("#you-can-suggest-photo-position").is(":visible")) {
 				$("#you-can-suggest-photo-position").hide();
-					return false;
+				return false;
 			} else if ($("#menu-icon").hasClass("expanded") || $("#search-icon").hasClass("expanded")) {
 				util.closeMenu();
 				util.downloadSelectionInfo();
@@ -510,7 +514,7 @@ $(document).ready(function() {
 
 		// "i" opens the contestual help
 		if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
-			util.fillContextualHelp();
+			$("#album-and-media-container").stop().fadeOut(500);
 			$("#contextual-help").stop().fadeIn(500);
 			return false;
 		}
@@ -522,6 +526,7 @@ $(document).ready(function() {
 		"keyup",
 		function(e) {
 			if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
+				$("#album-and-media-container").stop().fadeIn(500);
 				$("#contextual-help").stop().fadeOut(500);
 				return false;
 			}
@@ -1008,12 +1013,13 @@ $(document).ready(function() {
 	$(".info-icon").off("mouseenter").on(
 		"mouseenter",
 		function() {
-			util.fillContextualHelp();
+			$("#album-and-media-container").stop().fadeOut(500);
 			$("#contextual-help").stop().fadeIn(500);
 		}
 	).off("mouseleave").on(
 		"mouseleave",
 		function() {
+			$("#album-and-media-container").stop().fadeIn(500);
 			$("#contextual-help").stop().fadeOut(500);
 		}
 	);

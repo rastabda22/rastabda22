@@ -698,7 +698,7 @@ video {
 .exit-fullscreen {
 	display: none;
 }
-.enter-fullscreen, .fullscreen-divider {
+.enter-fullscreen:not(.shortcut-help), .fullscreen-divider {
 	display: inline;
 }
 
@@ -1212,4 +1212,30 @@ a.search-link:hover {
 	background-color: #3e8e41;
 	box-shadow: 0 5px #666;
 	transform: translateY(4px);
+}
+
+#contextual-help table {
+	font-size: 16px;
+	width: auto;
+	margin: 1em auto;
+}
+
+#contextual-help table, #contextual-help th, #contextual-help td {
+	border: 1px solid white;
+	border-collapse: collapse;
+	padding: 6px;
+	font-weight: normal;
+}
+
+#contextual-help .table-title{
+	font-size: 140%;
+	font-weight: bold;
+}
+
+#contextual-help th {
+	font-weight: bold;
+}
+
+#contextual-help td {
+	font-style: normal;
 }
