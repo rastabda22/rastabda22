@@ -9,11 +9,11 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "m",
+				".metadata-show-shortcut": "s",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
-				".map-link-shortcut": "s",
+				".map-link-shortcut": "m",
 				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				".hide-everytyhing-shortcut": "h",
@@ -25,11 +25,11 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "m",
+				".metadata-show-shortcut": "s",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
-				".map-link-shortcut": "s",
+				".map-link-shortcut": "m",
 				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				".hide-everytyhing-shortcut": "h",
@@ -41,11 +41,11 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "m",
+				".metadata-show-shortcut": "s",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
-				".map-link-shortcut": "s",
+				".map-link-shortcut": "m",
 				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				".hide-everytyhing-shortcut": "h",
@@ -57,11 +57,11 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "m",
+				".metadata-show-shortcut": "s",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
-				".map-link-shortcut": "s",
+				".map-link-shortcut": "m",
 				".enter-fullscreen-shortcut": "f",
 				// ".exit-fullscreen" is defined further to ".enter-fullscreen" value
 				".hide-everytyhing-shortcut": "h",
