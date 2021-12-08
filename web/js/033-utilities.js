@@ -270,11 +270,13 @@
 	};
 
 	Utilities._t = function(key) {
-		let shortcut = env.shortcuts[env.language][":not(#contextual-help) " + key + "-shortcut"];
-		if (shortcut)
-			shortcut = " [" + shortcut + "]";
-		else
-			shortcut = "";
+		let shortcut = "";
+		if (env.isMobile.any()) {
+			let shortcut = env.shortcuts[env.language][key + "-shortcut"];
+			if (shortcut)
+				shortcut = " [" + shortcut + "]";
+		}
+
 		return env.translations[env.language][key] + shortcut;
 	};
 
