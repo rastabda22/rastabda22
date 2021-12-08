@@ -498,6 +498,7 @@
 							</div>
 
 							<div class="media-bar">
+								<div class="metadata"></div>
 								<div class="links">
 									<span class="link-button">
 										<a class="metadata-show"></a>
@@ -519,7 +520,6 @@
 										</span>
 									</span>
 								</div>
-								<div class="metadata"></div>
 							</div>
 
 						</div>
