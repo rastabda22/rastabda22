@@ -61,6 +61,10 @@
 		padding-bottom: 0;
 	}
 
+	#right-menu li:not(#menu-and-padlock) {
+		line-height: 1.6em;
+	}
+
 	#my-modal .modal-close {
 	    top: 47px !important;
 	    right: 22px !important;
