@@ -2560,6 +2560,8 @@
 									util.scrollPopupToHighlightedThumb($("#popup-images-wrapper .highlighted"));
 
 								$("#loading").hide();
+
+								menuF.updateMenu();
 							}
 						);
 

@@ -1158,6 +1158,8 @@
 			$('.modal-close')[0].click();
 			$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 		}
+
+		MenuFunctions.updateMenu();
 	};
 
 	Utilities.isLoaded = function(imgSrc) {
