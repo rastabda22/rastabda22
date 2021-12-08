@@ -99,4 +99,8 @@
 	.hidden-title {
 		display: none;
 	}
+
+	#right-menu .info-icon {
+		display: none;
+	}
 }
