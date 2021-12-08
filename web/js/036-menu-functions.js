@@ -1750,7 +1750,10 @@
 					$(this).css("height", "auto");
 				});
 		} else {
-			$(".media-box .links").stop().fadeOut("slow");
+			if (env.isMobile.any())
+				$(".media-box .links").stop().fadeTo("slow", 0.25);
+			else
+				$(".media-box .links").stop().fadeOut("slow");
 			$(".media-box .metadata-show").show();
 			$(".media-box .metadata-hide").hide();
 			$(".media-box .metadata")
