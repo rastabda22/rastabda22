@@ -1,8 +1,8 @@
-* send by search json files to a separate directory, new option `by_search_album_subdir`
-* similarly, by gps json file, new option `by_gps_album_subdir`
-* similarly, by date json file, new option `by_date_album_subdir`
+* by search json files are now saved into a separate directory, new option `by_search_album_subdir`
+* similarly with by gps json file, new option `by_gps_album_subdir`
+* similarly with by date json file, new option `by_date_album_subdir`
 * swap metadata and map shortcuts, now they are respectively `s` and `m`
-* contextual help now available from top right and `i` shortcut
+* contextual help now available from top right and with `i` shortcut
 * bug fixes
 
 ### version v5.5.1 (December 5, 2021)
