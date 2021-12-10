@@ -1235,7 +1235,7 @@
 			"click",
 			function() {
 				// css manages the showing/hiding of media/subalbums, the title change and the subalbums caption change
-				// this function performs additional operation about highlighting the correct object and showing the correct image in subalbums
+				// this function performs additional operation: highlighting the correct object and showing the correct image in subalbums
 
 				// toggle the class that hides/shows/changes
 				$("#fullscreen-wrapper").toggleClass("hide-geotagged");

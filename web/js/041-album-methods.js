@@ -3468,7 +3468,7 @@
 						randomMedia = randomMediaFromCache;
 					self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
 				} else {
-					self.pickRandomMediaAndInsertIt(iSubalbum);
+					self.pickRandomMediaAndInsertIt(iSubalbum, util.onlyShowNonGeotaggedContent());
 				}
 			}
 
