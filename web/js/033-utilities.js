@@ -298,7 +298,7 @@
 					keyObject.html(Utilities._s(key));
 			}
 		}
-		$("ul#right-menu #save-data").attr("title", Utilities._t("#save-data-tip"));
+		$("#right-and-search-menu #save-data").attr("title", Utilities._t("#save-data-tip"));
 	};
 
 	Utilities.prototype.windowVerticalScrollbarWidth = function() {
@@ -574,7 +574,7 @@
 	};
 
 	Utilities.openSearchMenu = function(album) {
-		$("#right-menu").addClass("expanded");
+		$("#right-and-search-menu").addClass("expanded");
 		$("#search-icon").addClass("expanded");
 		$("#menu-icon").removeClass("expanded");
 
@@ -590,14 +590,14 @@
 	};
 
 	Utilities.prototype.toggleSearchMenu = function(ev, album) {
-		if (! $("#right-menu").hasClass("expanded") || ! $("#search-icon").hasClass("expanded"))
+		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#search-icon").hasClass("expanded"))
 			Utilities.openSearchMenu(album);
 		else
 			Utilities.closeMenu();
 	};
 
 	Utilities.openRightMenu = function(album) {
-		$("#right-menu").addClass("expanded");
+		$("#right-and-search-menu").addClass("expanded");
 		$("#search-icon").removeClass("expanded");
 		$("#menu-icon").addClass("expanded");
 
@@ -612,7 +612,7 @@
 	};
 
 	Utilities.prototype.toggleRightMenu = function(ev, album) {
-		if (! $("#right-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
+		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
 			Utilities.openRightMenu(album);
 		else
 			Utilities.closeMenu();
@@ -628,7 +628,7 @@
 	};
 
 	Utilities.closeMenu = function() {
-		$("#right-menu").removeClass("expanded");
+		$("#right-and-search-menu").removeClass("expanded");
 		$("#search-icon, #menu-icon").removeClass("expanded");
 
 		$("#album-view").css("opacity", "");
@@ -636,7 +636,7 @@
 	};
 
 	Utilities.prototype.toggleMenu = function(ev, album) {
-		if (! $("#right-menu").hasClass("expanded"))
+		if (! $("#right-and-search-menu").hasClass("expanded"))
 			Utilities.openMenu(album);
 		else
 			Utilities.closeMenu();
@@ -666,49 +666,49 @@
 			$("#search-button").blur();
 		}
 		if (
-			! $("#right-menu li.search .highlighted").length &&
-			! $("#right-menu li.search .was-highlighted").length
+			! $("#right-and-search-menu div.search .highlighted").length &&
+			! $("#right-and-search-menu div.search .was-highlighted").length
 		)
-			$("#right-menu li.search:not(.hidden-by-menu-selection)").addClass("highlighted");
+			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if (
-			! $("#right-menu li.search .highlighted").length &&
-			$("#right-menu li.search .was-highlighted").length
+			! $("#right-and-search-menu div.search .highlighted").length &&
+			$("#right-and-search-menu div.search .was-highlighted").length
 		)
-			$("#right-menu li.search:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.highlightMenu = function() {
 		if (
-			! $("#right-menu li.search.highlighted").length &&
-			! $("#right-menu li.search .highlighted").length &&
-			! $("#right-menu li.search.was-highlighted").length &&
-			! $("#right-menu li.search .was-highlighted").length
+			! $("#right-and-search-menu div.search.highlighted").length &&
+			! $("#right-and-search-menu div.search .highlighted").length &&
+			! $("#right-and-search-menu div.search.was-highlighted").length &&
+			! $("#right-and-search-menu div.search .was-highlighted").length
 		)
-			$("#right-menu li.search:not(.hidden-by-menu-selection)").addClass("highlighted");
+			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if(
-			! $("#right-menu li.search.highlighted").length &&
-			! $("#right-menu li.search .highlighted").length && (
-				$("#right-menu li.search.was-highlighted").length ||
-				$("#right-menu li.search .was-highlighted").length
+			! $("#right-and-search-menu div.search.highlighted").length &&
+			! $("#right-and-search-menu div.search .highlighted").length && (
+				$("#right-and-search-menu div.search.was-highlighted").length ||
+				$("#right-and-search-menu div.search .was-highlighted").length
 			)
 		)
-			$("#right-menu li.search:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 
 		if (
-			! $("#right-menu li.first-level.highlighted").length &&
-			! $("#right-menu li.first-level .highlighted").length &&
-			! $("#right-menu li.first-level.was-highlighted").length &&
-			! $("#right-menu li.first-level .was-highlighted").length
+			! $("#right-and-search-menu li.first-level.highlighted").length &&
+			! $("#right-and-search-menu li.first-level .highlighted").length &&
+			! $("#right-and-search-menu li.first-level.was-highlighted").length &&
+			! $("#right-and-search-menu li.first-level .was-highlighted").length
 		)
-			$("#right-menu li.first-level:not(.hidden-by-menu-selection)").first().addClass("highlighted");
+			$("#right-and-search-menu li.first-level:not(.hidden-by-menu-selection)").first().addClass("highlighted");
 		else if(
-			! $("#right-menu li.first-level.highlighted").length &&
-			! $("#right-menu li.first-level .highlighted").length && (
-				$("#right-menu li.first-level.was-highlighted").length ||
-				$("#right-menu li.first-level .was-highlighted").length
+			! $("#right-and-search-menu li.first-level.highlighted").length &&
+			! $("#right-and-search-menu li.first-level .highlighted").length && (
+				$("#right-and-search-menu li.first-level.was-highlighted").length ||
+				$("#right-and-search-menu li.first-level .was-highlighted").length
 			)
 		)
-			$("#right-menu li.first-level:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+			$("#right-and-search-menu li.first-level:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -799,7 +799,7 @@
 	};
 
 	Utilities.prototype.downloadSelectionInfo = function() {
-		if ($(".download-album.selection").hasClass("highlighted") && $("#right-menu").hasClass("expanded") && $("#menu-icon").hasClass("expanded")) {
+		if ($(".download-album.selection").hasClass("highlighted") && $("#right-and-search-menu").hasClass("expanded") && $("#menu-icon").hasClass("expanded")) {
 			$("#how-to-download-selection").show();
 			$("#how-to-download-selection").off("click").on(
 				"click",
@@ -1302,9 +1302,9 @@
 
 	Utilities.removeHighligthsToItems = function() {
 		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			$("#right-menu .search.highlighted, #right-menu .search .highlighted").removeClass("highlighted");
+			$("#right-and-search-menu .search.highlighted, #right-and-search-menu .search .highlighted").removeClass("highlighted");
 		else
-			$("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted").removeClass("highlighted");
+			$("#right-and-search-menu .first-level.highlighted, #right-and-search-menu .first-level .highlighted").removeClass("highlighted");
 	};
 
 	Utilities.prototype.prevItemForHighlighting = function(object) {
@@ -1391,9 +1391,9 @@
 
 	Utilities.prototype.highlightedItemObject = function() {
 		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			return $("#right-menu .search.highlighted, #right-menu .search .highlighted");
+			return $("#right-and-search-menu .search.highlighted, #right-and-search-menu .search .highlighted");
 		else
-			return $("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted");
+			return $("#right-and-search-menu .first-level.highlighted, #right-and-search-menu .first-level .highlighted");
 	};
 
 	Utilities.highlightedObject = function(inThumbs = false) {
@@ -2963,8 +2963,8 @@
 				$("#show-hide-them:hover").css("color", "").css("cursor", "");
 			else
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
-			menuF.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
-			menuF.updateMenu();
+			MenuFunctions.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
+			MenuFunctions.updateMenu();
 			env.currentAlbum.showMedia();
 			$("#loading").hide();
 		}

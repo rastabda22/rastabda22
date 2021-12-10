@@ -551,16 +551,16 @@
 				</div>
 			</div>
 
-			<ul id="right-menu">
-				<li id="menu-and-padlock">
+			<div id="right-and-search-menu">
+				<div id="menu-and-padlock">
 					<span id="menu-icon"> ☰ </span>
 					<img id="search-icon" src="img/ic_search_black_48dp_2x.png">
 					<span id="padlock" class="protection">
 						<img width="12px" height="16px" src="img/padlock.png" />
 					</span>
 					<span class="info-icon info-icon-shortcut"></span>
-				</li>
-				<li class="search active hidden-by-menu-selection">
+				</div>
+				<div id="search-menu" class="search active hidden-by-menu-selection">
 					<form class="caption">
 						<input type="search" id="search-field" />
 						<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
@@ -573,112 +573,114 @@
 						<li id="tags-only" class="active"></li>
 						<li id="album-search" class="active"></li>
 					</ul>
-				</li>
+				</div>
 
-				<li class="first-level expandable browsing-mode-switcher active">
-					<span class="browsing-mode-switcher caption"></span>
-					<ul class="sub-menu hidden">
-						<li id="folders-view" class="browsing-mode-switcher radio active"></li>
-						<li id="by-date-view" class="browsing-mode-switcher radio active"></li>
-						<li id="by-gps-view" class="browsing-mode-switcher radio active"></li>
-						<li id="by-map-view" class="browsing-mode-switcher radio active"></li>
-						<li id="by-search-view" class="browsing-mode-switcher radio active"></li>
-						<li id="by-selection-view" class="browsing-mode-switcher radio active"></li>
-					</ul>
-				</li>
+				<ul id="right-menu">
+					<li class="first-level expandable browsing-mode-switcher active">
+						<span class="browsing-mode-switcher caption"></span>
+						<ul class="sub-menu hidden">
+							<li id="folders-view" class="browsing-mode-switcher radio active"></li>
+							<li id="by-date-view" class="browsing-mode-switcher radio active"></li>
+							<li id="by-gps-view" class="browsing-mode-switcher radio active"></li>
+							<li id="by-map-view" class="browsing-mode-switcher radio active"></li>
+							<li id="by-search-view" class="browsing-mode-switcher radio active"></li>
+							<li id="by-selection-view" class="browsing-mode-switcher radio active"></li>
+						</ul>
+					</li>
 
-				<li class="first-level expandable sort album-sort active">
-					<span class="sort album-sort caption"></span>
-					<ul class="sub-menu hidden">
-						<li class='sort album-sort by-date radio'></li>
-						<li class='sort album-sort by-name radio'></li>
-						<li class='sort album-sort reverse active'></li>
-					</ul>
-				</li>
+					<li class="first-level expandable sort album-sort active">
+						<span class="sort album-sort caption"></span>
+						<ul class="sub-menu hidden">
+							<li class='sort album-sort by-date radio'></li>
+							<li class='sort album-sort by-name radio'></li>
+							<li class='sort album-sort reverse active'></li>
+						</ul>
+					</li>
 
-				<li class="first-level expandable sort media-sort active">
-					<span class="sort media-sort caption"></span>
-					<ul class="sub-menu hidden">
-						<li class='sort media-sort by-date radio'></li>
-						<li class='sort media-sort by-name radio'></li>
-						<li class='sort media-sort reverse active'></li>
-					</ul>
-				</li>
+					<li class="first-level expandable sort media-sort active">
+						<span class="sort media-sort caption"></span>
+						<ul class="sub-menu hidden">
+							<li class='sort media-sort by-date radio'></li>
+							<li class='sort media-sort by-name radio'></li>
+							<li class='sort media-sort reverse active'></li>
+						</ul>
+					</li>
 
-				<li class="first-level expandable ui active">
-					<span class='ui caption'></span>
-					<ul class="sub-menu hidden">
-						<li class='ui hide-title active'></li>
-						<li class='ui media-count active'></li>
-						<li class='ui slide active'></li>
-						<li class='ui square-album-thumbnails active'></li>
-						<li class='ui album-names active'></li>
-						<li class='ui square-media-thumbnails active'></li>
-						<li class='ui media-names active'></li>
-						<li class='ui show-descriptions active'></li>
-						<li class='ui show-tags active'></li>
-						<li class='ui spaced active'></li>
-						<li class='ui show-bottom-thumbnails active'></li>
-					</ul>
-				</li>
+					<li class="first-level expandable ui active">
+						<span class='ui caption'></span>
+						<ul class="sub-menu hidden">
+							<li class='ui hide-title active'></li>
+							<li class='ui media-count active'></li>
+							<li class='ui slide active'></li>
+							<li class='ui square-album-thumbnails active'></li>
+							<li class='ui album-names active'></li>
+							<li class='ui square-media-thumbnails active'></li>
+							<li class='ui media-names active'></li>
+							<li class='ui show-descriptions active'></li>
+							<li class='ui show-tags active'></li>
+							<li class='ui spaced active'></li>
+							<li class='ui show-bottom-thumbnails active'></li>
+						</ul>
+					</li>
 
-				<li class='first-level expandable select active'>
-					<span class='select caption'></span>
-					<ul class="sub-menu hidden">
-						<li class='select everything active'></li>
-						<li class='select everything-individual active'></li>
-						<li class='select albums active'></li>
-						<li class='select media active'></li>
-						<li class='select global-reset active'></li>
-						<li class='select nothing active'></li>
-						<li class='select no-albums active'></li>
-						<li class='select no-media active'></li>
-						<li class='select go-to-selected active'></li>
-					</ul>
-				</li>
+					<li class='first-level expandable select active'>
+						<span class='select caption'></span>
+						<ul class="sub-menu hidden">
+							<li class='select everything active'></li>
+							<li class='select everything-individual active'></li>
+							<li class='select albums active'></li>
+							<li class='select media active'></li>
+							<li class='select global-reset active'></li>
+							<li class='select nothing active'></li>
+							<li class='select no-albums active'></li>
+							<li class='select no-media active'></li>
+							<li class='select go-to-selected active'></li>
+						</ul>
+					</li>
 
-				<li class='first-level big-albums active'>
-					<span id='show-big-albums' class="big-albums caption"></span>
-				</li>
+					<li class='first-level big-albums active'>
+						<span id='show-big-albums' class="big-albums caption"></span>
+					</li>
 
-				<li class='first-level expandable download-album active'>
-					<span class='download-album caption'></span>
-					<ul class="sub-menu hidden">
-						<li class='download-single-media active'>
-							<a class='download-link'></a>
-						</li>
-						<li class='download-album everything all full active'></li>
-						<li class='download-album everything all sized active'></li>
-						<li class='download-album everything images full active'></li>
-						<li class='download-album everything images sized active'></li>
-						<li class='download-album everything videos full active'></li>
-						<li class='download-album everything videos sized active'></li>
-						<li class='download-album media-only all full active'></li>
-						<li class='download-album media-only all sized active'></li>
-						<li class='download-album media-only images full active'></li>
-						<li class='download-album media-only images sized active'></li>
-						<li class='download-album media-only videos full active'></li>
-						<li class='download-album media-only videos sized active'></li>
-						<li class='download-album selection active'></li>
-					</ul>
-				</li>
+					<li class='first-level expandable download-album active'>
+						<span class='download-album caption'></span>
+						<ul class="sub-menu hidden">
+							<li class='download-single-media active'>
+								<a class='download-link'></a>
+							</li>
+							<li class='download-album everything all full active'></li>
+							<li class='download-album everything all sized active'></li>
+							<li class='download-album everything images full active'></li>
+							<li class='download-album everything images sized active'></li>
+							<li class='download-album everything videos full active'></li>
+							<li class='download-album everything videos sized active'></li>
+							<li class='download-album media-only all full active'></li>
+							<li class='download-album media-only all sized active'></li>
+							<li class='download-album media-only images full active'></li>
+							<li class='download-album media-only images sized active'></li>
+							<li class='download-album media-only videos full active'></li>
+							<li class='download-album media-only videos sized active'></li>
+							<li class='download-album selection active'></li>
+						</ul>
+					</li>
 
-				<li class='first-level non-geotagged-only active'>
-					<span id="hide-geotagged-media" class='non-geotagged-only caption'></span>
-				</li>
+					<li class='first-level non-geotagged-only active'>
+						<span id="hide-geotagged-media" class='non-geotagged-only caption'></span>
+					</li>
 
-				<li class='first-level protection active'>
-					<span class='protection caption protected-content-unveil'></span>
-				</li>
+					<li class='first-level protection active'>
+						<span class='protection caption protected-content-unveil'></span>
+					</li>
 
-				<li class='first-level save-data active'>
-					<span id="save-data" class='save-data caption'></span>
-				</li>
+					<li class='first-level save-data active'>
+						<span id="save-data" class='save-data caption'></span>
+					</li>
 
-				<li class='first-level restore active'>
-					<span id="restore" class='restore caption'></span>
-				</li>
-			</ul>
+					<li class='first-level restore active'>
+						<span id="restore" class='restore caption'></span>
+					</li>
+				</ul>
+			</div>
 
 
 			<div id="loading" class="messages" ></div>

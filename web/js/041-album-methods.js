@@ -2151,7 +2151,7 @@
 			}
 		}
 		// if (this.isSearch() && mediaIndex === -1) {
-		// 	if (! $("ul#right-menu").hasClass("expanded"))
+		// 	if (! $("#right-and-search-menu").hasClass("expanded"))
 		// 		util.openMenu();
 		// 	util.focusSearchField();
 		// }
@@ -2821,7 +2821,7 @@
 				isShowing = true;
 			}
 			$("#message-too-many-images").html(tooManyImagesText).show();
-			if (! $("ul#right-menu").hasClass("expanded")) {
+			if (! $("#right-and-search-menu").hasClass("expanded")) {
 				$("#show-hide-them:hover").css("color", "").css("cursor", "");
 			} else {
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");

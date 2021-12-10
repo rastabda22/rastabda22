@@ -309,42 +309,42 @@
 		////////////////// SEARCH //////////////////////////////
 
 		if (isMap)
-			$("ul#right-menu li.search").addClass("hidden-by-map");
+			$("#right-and-search-menu div.search").addClass("hidden-by-map");
 		else
-			$("ul#right-menu li.search").removeClass("hidden-by-map");
+			$("#right-and-search-menu div.search").removeClass("hidden-by-map");
 
 		if (
 			thisAlbum !== null
 		) {
 			if (isPopup)
-				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#refine-popup-content"));
+				$("#right-and-search-menu div.search #search-field, #right-and-search-menu div.search #search-button").attr("title", util._t("#refine-popup-content"));
 			else
-				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#real-search"));
+				$("#right-and-search-menu div.search #search-field, #right-and-search-menu div.search #search-button").attr("title", util._t("#real-search"));
 
 			if (env.options.search_inside_words)
-				$("ul#right-menu li#inside-words").addClass("selected");
+				$("#right-and-search-menu li#inside-words").addClass("selected");
 			else
-				$("ul#right-menu li#inside-words").removeClass("selected");
+				$("#right-and-search-menu li#inside-words").removeClass("selected");
 			if (env.options.search_any_word)
-				$("ul#right-menu li#any-word").addClass("selected");
+				$("#right-and-search-menu li#any-word").addClass("selected");
 			else
-				$("ul#right-menu li#any-word").removeClass("selected");
+				$("#right-and-search-menu li#any-word").removeClass("selected");
 			if (env.options.search_case_sensitive)
-				$("ul#right-menu li#case-sensitive").addClass("selected");
+				$("#right-and-search-menu li#case-sensitive").addClass("selected");
 			else
-				$("ul#right-menu li#case-sensitive").removeClass("selected");
+				$("#right-and-search-menu li#case-sensitive").removeClass("selected");
 			if (env.options.search_accent_sensitive)
-				$("ul#right-menu li#accent-sensitive").addClass("selected");
+				$("#right-and-search-menu li#accent-sensitive").addClass("selected");
 			else
-				$("ul#right-menu li#accent-sensitive").removeClass("selected");
+				$("#right-and-search-menu li#accent-sensitive").removeClass("selected");
 			if (env.options.search_tags_only)
-				$("ul#right-menu li#tags-only").addClass("selected");
+				$("#right-and-search-menu li#tags-only").addClass("selected");
 			else
-				$("ul#right-menu li#tags-only").removeClass("selected");
+				$("#right-and-search-menu li#tags-only").removeClass("selected");
 			// if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
-				// $("ul#right-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
+				// $("#right-and-search-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
 			// } else {
-				// $("ul#right-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
+				// $("#right-and-search-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
 			if (env.options.cache_base_to_search_in === env.options.folders_string) {
 				// TO DO: actually code could enter here for any root album, i.e. for by date, ecc. too
 				$("#album-search").attr('title', util._t("#current-album-is") + '""');
@@ -358,50 +358,50 @@
 			}
 
 			if (env.options.search_current_album)
-				$("ul#right-menu li#album-search").addClass("selected");
+				$("#right-and-search-menu li#album-search").addClass("selected");
 			else
-				$("ul#right-menu li#album-search").removeClass("selected");
+				$("#right-and-search-menu li#album-search").removeClass("selected");
 			// }
 		}
 
 		////////////////// UI //////////////////////////////
 
 		if (isMap) {
-			$("ul#right-menu li.ui").addClass("hidden");
+			$("#right-and-search-menu li.ui").addClass("hidden");
 		} else {
-			$("ul#right-menu li.ui").removeClass("hidden");
+			$("#right-and-search-menu li.ui").removeClass("hidden");
 
 			if (
 				isMapOrPopup ||
 				env.currentMedia !== null && env.isMobile.any()
 			) {
-				$("ul#right-menu li.hide-title").addClass("hidden");
+				$("#right-and-search-menu li.hide-title").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-title").removeClass("hidden");
+				$("#right-and-search-menu li.hide-title").removeClass("hidden");
 				if (env.options.hide_title)
-					$("ul#right-menu li.hide-title").removeClass("selected");
+					$("#right-and-search-menu li.hide-title").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-title").addClass("selected");
+					$("#right-and-search-menu li.hide-title").addClass("selected");
 			}
 
 			if (MenuFunctions.hideDescriptionMenuEntry(thisAlbum)) {
-				$("ul#right-menu li.show-descriptions").addClass("hidden");
+				$("#right-and-search-menu li.show-descriptions").addClass("hidden");
 			} else {
-				$("ul#right-menu li.show-descriptions").removeClass("hidden");
+				$("#right-and-search-menu li.show-descriptions").removeClass("hidden");
 				if (env.options.hide_descriptions)
-					$("ul#right-menu li.show-descriptions").removeClass("selected");
+					$("#right-and-search-menu li.show-descriptions").removeClass("selected");
 				else
-					$("ul#right-menu li.show-descriptions").addClass("selected");
+					$("#right-and-search-menu li.show-descriptions").addClass("selected");
 			}
 
 			if (MenuFunctions.hideTagsMenuEntry()) {
-				$("ul#right-menu li.show-tags").addClass("hidden");
+				$("#right-and-search-menu li.show-tags").addClass("hidden");
 			} else {
-				$("ul#right-menu li.show-tags").removeClass("hidden");
+				$("#right-and-search-menu li.show-tags").removeClass("hidden");
 				if (env.options.hide_tags)
-					$("ul#right-menu li.show-tags").removeClass("selected");
+					$("#right-and-search-menu li.show-tags").removeClass("selected");
 				else
-					$("ul#right-menu li.show-tags").addClass("selected");
+					$("#right-and-search-menu li.show-tags").addClass("selected");
 			}
 
 			if (
@@ -410,24 +410,24 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
 			) {
-				$("ul#right-menu li.media-count").addClass("hidden");
+				$("#right-and-search-menu li.media-count").addClass("hidden");
 			} else {
-				$("ul#right-menu li.media-count").removeClass("hidden");
+				$("#right-and-search-menu li.media-count").removeClass("hidden");
 				if (env.options.show_album_media_count)
-					$("ul#right-menu li.media-count").addClass("selected");
+					$("#right-and-search-menu li.media-count").addClass("selected");
 				else
-					$("ul#right-menu li.media-count").removeClass("selected");
+					$("#right-and-search-menu li.media-count").removeClass("selected");
 			}
 
 
 			if (isMap || isPopup && env.mapAlbum.media.length <= 1 || ! $("#thumbs").is(":visible"))
-				$("ul#right-menu li.spaced").addClass("hidden");
+				$("#right-and-search-menu li.spaced").addClass("hidden");
 			else
-				$("ul#right-menu li.spaced").removeClass("hidden");
+				$("#right-and-search-menu li.spaced").removeClass("hidden");
 			if (env.options.spacing)
-				$("ul#right-menu li.spaced").addClass("selected");
+				$("#right-and-search-menu li.spaced").addClass("selected");
 			else
-				$("ul#right-menu li.spaced").removeClass("selected");
+				$("#right-and-search-menu li.spaced").removeClass("selected");
 
 			if (
 				isMapOrPopup ||
@@ -435,13 +435,13 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && thisAlbum.subalbums.length === 0
 			) {
-				$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
+				$("#right-and-search-menu li.square-album-thumbnails").addClass("hidden");
 			} else {
-				$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
+				$("#right-and-search-menu li.square-album-thumbnails").removeClass("hidden");
 				if (env.options.album_thumb_type.indexOf("square") > -1)
-					$("ul#right-menu li.square-album-thumbnails").addClass("selected");
+					$("#right-and-search-menu li.square-album-thumbnails").addClass("selected");
 				else
-					$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
+					$("#right-and-search-menu li.square-album-thumbnails").removeClass("selected");
 			}
 
 			if (
@@ -450,13 +450,13 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && thisAlbum.subalbums.length === 0
 			) {
-				$("ul#right-menu li.slide").addClass("hidden");
+				$("#right-and-search-menu li.slide").addClass("hidden");
 			} else {
-				$("ul#right-menu li.slide").removeClass("hidden");
+				$("#right-and-search-menu li.slide").removeClass("hidden");
 				if (env.options.albums_slide_style)
-					$("ul#right-menu li.slide").addClass("selected");
+					$("#right-and-search-menu li.slide").addClass("selected");
 				else
-					$("ul#right-menu li.slide").removeClass("selected");
+					$("#right-and-search-menu li.slide").removeClass("selected");
 			}
 
 			if (
@@ -465,23 +465,23 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
 			) {
-				$("ul#right-menu li.album-names").addClass("hidden");
+				$("#right-and-search-menu li.album-names").addClass("hidden");
 			} else {
-				$("ul#right-menu li.album-names").removeClass("hidden");
+				$("#right-and-search-menu li.album-names").removeClass("hidden");
 				if (env.options.show_album_names_below_thumbs)
-					$("ul#right-menu li.album-names").addClass("selected");
+					$("#right-and-search-menu li.album-names").addClass("selected");
 				else
-					$("ul#right-menu li.album-names").removeClass("selected");
+					$("#right-and-search-menu li.album-names").removeClass("selected");
 			}
 
 			if (isMap || ! $("#thumbs").is(":visible"))
-				$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
+				$("#right-and-search-menu li.square-media-thumbnails").addClass("hidden");
 			else
-				$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
+				$("#right-and-search-menu li.square-media-thumbnails").removeClass("hidden");
 			if (env.options.media_thumb_type.indexOf("square") > -1)
-			 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
+			 	$("#right-and-search-menu li.square-media-thumbnails").addClass("selected");
 			else
-				$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
+				$("#right-and-search-menu li.square-media-thumbnails").removeClass("selected");
 
 			if (
 				isMap ||
@@ -494,27 +494,27 @@
 					)
 				)
 			) {
-				$("ul#right-menu li.media-names").addClass("hidden");
+				$("#right-and-search-menu li.media-names").addClass("hidden");
 			} else {
-				$("ul#right-menu li.media-names").removeClass("hidden");
+				$("#right-and-search-menu li.media-names").removeClass("hidden");
 				if (env.options.show_media_names_below_thumbs)
-					$("ul#right-menu li.media-names").addClass("selected");
+					$("#right-and-search-menu li.media-names").addClass("selected");
 				else
-					$("ul#right-menu li.media-names").removeClass("selected");
+					$("#right-and-search-menu li.media-names").removeClass("selected");
 			}
 
 			if (
 				isMapOrPopup ||
 				env.currentMedia === null || isAlbumWithOneMedia  || ! $("#thumbs").is(":visible")
 			) {
-				$("ul#right-menu li.show-bottom-thumbnails").addClass("hidden");
+				$("#right-and-search-menu li.show-bottom-thumbnails").addClass("hidden");
 			} else {
-				$("ul#right-menu li.show-bottom-thumbnails").removeClass("hidden");
+				$("#right-and-search-menu li.show-bottom-thumbnails").removeClass("hidden");
 
 				if (env.options.hide_bottom_thumbnails)
-					$("ul#right-menu li.show-bottom-thumbnails").removeClass("selected");
+					$("#right-and-search-menu li.show-bottom-thumbnails").removeClass("selected");
 				else
-					$("ul#right-menu li.show-bottom-thumbnails").addClass("selected");
+					$("#right-and-search-menu li.show-bottom-thumbnails").addClass("selected");
 			}
 		}
 
@@ -526,13 +526,13 @@
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			! isTransversalAlbum
 		) {
-			$("ul#right-menu .big-albums").addClass("hidden");
+			$("#right-and-search-menu .big-albums").addClass("hidden");
 		} else {
-			$("ul#right-menu .big-albums").removeClass("hidden");
+			$("#right-and-search-menu .big-albums").removeClass("hidden");
 			if (env.options.show_big_virtual_folders)
-			 	$("ul#right-menu .big-albums").addClass("selected");
+			 	$("#right-and-search-menu .big-albums").addClass("selected");
 			else
-				$("ul#right-menu .big-albums").removeClass("selected");
+				$("#right-and-search-menu .big-albums").removeClass("selected");
 		}
 
 		////////////////// SORT //////////////////////////////
@@ -543,20 +543,20 @@
 			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
-			$("#right-menu li.sort").addClass("hidden");
+			$("#right-and-search-menu li.sort").addClass("hidden");
 		} else if (thisAlbum !== null) {
 			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1) {
 				// no media or one media
-				$("ul#right-menu li.media-sort").addClass("hidden");
+				$("#right-and-search-menu li.media-sort").addClass("hidden");
 			} else {
-				$("ul#right-menu li.media-sort").removeClass("hidden");
+				$("#right-and-search-menu li.media-sort").removeClass("hidden");
 			}
 
 			if (thisAlbum.subalbums.length <= 1 || isMapOrPopup) {
 				// no subalbums or one subalbum
-				$("ul#right-menu li.album-sort").addClass("hidden");
+				$("#right-and-search-menu li.album-sort").addClass("hidden");
 			} else {
-				$("ul#right-menu li.album-sort").removeClass("hidden");
+				$("#right-and-search-menu li.album-sort").removeClass("hidden");
 			}
 
 			if (
@@ -564,9 +564,9 @@
 				highMediaNumberInTransversalAlbum
 			) {
 				// no media or one media or too many media
-				$("ul#right-menu li.media-sort").addClass("hidden");
+				$("#right-and-search-menu li.media-sort").addClass("hidden");
 			} else {
-				$("ul#right-menu li.media-sort").removeClass("hidden");
+				$("#right-and-search-menu li.media-sort").removeClass("hidden");
 			}
 
 			var modes = ["album", "media"];
@@ -574,19 +574,19 @@
 				if (modes.hasOwnProperty(i)) {
 					albumOrMedia = modes[i];
 					if (thisAlbum[albumOrMedia + "NameSort"]) {
-						$("ul#right-menu li." + albumOrMedia + "-sort.by-name").removeClass("active").addClass("selected");
-						$("ul#right-menu li." + albumOrMedia + "-sort.by-date").addClass("active").removeClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.by-name").removeClass("active").addClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.by-date").addClass("active").removeClass("selected");
 					} else {
-						$("ul#right-menu li." + albumOrMedia + "-sort.by-date").removeClass("active").addClass("selected");
-						$("ul#right-menu li." + albumOrMedia + "-sort.by-name").addClass("active").removeClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.by-date").removeClass("active").addClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.by-name").addClass("active").removeClass("selected");
 					}
 
 					if (
 						thisAlbum[albumOrMedia + "ReverseSort"]
 					) {
-						$("#right-menu li." + albumOrMedia + "-sort.reverse").addClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.reverse").addClass("selected");
 					} else {
-						$("#right-menu li." + albumOrMedia + "-sort.reverse").removeClass("selected");
+						$("#right-and-search-menu li." + albumOrMedia + "-sort.reverse").removeClass("selected");
 					}
 				}
 			}
@@ -1328,9 +1328,9 @@
 		////////////////// SAVE DATA MODE //////////////////////////////
 
 		if (env.options.save_data)
-			$("ul#right-menu #save-data").addClass("selected");
+			$("#right-and-search-menu #save-data").addClass("selected");
 		else
-			$("ul#right-menu #save-data").removeClass("selected");
+			$("#right-and-search-menu #save-data").removeClass("selected");
 
 
 		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
@@ -1344,16 +1344,19 @@
 		////////////////// ACCORDION EFFECT //////////////////////////////
 
 		// accordion effect on right menu
-		$("#right-menu li.expandable").off("click").on(
+		$("#right-and-search-menu li.expandable :not(ul)").off("click").on(
 			"click",
 			function() {
-				util.addHighlightToItem($(this));
-				var wasExpanded = $(this).hasClass("expanded");
-				$("#right-menu li.expandable").removeClass("expanded");
-				$("#right-menu li.first-level ul").addClass("hidden");
+				if ($(this).hasClass("caption"))
+					util.addHighlightToItem($(this).parent());
+				else
+					util.addHighlightToItem($(this));
+				var wasExpanded = $(this).parent().hasClass("expanded");
+				$("#right-and-search-menu li.expandable").removeClass("expanded");
+				$("#right-and-search-menu li.first-level ul").addClass("hidden");
 				if (! wasExpanded) {
-					$("ul", this).removeClass("hidden");
-					$(this).addClass("expanded");
+					$(this).nextAll().first().removeClass("hidden");
+					$(this).parent().addClass("expanded");
 				} else if ($(".first-level ul li.highlighted.hidden").length) {
 					// the highlingting is inside a closed first-level menu entry, move it to the parent
 					$(".first-level ul li.highlighted").parent().parent().addClass("highlighted");

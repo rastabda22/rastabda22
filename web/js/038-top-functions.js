@@ -1380,7 +1380,7 @@
 		}
 
 		if (env.defaultOptions.show_big_virtual_folders !== env.options.show_big_virtual_folders) {
-			util.toggleBigAlbumsShow();
+			util.toggleBigAlbumsShow(ev);
 		}
 
 		menuF.updateMenu();

@@ -598,8 +598,8 @@
 				$("#message-too-many-images").css("display", "");
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
-				// $("ul#right-menu li#album-search").removeClass("hidden");
-				// $("ul#right-menu li#any-word").addClass("active").off("click").on("click", util.toggleAnyWordSearch);
+				// $("#right-and-search-menu li#album-search").removeClass("hidden");
+				// $("#right-and-search-menu li#any-word").addClass("active").off("click").on("click", util.toggleAnyWordSearch);
 				$("#album-view, #subalbums, #thumbs").removeClass("hidden");
 
 				if (albumCacheBase) {
@@ -634,7 +634,7 @@
 							env.options.search_current_album = searchOptions.includes('o');
 						}
 
-						$("ul#right-menu #search-field").attr("value", decodeURIComponent(wordsStringOriginal));
+						$("#right-and-search-menu #search-field").attr("value", decodeURIComponent(wordsStringOriginal));
 						wordsString = util.normalizeAccordingToOptions(wordsString);
 						if (env.options.search_tags_only) {
 							searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];
