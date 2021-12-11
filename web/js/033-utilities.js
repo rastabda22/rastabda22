@@ -565,9 +565,8 @@
 	};
 
 	Utilities.isSearchHash = function() {
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(location.hash);
 		var cacheBase = PhotoFloat.convertHashToCacheBase(location.hash);
-		if (Utilities.isSearchCacheBase(cacheBase) || collectionCacheBase !== null)
+		if (Utilities.isSearchCacheBase(cacheBase) || env.collectionCacheBase !== null)
 			return true;
 		else
 			return false;
@@ -2747,7 +2746,7 @@
 					resultCacheBase = collectionCacheBase;
 				else {
 					// we must go up in the sub folder
-					albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
+					let albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
 					resultCacheBase = Utilities.pathJoin([
 						albumCacheBase,
 						foundAlbumCacheBase,

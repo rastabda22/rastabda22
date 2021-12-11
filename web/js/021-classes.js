@@ -42,6 +42,12 @@
 			// scrollbarWidth;
 			// contextMenu = false;
 
+			this.albumCacheBase = "";
+			this.mediaCacheBase = "";
+			this.mediaFolderCacheBase = "";
+			this.foundAlbumCacheBase = "";
+			this.collectionCacheBase = "";
+
 			// initialSizes = {};
 			// initialSizes[0] = new ImagesAndVideos();
 			this.positionMarker = "<marker>position</marker>";

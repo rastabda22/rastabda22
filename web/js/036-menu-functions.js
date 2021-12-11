@@ -154,16 +154,15 @@
 				$("#by-map-view").addClass("hidden");
 			}
 
-			let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 			if (
 				! (
 					isAnyRoot && util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
-						// collectionCacheBase && util.isSearchCacheBase(collectionCacheBase)
+						// env.collectionCacheBase && util.isSearchCacheBase(env.collectionCacheBase)
 						thisAlbum.isSearch() ||
 						thisMedia.isSearched() ||
-						collectionCacheBase && util.isSearchCacheBase(collectionCacheBase) ||
+						env.collectionCacheBase && util.isSearchCacheBase(env.collectionCacheBase) ||
 						thisMedia.isInFoundAlbum() !== false
 					)
 				)
@@ -171,7 +170,7 @@
 				$("#by-search-view").addClass("hidden");
 			}
 
-			if (thisAlbum.isFolder() && ! (collectionCacheBase && util.isSearchCacheBase(collectionCacheBase))) {
+			if (thisAlbum.isFolder() && ! (env.collectionCacheBase && util.isSearchCacheBase(env.collectionCacheBase))) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").addClass("selected").removeClass("active");
 			} else if (thisAlbum.isByDate()) {
@@ -182,7 +181,7 @@
 				$("#by-map-view").removeClass("hidden").addClass("selected").removeClass("active");
 			} else if (
 				thisAlbum.isSearch() ||
-				collectionCacheBase && util.isSearchCacheBase(collectionCacheBase)
+				env.collectionCacheBase && util.isSearchCacheBase(env.collectionCacheBase)
 			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected").removeClass("active");
 			} else if (thisAlbum.isSelection()) {
@@ -1436,8 +1435,7 @@
 		if (Object.keys(env.options).length > 0) {
 			if (! util.isSearchHash()) {
 				// reset the return link from search
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
-				env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
+				env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(env.albumCacheBase);
 			}
 			return Promise.resolve();
 		} else {

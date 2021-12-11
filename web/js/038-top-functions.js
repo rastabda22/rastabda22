@@ -52,8 +52,6 @@
 					$("#album-view .title-string").html("");
 				}
 
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
-
 				isFolderTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.folders_string);
 				isDateTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_date_string);
 				isGpsTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_gps_string);
@@ -62,15 +60,15 @@
 				isMapTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_map_string);
 				isInsideCollectionTitle = false;
 				isSearchCurrentAlbumOnly = false;
-				if (isFolderTitle && collectionCacheBase) {
+				if (isFolderTitle && env.collectionCacheBase) {
 					isInsideCollectionTitle = true;
-					searchCacheBase = collectionCacheBase;
+					searchCacheBase = env.collectionCacheBase;
 					if (util.isSearchCacheBase(searchCacheBase) && searchCacheBaseIsCurrentAlbumOnly(searchCacheBase)) {
 						isSearchCurrentAlbumOnly = true;
 						searchFolderCacheBase = getSearchFolderCacheBase(searchCacheBase);
 					}
 				} else if (isSearchTitle) {
-					searchCacheBase = albumCacheBase;
+					searchCacheBase = env.albumCacheBase;
 					if (searchCacheBaseIsCurrentAlbumOnly(searchCacheBase)) {
 						isSearchCurrentAlbumOnly = true;
 						searchFolderCacheBase = getSearchFolderCacheBase(searchCacheBase);
@@ -187,10 +185,10 @@
 
 					if (isInsideCollectionTitle) {
 						// put the components of the found album and (if any) its subalbums
-						let splittedAlbumCacheBase = albumCacheBase.split(env.options.cache_folder_separator);
+						let splittedAlbumCacheBase = env.albumCacheBase.split(env.options.cache_folder_separator);
 						let splittedFoundAlbumCacheBase, cacheBasesForSplittedAlbumCacheBase;
 						if (isSearchCurrentAlbumOnly) {
-							splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
+							splittedFoundAlbumCacheBase = env.foundAlbumCacheBase.split(env.options.cache_folder_separator);
 							cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
 						} else {
 							cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(1);

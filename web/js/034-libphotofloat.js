@@ -585,14 +585,14 @@
 		return [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase];
 	};
 
-	PhotoFloat.prototype.parseHashAndReturnAlbumAndMediaIndex = function(hash) {
+	PhotoFloat.prototype.parseHashAndReturnAlbumAndMediaIndex = function() {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
 				var removedStopWords = [];
 				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
 				var albumCacheBaseToGet, albumCacheBases = [], wordSubalbums = new Subalbums([]);
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase] = PhotoFloat.decodeHash(hash);
 				var indexWords, indexAlbums, wordsWithOptionsString;
+				var albumCacheBase = env.albumCacheBase, mediaCacheBase = env.mediaCacheBase, mediaFolderCacheBase = env.mediaFolderCacheBase;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
 
 				$("#message-too-many-images").css("display", "");
@@ -649,7 +649,7 @@
 						}
 
 						if (albumCacheBase === env.options.by_search_string) {
-							env.searchAlbum = util.initializeSearchAlbumBegin(albumCacheBase, mediaFolderCacheBase);
+							env.searchAlbum = util.initializeSearchAlbumBegin(albumCacheBase, env.mediaFolderCacheBase);
 							// no search term
 							// TO DO: does execution actually arrive here?
 							util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string');
@@ -665,7 +665,7 @@
 					albumCacheBaseToGet = albumCacheBase;
 				// // same conditions as before????????????????
 				// } else if (util.isSearchCacheBase(albumCacheBase)) {
-				// 	albumCacheBaseToGet = util.pathJoin([albumCacheBase, mediaFolderCacheBase]);
+				// 	albumCacheBaseToGet = util.pathJoin([albumCacheBase, env.mediaFolderCacheBase]);
 				} else {
 					albumCacheBaseToGet = albumCacheBase;
 				}
@@ -978,7 +978,6 @@
 														env.searchAlbum.media.forEach(
 															function(singleMedia) {
 																let cacheBase = singleMedia.foldersCacheBase;
-																// let albumCacheBase = PhotoFloat.decodeHash(window.location.hash)[0];
 																// let searchStartCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 																if (util.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
 																	cacheBase = singleMedia.dayAlbumCacheBase;

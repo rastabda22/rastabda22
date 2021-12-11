@@ -555,15 +555,14 @@ $(document).ready(function() {
 	// search
 	$('#search-button').off("click").on("click", function() {
 		var searchOptions = '';
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
-		if (util.isSearchCacheBase(albumCacheBase)) {
+		if (util.isSearchCacheBase(env.albumCacheBase)) {
 			// a plain search: get the folder to search in from the search album hash
-			env.options.cache_base_to_search_in = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+			env.options.cache_base_to_search_in = env.albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 		} else {
 			// it's a subalbum of a search or it's not a search hash: use the current album hash
-			env.options.cache_base_to_search_in = albumCacheBase;
+			env.options.cache_base_to_search_in = env.albumCacheBase;
 
 			env.options.saved_cache_base_to_search_in = env.options.cache_base_to_search_in;
 		}
@@ -1127,9 +1126,10 @@ $(document).ready(function() {
 			var optionsPromise = menuF.getOptions();
 			optionsPromise.then(
 				function() {
+					[env.albumCacheBase, env.mediaCacheBase, env.mediaFolderCacheBase, env.foundAlbumCacheBase, env.collectionCacheBase] = PhotoFloat.decodeHash(window.location.hash);
+
 					util.translate();
 					$("#loading").show();
-					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {
 						// restore current album search flag to its default value
@@ -1144,7 +1144,7 @@ $(document).ready(function() {
 					// parseHashAndReturnAlbumAndMediaIndex returns an array of 2 elements:
 					// - the requested album
 					// - the requested media index (if applicable)
-					var hashPromise = phFl.parseHashAndReturnAlbumAndMediaIndex(location.hash);
+					var hashPromise = phFl.parseHashAndReturnAlbumAndMediaIndex();
 					hashPromise.then(
 						function([album, mediaIndex]) {
 							if (env.isABrowsingModeChangeFromMouseClick || env.isASaveDataChange) {
@@ -1164,14 +1164,14 @@ $(document).ready(function() {
 								if (album.isSearch())
 									util.openSearchMenu(album);
 
-								let upHash = util.upHash(hash);
-								if (! hash.length || upHash === hash) {
+								let upHash = util.upHash(higherHash);
+								if (! higherHash.length || upHash === higherHash) {
 									// the top album has been reached and no unprotected nor protected content has been found
 									if (album.isEmpty || album.hasVeiledProtectedContent())
 										$("#protected-content-unveil")[0].click();
 								} else {
-									hash = upHash;
-									let cacheBase = hash.substring(env.hashBeginning.length);
+									higherHash = upHash;
+									let cacheBase = higherHash.substring(env.hashBeginning.length);
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
@@ -1190,7 +1190,7 @@ $(document).ready(function() {
 
 							// neither the unprotected nor the protected album exist
 							// the user could have opened a protected album link: the password can be asked, but only if some ancestor album has protected content
-							let hash = location.hash;
+							let higherHash = location.hash;
 							checkHigherAncestor();
 						}
 					);

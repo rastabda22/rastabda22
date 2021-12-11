@@ -2820,7 +2820,6 @@
 			inPopup = true;
 
 		var thumbnailSize = env.options.media_thumb_size;
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 		var self = this;
 		var lazyClass, thumbsSelector;
 		if (inPopup) {
@@ -2950,8 +2949,8 @@
 				let selectBoxHtml = "<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + imgHtml + "</a>";
 
 				let mediaHash;
-				if (collectionCacheBase !== undefined && collectionCacheBase !== null)
-					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, collectionCacheBase);
+				if (env.collectionCacheBase !== undefined && env.collectionCacheBase !== null)
+					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, env.foundAlbumCacheBase, env.collectionCacheBase);
 				else
 					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 
@@ -3156,12 +3155,10 @@
 
 		$("#downloading-media").hide();
 
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] =
-			phFl.decodeHash(randomSubAlbumCacheBase);
+		var [fake_albumCacheBase, fake_mediaCacheBase, fake_mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(randomSubAlbumCacheBase);
 		if (this.isSearch() || this.isSelection()) {
 			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
-			//function(cacheBase, singleMedia, foundAlbumCacheBase, collectionCacheBase)
 			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, foundAlbumCacheBase, collectionCacheBase);
 		} else if (this.isByDate()) {
 			titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
@@ -3240,7 +3237,6 @@
 	};
 
 	Album.prototype.showSubalbums = function(forcePopulate = false) {
-		let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 		var self = this;
 
 		if (env.fromEscKey && env.firstEscKey) {
@@ -3249,7 +3245,7 @@
 		} else {
 			// reset mediaLink
 			if (self.numsMedia.imagesAndVideosTotal())
-				env.mediaLink = phFl.encodeHash(self.cacheBase, self.media[0], foundAlbumCacheBase, collectionCacheBase);
+				env.mediaLink = phFl.encodeHash(self.cacheBase, self.media[0], env.foundAlbumCacheBase, env.collectionCacheBase);
 			else
 				env.mediaLink = env.hashBeginning + self.cacheBase;
 
@@ -3356,8 +3352,8 @@
 				if (self.isSearch() || self.isSelection()) {
 					subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, self.cacheBase);
 				} else {
-					if (typeof collectionCacheBase !== "undefined" && collectionCacheBase !== null)
-						subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, collectionCacheBase);
+					if (typeof env.collectionCacheBase !== "undefined" && env.collectionCacheBase !== null)
+						subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, env.foundAlbumCacheBase, env.collectionCacheBase);
 					else
 						subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
 				}
