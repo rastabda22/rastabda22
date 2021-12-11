@@ -849,6 +849,7 @@ video {
 .thumb-and-caption-container.highlighted .media-caption,
 .album-button-and-caption.highlighted .album-caption,
 #right-and-search-menu div.highlighted .caption,
+#right-and-search-menu li:not(.expandable).highlighted,
 #right-and-search-menu li.highlighted .caption,
 #right-and-search-menu ul ul li.highlighted,
 #menu-icon.expanded,
@@ -978,7 +979,8 @@ video {
 	cursor: default;
 } */
 
-#right-and-search-menu li:not(.expanded) span.caption, #right-and-search-menu li ul:not(.hidden) li.radio:not(.selected), #right-and-search-menu li ul:not(.hidden) li:not(.radio) {
+#right-and-search-menu li ul li.radio:not(.selected), #right-and-search-menu li ul li:not(.radio) {
+/* #right-and-search-menu li:not(.expanded) span.caption, #right-and-search-menu li ul:not(.hidden) li.radio:not(.selected), #right-and-search-menu li ul:not(.hidden) li:not(.radio) { */
 	cursor: pointer;
 }
 
@@ -1034,7 +1036,7 @@ video {
 	font-style: italic;
 }
 
-#right-and-search-menu.expanded li.caption {
+#right-and-search-menu .menu li.expandable:not(.expandanded) span.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
 	font-variant: small-caps;
@@ -1130,8 +1132,9 @@ a.search-link:hover {
 #right-and-search-menu.expanded li:not(.active, .sub-menu) {
 }
 
+#right-and-search-menu li.first-level:not(.expandable):not(.highlighted):hover,
 #right-and-search-menu li:not(.expanded) .caption:hover,
-#right-and-search-menu ul ul li.active:hover,
+#right-and-search-menu li.active:not(.first-level):hover,
 #right-and-search-menu #search-icon:hover,
 #right-and-search-menu #menu-icon:hover,
 #right-and-search-menu .info-icon:hover,

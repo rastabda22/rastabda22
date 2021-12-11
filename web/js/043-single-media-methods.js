@@ -845,7 +845,10 @@
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
-			if (album.numsMedia.imagesAndVideosTotal() > 1) {
+			if (
+				util.onlyShowNonGeotaggedContent() && album.nonGeotagged.numsMedia.imagesAndVideosTotal() > 1 ||
+				! util.onlyShowNonGeotaggedContent() && album.numsMedia.imagesAndVideosTotal() > 1
+			) {
 				env.prevMedia.show(album, 'left');
 				env.nextMedia.show(album, 'right');
 			}

@@ -19,7 +19,7 @@
 				".hide-everytyhing-shortcut": "h",
 				".select.everything-shortcut": "a",
 				".menu-icon-title-shortcut": "e",
-				".protected-content-unveil-shortcut": "u"
+				"#protected-content-unveil-shortcut": "u"
 			},
 			it: {
 				".next-media-title-shortcut": "n",
@@ -35,7 +35,7 @@
 				".hide-everytyhing-shortcut": "h",
 				".select.everything-shortcut": "a",
 				".menu-icon-title-shortcut": "e",
-				".protected-content-unveil-shortcut": "u"
+				"#protected-content-unveil-shortcut": "u"
 			},
 			es: {
 				".next-media-title-shortcut": "n",
@@ -51,7 +51,7 @@
 				".hide-everytyhing-shortcut": "h",
 				".select.everything-shortcut": "a",
 				".menu-icon-title-shortcut": "e",
-				".protected-content-unveil-shortcut": "u"
+				"#protected-content-unveil-shortcut": "u"
 			},
 			fr: {
 				".next-media-title-shortcut": "n",
@@ -67,7 +67,7 @@
 				".hide-everytyhing-shortcut": "h",
 				".select.everything-shortcut": "a",
 				".menu-icon-title-shortcut": "e",
-				".protected-content-unveil-shortcut": "u"
+				"#protected-content-unveil-shortcut": "u"
 			}
 		};
 
@@ -230,7 +230,7 @@
 				".non-geotagged-only.caption": "Hide geotagged media",
 				"#hide-geotagged-media": "Hide geotagged media",
 				".hidden-geotagged-media": "Non-geotagged media only",
-				".protected-content-unveil": "Unveil protected content",
+				"#protected-content-unveil": "Unveil protected content",
 				"#current-album-is": "current album is ",
 				"#refine-search": "refine current search",
 				".album-sort.caption": "Sort albums",
@@ -490,7 +490,7 @@
 				".non-geotagged-only.caption": "Nascondi le immagini/video geolocalizzate",
 				"#hide-geotagged-media": "Nascondi le immagini/video geolocalizzate",
 				".hidden-geotagged-media": "Solo immagini/video non geolocalizzati",
-				".protected-content-unveil": "Svela contenuti protetti",
+				"#protected-content-unveil": "Svela contenuti protetti",
 				"#current-album-is": "l'album corrente è ",
 				"#refine-search": "perfeziona la ricerca corrente",
 				".album-sort.caption": "Ordina gli albums",
@@ -750,7 +750,7 @@
 				".non-geotagged-only.caption": "Esconde las imágenes/videos sin geolocalización",
 				"#hide-geotagged-media": "Esconde las imágenes/videos sin geolocalización",
 				".hidden-geotagged-media": "Sólo imágenes/videos sin geolocalización",
-				".protected-content-unveil": "Revela contenidos protegidos",
+				"#protected-content-unveil": "Revela contenidos protegidos",
 				"#current-album-is": "el álbum corriente es ",
 				"#refine-search": "perfectiona la búsqueda corriente",
 				".album-sort.caption": "Ordena los álbums",
@@ -1010,7 +1010,7 @@
 				".non-geotagged-only.caption": "Hide geotagged media",
 				"#hide-geotagged-media": "Hide geotagged media",
 				".hidden-geotagged-media": "Non-geotagged media only",
-				".protected-content-unveil": "Révéler le contenu protégé",
+				"#protected-content-unveil": "Révéler le contenu protégé",
 				"#current-album-is": "l'album actuel est ",
 				"#refine-search": "Affiner la recherche en cours",
 				".album-sort.caption": "Trier les albums",

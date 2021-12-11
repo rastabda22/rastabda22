@@ -196,7 +196,7 @@
 			"click",
 			function changeToFoldersView(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage(ev, "#folders-browsing");
 
 				if (isSingleMedia) {
@@ -216,7 +216,7 @@
 			"click",
 			function changeToByDateView(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage(ev, "#by-date-browsing");
 
 				if (isSingleMedia) {
@@ -236,7 +236,7 @@
 			"click",
 			function changeToByGpsView(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage(ev, "#by-gps-browsing");
 
 				if (isSingleMedia) {
@@ -256,7 +256,7 @@
 			"click",
 			function changeToByMapView(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage(ev, "#by-map-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -274,7 +274,7 @@
 			"click",
 			function changeToBySearchView(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage(ev, "#by-search-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -299,7 +299,7 @@
 			"click",
 			function(ev) {
 				ev.stopPropagation();
-				util.addHighlightToItem($(this).parent().parent());
+				util.addHighlightToItem($(this));
 					util.changeToBySelectionView(ev, thisMedia);
 
 				return false;
@@ -666,7 +666,7 @@
 			}
 
 
-			$(".select.everything:not(.hidden)").off("click").on(
+			$(".select.everything:not(.hidden):not(.shortcut-help)").off("click").on(
 				"click",
 				function() {
 					util.addHighlightToItem($(this));
@@ -1242,7 +1242,7 @@
 				var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
 				// highlight the menu item
-				util.addHighlightToItem($(this).parent());
+				util.addHighlightToItem($(this));
 				MenuFunctions.updateMenu();
 
 				util.addClickToHiddenGeotaggedMediaPhrase();
@@ -1307,22 +1307,22 @@
 
 		////////////////// PROTECTED CONTENT //////////////////////////////
 
-		let selectors = "#padlock, .first-level.protection";
+		let selector = ".protection";
 		if (thisAlbum !== null) {
 			if (thisAlbum.hasVeiledProtectedContent()) {
-				$(selectors).removeClass("hidden");
-				$(selectors).off("click").on(
+				$(selector).removeClass("hidden");
+				$(selector).off("click").on(
 					"click",
 					function() {
-						$(".protected-content-unveil")[0].click();
+						util.showAuthForm();
 						util.closeMenu();
 					}
 				);
 			} else {
-				$(selectors).addClass("hidden");
+				$(selector).addClass("hidden");
 			}
 		} else {
-			$(selectors).addClass("hidden");
+			$(selector).addClass("hidden");
 		}
 
 		////////////////// SAVE DATA MODE //////////////////////////////
@@ -1344,7 +1344,7 @@
 		////////////////// ACCORDION EFFECT //////////////////////////////
 
 		// accordion effect on right menu
-		$("#right-and-search-menu li.expandable :not(ul)").off("click").on(
+		$("#right-and-search-menu li.expandable .caption").off("click").on(
 			"click",
 			function() {
 				if ($(this).hasClass("caption"))

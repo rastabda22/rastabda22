@@ -116,7 +116,7 @@ $(document).ready(function() {
 				) {
 					let highlightedItemObject = util.highlightedItemObject();
 					if (e.key === "Enter") {
-						if (true || highlightedItemObject.hasClass("first-level") && ! highlightedItemObject.hasClass("expandable"))
+						if (highlightedItemObject.hasClass("first-level") && highlightedItemObject.hasClass("expandable"))
 							highlightedItemObject.children().click();
 						else
 							highlightedItemObject.click();
@@ -376,13 +376,13 @@ $(document).ready(function() {
 							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key.toLowerCase() === util._s(".protected-content-unveil-shortcut") &&
+						e.key.toLowerCase() === util._s("#protected-content-unveil-shortcut") &&
 						env.currentAlbum !== null
 					) {
 						if (
 							env.currentAlbum.hasVeiledProtectedContent()
 						) {
-							$(".protected-content-unveil")[0].click();
+							util.showAuthForm();
 							return false;
 						}
 					}
@@ -882,8 +882,6 @@ $(document).ready(function() {
 		}
 	);
 
-	$(".protected-content-unveil").off("click").on("click", util.showAuthForm);
-
 	// binds the click events to the sort buttons
 
 	$("#right-and-search-menu li.hide-title").off("click").on(
@@ -1170,7 +1168,7 @@ $(document).ready(function() {
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
 									if (album.isEmpty || album.hasVeiledProtectedContent())
-										$(".protected-content-unveil")[0].click();
+										$("#protected-content-unveil")[0].click();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
@@ -1180,7 +1178,7 @@ $(document).ready(function() {
 											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												$(".protected-content-unveil")[0].click();
+												$("#protected-content-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}
