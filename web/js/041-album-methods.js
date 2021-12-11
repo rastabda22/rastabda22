@@ -775,6 +775,7 @@
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (ithAlbum.positionsAndMediaInTree.length) {
+							// if (ithAlbum.hasOwnProperty("positionsAndMediaInTree") && ithAlbum.positionsAndMediaInTree.length) {
 								if (ithAlbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
 									let newPos = new PositionsAndMedia();
 									let firstTime = true;
@@ -858,7 +859,15 @@
 	};
 
   Album.prototype.isAlbumWithOneMedia = function() {
-		return this !== null && ! this.subalbums.length && this.numsMedia.imagesAndVideosTotal() === 1;
+		var result;
+
+		result = (
+			this !== null && ! this.subalbums.length && (
+				util.onlyShowNonGeotaggedContent() && this.nonGeotagged.numsMedia.imagesAndVideosTotal() === 1 ||
+				! util.onlyShowNonGeotaggedContent() && this.numsMedia.imagesAndVideosTotal() === 1
+			)
+		);
+		return result;
 	};
 
   Album.prototype.downloadAlbum = function(everything = false, what = "all", size = 0) {
@@ -3483,7 +3492,7 @@
 					}
 				);
 
-				let onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
+				let onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent() && ithSubalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 				if (
 					! env.options.save_data ||
 					onlyShowNonGeotaggedContent && ithSubalbum.randomMedia.every(singleMedia => singleMedia.hasGpsData())

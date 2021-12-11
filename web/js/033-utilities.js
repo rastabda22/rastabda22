@@ -1132,7 +1132,10 @@
 			}
 		);
 
-		if (album.numsMedia.imagesAndVideosTotal() > 1) {
+		if (
+			Utilities.onlyShowNonGeotaggedContent() && album.nonGeotagged.numsMedia.imagesAndVideosTotal() > 1 ||
+			Utilities.onlyShowNonGeotaggedContent() && album.numsMedia.imagesAndVideosTotal() > 1
+		) {
 			event.data.id = "left";
 			env.prevMedia.scale(event);
 
@@ -3173,7 +3176,6 @@
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype._s = Utilities._s;
 	Utilities.prototype.upHash = Utilities.upHash;
-	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeOrGetMapRootAlbum = Utilities.initializeOrGetMapRootAlbum;
