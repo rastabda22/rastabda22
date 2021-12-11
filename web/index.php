@@ -638,9 +638,7 @@
 						</ul>
 					</li>
 
-					<li id="show-big-albums" class="first-level big-albums active">
-						<!-- <span class="big-albums caption"></span> -->
-					</li>
+					<li id="show-big-albums" class="first-level big-albums active"></li>
 
 					<li class="first-level expandable download-album active">
 						<span class="download-album caption"></span>
@@ -664,21 +662,13 @@
 						</ul>
 					</li>
 
-					<li id="hide-geotagged-media" class="first-level non-geotagged-only active">
-						<!-- <span class="non-geotagged-only caption"></span> -->
-					</li>
+					<li id="hide-geotagged-media" class="first-level non-geotagged-only active"></li>
 
-					<li id="protected-content-unveil" class="first-level protection active">
-						<!-- <span class="protection caption protected-content-unveil"></span> -->
-					</li>
+					<li id="protected-content-unveil" class="first-level protection active"></li>
 
-					<li id="save-data" class="first-level save-data active">
-						<!-- <span class="save-data caption"></span> -->
-					</li>
+					<li id="save-data" class="first-level save-data active"></li>
 
-					<li id="restore" class="first-level restore active">
-						<!-- <span class="restore caption"></span> -->
-					</li>
+					<li id="restore" class="first-level restore active"></li>
 				</ul>
 			</div>
 
