@@ -281,7 +281,7 @@
 	};
 
 	Utilities.prototype.translate = function() {
-		for (var key in env.translations.en) {
+		for (let key in env.translations.en) {
 			if (env.translations[env.language].hasOwnProperty(key)) {
 				if (key === '.title-string' && document.title.substr(0, 5) != "<?php")
 					// don't set page title, php has already set it
@@ -291,7 +291,7 @@
 					keyObject.html(Utilities._t(key));
 			}
 		}
-		for (var key in env.shortcuts.en) {
+		for (let key in env.shortcuts.en) {
 			if (env.shortcuts[env.language].hasOwnProperty(key)) {
 				let keyObject = $(key);
 				if (keyObject.length)
@@ -629,6 +629,7 @@
 	Utilities.closeMenu = function() {
 		$("#right-and-search-menu").removeClass("expanded");
 		$("#search-icon, #menu-icon").removeClass("expanded");
+		$(".search").addClass("hidden-by-menu-selection");
 
 		$("#album-view").css("opacity", "");
 		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "");
@@ -2737,7 +2738,7 @@
 		var resultCacheBase;
 		if (hash === undefined)
 			hash = window.location.hash;
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(hash);
+		var [albumCacheBase, mediaCacheBase, fake_mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(hash);
 
 		if (mediaCacheBase === null || env.currentAlbum !== null && env.currentAlbum.isAlbumWithOneMedia()) {
 			// hash of an album: go up in the album tree
@@ -2746,7 +2747,7 @@
 					resultCacheBase = collectionCacheBase;
 				else {
 					// we must go up in the sub folder
-					let albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
+					albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
 					resultCacheBase = Utilities.pathJoin([
 						albumCacheBase,
 						foundAlbumCacheBase,

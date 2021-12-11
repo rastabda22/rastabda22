@@ -553,12 +553,12 @@
 
 			<div id="right-and-search-menu">
 				<div id="menu-and-padlock">
-					<span id="menu-icon"> ☰ </span>
+					<div id="menu-icon">☰</div>
 					<img id="search-icon" src="img/ic_search_black_48dp_2x.png">
-					<span id="padlock" class="protection">
+					<div id="padlock" class="protection">
 						<img width="12px" height="16px" src="img/padlock.png" />
-					</span>
-					<span class="info-icon info-icon-shortcut"></span>
+					</div>
+					<div class="info-icon info-icon-shortcut"></div>
 				</div>
 				<div id="search-menu" class="menu search active hidden-by-menu-selection">
 					<form class="caption">

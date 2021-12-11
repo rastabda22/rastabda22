@@ -211,7 +211,7 @@
 											function(theAlbum) {
 												theAlbum.generateCaptionsForSearch();
 												let name = theAlbum.nameForShowing();
-												let [fakeName, subalbumPosition] = theAlbum.captionsForSearch;
+												let [fake_name, subalbumPosition] = theAlbum.captionsForSearch;
 												if (i === 0) {
 													name =
 														"<span class='with-second-part'>" +

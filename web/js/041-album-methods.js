@@ -1915,7 +1915,7 @@
 							let trueIndex;
 							let counter = 0;
 							for (trueIndex = 0; trueIndex < ithAlbumWithMediaAndPositions.media.length; trueIndex ++) {
-								thisMedia = ithAlbumWithMediaAndPositions.media[trueIndex];
+								let thisMedia = ithAlbumWithMediaAndPositions.media[trueIndex];
 								if (thisMedia.hasGpsData())
 									continue;
 								if (counter === index) {
@@ -3157,7 +3157,7 @@
 
 		var [fake_albumCacheBase, fake_mediaCacheBase, fake_mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(randomSubAlbumCacheBase);
 		if (this.isSearch() || this.isSelection()) {
-			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
+			let [name, fake_title] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 			randomMediaLink = phFl.encodeHash(randomSubAlbumCacheBase, randomMedia, foundAlbumCacheBase, collectionCacheBase);
 		} else if (this.isByDate()) {
@@ -3170,7 +3170,7 @@
 		// } else if (this.isSearch()) {
 		// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 		} else {
-			let [name, fakeTitle] = randomMedia.nameAndTitleForShowing();
+			let [name, fake_title] = randomMedia.nameAndTitleForShowing();
 			titleName = util.pathJoin([randomMedia.albumName, name]);
 			if (this.isSearch())
 				randomMediaLink = phFl.encodeHash(randomMedia.foldersCacheBase, randomMedia, randomSubAlbumCacheBase, this.cacheBase);

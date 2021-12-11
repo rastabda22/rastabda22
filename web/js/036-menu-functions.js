@@ -1799,10 +1799,6 @@
 		}
 	};
 
-	MenuFunctions.prototype.showContestualHelp = function(ev) {
-		alert("contestual help")
-	};
-
 
 	MenuFunctions.prototype.toggleFullscreenFromMouse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {

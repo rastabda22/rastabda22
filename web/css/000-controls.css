@@ -857,6 +857,10 @@ video {
 	background-color: orange !important;
 }
 
+#search-menu form {
+	display: inline-table;
+}
+
 #right-and-search-menu li.highlighted .caption,
 #right-and-search-menu ul ul li.highlighted,
 .highlighted .album-name[style],
@@ -1015,7 +1019,7 @@ video {
 }
 
 #right-and-search-menu div.search {
-	margin-right: 30px;
+	margin-right: 33px;
 }
 
 #right-and-search-menu #padlock {
@@ -1036,12 +1040,13 @@ video {
 	font-style: italic;
 }
 
-#right-and-search-menu .menu li.expandable:not(.expandanded) span.caption {
+#right-and-search-menu .menu li.expandable span.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
 	font-variant: small-caps;
 	font-weight: bold;
 	font-style: normal;
+	font-size: 115%;
 }
 
 #right-and-search-menu.expanded li {
@@ -1068,7 +1073,7 @@ video {
 #menu-icon, #search-icon, #padlock img, #right-and-search-menu .info-icon {
 	background-color: black;
 	opacity: 50%;
-	padding: .1em .5em;
+	padding: .1em .3em;
 }
 
 #menu-icon.expanded, #search-icon.expanded, #right-and-search-menu .info-icon.expanded {
@@ -1107,7 +1112,6 @@ a.search-link:hover {
 }
 
 #right-and-search-menu img#search-button {
-	width: 1.7em;
 	height: 1.7em;
 	cursor: pointer;
 	position: relative;
@@ -1165,13 +1169,14 @@ a.search-link:hover {
 }
 
 #right-and-search-menu #padlock:hover {
-	margin-left: 1em;
+	margin-left: .1em;
 	padding-bottom: 0;
 }
 
 #right-and-search-menu.expanded ul {
 	list-style: none;
 	padding-inline-start: 1em;
+	margin-block: 0;
 }
 
 #right-and-search-menu ul li.download-album.active {
