@@ -2875,11 +2875,13 @@
 		if (
 			populateMedia &&
 			$("#thumbs").is(":visible") && (
-				! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders
+				! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders || env.isRevertingFromHidingGeotaggedMedia
 			)
 		) {
-		// if (! (this.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
 			$(thumbsSelector).empty();
+
+			if (env.isRevertingFromHidingGeotaggedMedia)
+				env.isRevertingFromHidingGeotaggedMedia = false;
 
 			//
 			// media loop
@@ -3261,7 +3263,10 @@
 			forcePopulate ||
 			env.albumInSubalbumDiv === null ||
 			self === null ||
-			(env.albumInSubalbumDiv !== self || env.isFromAuthForm) && self.subalbums.length;
+			(env.albumInSubalbumDiv !== self || env.isFromAuthForm || env.isRevertingFromHidingGeotaggedMedia) && self.subalbums.length;
+
+		if (env.isRevertingFromHidingGeotaggedMedia)
+			env.isRevertingFromHidingGeotaggedMedia = false;
 
 		let objects = [];
 		if (populateSubalbums) {

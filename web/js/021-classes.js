@@ -39,6 +39,7 @@
 			this.searchWords = [];
 			this.loadedImages = [];
 			this.isASaveDataChange = false;
+			this.isRevertingFromHidingGeotaggedMedia = false;
 			// scrollbarWidth;
 			// contextMenu = false;
 

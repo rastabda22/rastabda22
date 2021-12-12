@@ -1299,6 +1299,9 @@
 								}
 							}
 						);
+					} else {
+						env.isRevertingFromHidingGeotaggedMedia = true;
+						$(window).hashchange();
 					}
 				}
 			}

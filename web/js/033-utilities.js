@@ -317,9 +317,40 @@
 		return scrollbarWidth;
 	};
 
-	Utilities.prototype.cloneObject = function(object) {
+	Utilities.cloneObject = function(object) {
 		return Object.assign({}, object);
 	};
+
+	// // this doesn't work: "Uncaught TypeError: Converting circular structure to JSON"
+	// Utilities.prototype.cloneObject = function(object) {
+	// 	return JSON.parse(JSON.stringify(object));
+	// };
+
+
+	// // from https://newbedev.com/javascript-deep-clone-object-with-circular-references
+	// Utilities.cloneObject = function(obj, hash = new WeakMap()) {
+	// 	// Do not try to clone primitives or functions
+	// 	if (Object(obj) !== obj || obj instanceof Function)
+	// 		return obj;
+	// 	if (hash.has(obj))
+	// 		return hash.get(obj); // Cyclic reference
+	// 	try { // Try to run constructor (without arguments, as we don't know them)
+	// 		var result = new obj.constructor();
+	// 	} catch(e) { // Constructor failed, create object without running the constructor
+	// 		result = Object.create(Object.getPrototypeOf(obj));
+	// 	}
+	// 	// Optional: support for some standard constructors (extend as desired)
+	// 	if (obj instanceof Map)
+	// 		Array.from(obj, ([key, val]) => result.set(deepClone(key, hash), Utilities.cloneObject(val, hash)) );
+	// 	else if (obj instanceof Set)
+	// 		Array.from(obj, (key) => result.add(Utilities.cloneObject(key, hash)) );
+	// 	// Register in hash
+	// 	hash.set(obj, result);
+	// 	// Clone and assign enumerable own properties recursively
+	// 	return Object.assign(result, ...Object.keys(obj).map (
+	// 		key => ({ [key]: Utilities.cloneObject(obj[key], hash) }) )
+	// 	);
+	// };
 
 	Utilities.arrayIntersect = function(a, b) {
 		if (b.length > a.length) {
@@ -3224,6 +3255,7 @@
 	Utilities.prototype.onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent;
 	Utilities.prototype.isLoaded = Utilities.isLoaded;
 	Utilities.prototype.hasSomeDescription = Utilities.hasSomeDescription;
+	Utilities.prototype.cloneObject = Utilities.cloneObject;
 
 	window.Utilities = Utilities;
 }());
