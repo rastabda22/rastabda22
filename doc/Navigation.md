@@ -4,69 +4,68 @@
 
 MyPhotoShare can be used entirely with a keyboard.
 
-|         Scope         |         Key        |                           Action                                 |
-|-----------------------|--------------------|------------------------------------------------------------------|
-| any                   | ESC                | Quit current action, go up in the albums tree, hide map, ecc.    |
-| any                   | e                  | Open menu                                                        |
-| any                   | m                  | Show map                                                         |
-| any                   | f                  | Full screen                                                      |
-|-----------------------|--------------------|------------------------------------------------------------------|
-| menu                  | TAB                | Highlight next menu entry                                        |
-| menu                  | Down Arrow         | Highlight next menu entry                                        |
-| menu                  | Shift-TAB          | Highlight previous menu entry                                    |
-| menu                  | Up Arrow           | Highlight previus menu entry                                     |
-| menu                  | left/right Arrow   | Toggle main/search menu                                          |
-| expandable menu entry | ENTER              | Toggle menu entry expansion                                      |
-| menu commands         | ENTER              | Activate menu command                                            |
-| menu                  | ESC                | Closes the menu                                                  |
-|-----------------------|--------------------|------------------------------------------------------------------|
-| root albums           | >                  | Browse folders by album > date > GPS > search > selection        |
-| root albums           | <                  | Browse folders reverse                                           |
-| album                 | Shift-Down Arrow   | first media in album                                             |
-| album                 | ENTER              | enter highlighted album/single media                             |
-| album                 | Left arrow         | move selection backward circularly                               |
-| album                 | Right arrow        | move selection forward circularly                                |
-| album                 | Shift-Page Down    | first media in album                                             |
-| album                 | ]                  | Sort albums by name asc > name desc > date desc > date asc       |
-| album                 | [                  | Sort albums reverse                                              |
-| album                 | }                  | Sort media by name asc > date asc > name desc > date desc        |
-| album                 | {                  | Sort media reverse                                               |
-| album                 | h                  | Show/hide title                                                  |
-| album                 | a                  | Select all media                                                 |
-| album                 | Shift-a            | Unselect all media                                               |
-| album                 | Space, Ctrl-Space  | toggle selection status of highlighted subalbum/media            |
-|-----------------------|--------------------|------------------------------------------------------------------|
-| single media          | ENTER              | Next media                                                       |
-| single media          | Shift-ENTER        | Previous media                                                   |
-| single media          | Right arrow        | Next media                                                       |
-| single media          | Shift-Up Arrow     | Album view                                                       |
-| single media          | Left arrow         | Previous media                                                   |
-| single media          | s                  | Show metadata                                                    |
-| single media          | o                  | Show original media                                              |
-| single media          | d                  | Download original media                                          |
-| single media          | +                  | Zoom in picture                                                  |
-| single media          | -                  | Zoom out picture                                                 |
-| single media          | Shift-Space        | Previous media                                                   |
-| single media          | BACKSPACE          | Previous media                                                   |
-| single media          | Shift-BACKSPACE    | Next media                                                       |
-| single media          | n                  | Next media                                                       |
-| single media          | Shift-n            | Previous media                                                   |
-| single media          | p                  | Previous media                                                   |
-| single media          | Shift-p            | Next media                                                       |
-| single media          | Shift-Page Up      | Album view                                                       |
-| single media          | >                  | Change browsing mode by album > date > GPS > search > selection  |
-| single media          | <                  | Change browsing mode reverse                                     |
-| single media          | h                  | Show/hide title and bottom thumbnails                            |
-| single media          | 0 .. 9             | Zoom level                                                       |
-| single media          | a                  | Select current media                                             |
-| single media          | Shift-a            | Unselect current media                                           |
-| single media          | Crtl-SPACE         | toggle selection status                                          |
-| video                 | SPACE              | play/stop                                                        |
-| picture               | SPACE              | Next picture                                                     |
-| enlarged picture      | Arrows             | Drag                                                             |
-| enlarged picture      | Shift-Arrows       | Drag faster                                                      |
-| enlarged picture      | Page Up/Down       | Drag                                                             |
-| enlarged picture      | Shift-Page Up/Down | Drag faster                                                      |
+|         Scope         |         Key         |                           Action                                 |
+|-----------------------|---------------------|------------------------------------------------------------------|
+| any                   | ESC                 | Quit current action, go up in the albums tree, hide map, ecc.    |
+| any                   | e                   | Open menu                                                        |
+| any                   | m                   | Show map                                                         |
+| any                   | f                   | Full screen                                                      |
+|-----------------------|---------------------|------------------------------------------------------------------|
+| menu                  | ESC                 | Closes the menu                                                  |
+| menu                  | TAB, DOWN ARROW     | Move highlight to next menu entry                                |
+| menu                  | SHIFT-TAB, UP ARROW | Move highlight to previous menu entry                            |
+| menu                  | LEFT/RIGHT ARROW    | Toggle main/search menu                                          |
+| expandable menu entry | ENTER               | Toggle menu entry expansion                                      |
+| menu commands         | ENTER               | Activate menu command                                            |
+|-----------------------|---------------------|------------------------------------------------------------------|
+| root albums           | >                   | Change browsing mode: albums > date > GPS > search > selection   |
+| root albums           | <                   | Change browsing mode reverse                                     |
+| album                 | SHIFT-DOWN ARROW    | first media in album                                             |
+| album                 | ENTER               | enter highlighted album/single media                             |
+| album                 | LEFT ARROW          | move selection backward circularly                               |
+| album                 | RIGHT ARROW         | move selection forward circularly                                |
+| album                 | SHIFT-PAGE DOWN     | first media in album                                             |
+| album                 | ]                   | Sort albums by name asc > name desc > date desc > date asc       |
+| album                 | [                   | Sort albums reverse                                              |
+| album                 | }                   | Sort media by name asc > date asc > name desc > date desc        |
+| album                 | {                   | Sort media reverse                                               |
+| album                 | h                   | Show/hide title                                                  |
+| album                 | a                   | Select all media                                                 |
+| album                 | SHIFT-a             | Unselect all media                                               |
+| album                 | SPACE, CTRL-SPACE   | toggle selection status of highlighted subalbum/media            |
+|-----------------------|---------------------|------------------------------------------------------------------|
+| single media          | ENTER               | Next media                                                       |
+| single media          | SHIFT-ENTER         | Previous media                                                   |
+| single media          | RIGHT ARROW         | Next media                                                       |
+| single media          | SHIFT-UP ARROW      | Album view                                                       |
+| single media          | LEFT ARROW          | Previous media                                                   |
+| single media          | s                   | Show metadata                                                    |
+| single media          | o                   | Show original media                                              |
+| single media          | d                   | Download original media                                          |
+| single media          | +                   | Zoom in picture                                                  |
+| single media          | -                   | Zoom out picture                                                 |
+| single media          | SHIFT-SPACE         | Previous media                                                   |
+| single media          | BACKSPACE           | Previous media                                                   |
+| single media          | SHIFT-BACKSPACE     | Next media                                                       |
+| single media          | n                   | Next media                                                       |
+| single media          | SHIFT-n             | Previous media                                                   |
+| single media          | p                   | Previous media                                                   |
+| single media          | SHIFT-p             | Next media                                                       |
+| single media          | SHIFT-PAGE UP       | Album view                                                       |
+| single media          | >                   | Change browsing mode: albums > date > GPS > search > selection   |
+| single media          | <                   | Change browsing mode reverse                                     |
+| single media          | h                   | Show/hide title and bottom thumbnails                            |
+| single media          | 0 .. 9              | Zoom level                                                       |
+| single media          | a                   | Select current media                                             |
+| single media          | SHIFT-a             | Unselect current media                                           |
+| single media          | CTRL-SPACE          | toggle selection status                                          |
+| video                 | SPACE               | play/stop                                                        |
+| picture               | SPACE               | Next picture                                                     |
+| enlarged picture      | ARROWS              | Drag                                                             |
+| enlarged picture      | SHIFT-ARROWS        | Drag faster                                                      |
+| enlarged picture      | PAGE UP/DOWN        | Drag                                                             |
+| enlarged picture      | SHIFT-PAGE UP/DOWN  | Drag faster                                                      |
+|-----------------------|---------------------|------------------------------------------------------------------|
 
 ### Accessibility (_not implemented yet_)
 
@@ -90,8 +89,8 @@ Unfortunately, access keys depend on the browser and platform.
 
 | Browser    | Windows                        | Linux                             | Mac                               |
 |------------|--------------------------------|-----------------------------------|-----------------------------------|
-| Chrome     | [Alt] + [Shift] + [key]        | [Control] + [Alt] + [key]         | [Control] + [Alt] + [key]         |
-| Firefox    | [Alt] + [Shift] + [key]        | [Alt] + [Shift] + [key]           | [Control] + [Alt] + [key]         |
+| Chrome     | [Alt] + [SHIFT] + [key]        | [Control] + [Alt] + [key]         | [Control] + [Alt] + [key]         |
+| Firefox    | [Alt] + [SHIFT] + [key]        | [Alt] + [SHIFT] + [key]           | [Control] + [Alt] + [key]         |
 | Edge       | [Alt] + [key]                  |                                   |                                   |
 | IE         | [Alt] + [key]                  |                                   |                                   |
 | Safari     | [Alt] + [key]                  |                                   | [Control] + [Alt] + [key]         |
