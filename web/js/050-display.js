@@ -108,7 +108,7 @@ $(document).ready(function() {
 			}
 		} else if (! isAuth && ! isMap) {
 			if (
-				! ($("#search-menu").hasClass("highlighted")) &&
+				! ($("#search-menu").hasClass("expanded")) &&
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")
 			) {
 				$("#album-and-media-container").stop().fadeOut(500);
