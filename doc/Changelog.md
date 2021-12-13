@@ -3,6 +3,7 @@
 * similarly with by date json file, new option `by_date_album_subdir`
 * swap metadata and map shortcuts, now they are respectively `s` and `m`
 * contextual help now available from top right and with `i` shortcut
+* the space bar can now  be used in menu to open an expandable entry and to activate a command
 * bug fixes
 
 ### version v5.5.1 (December 5, 2021)

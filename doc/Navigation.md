@@ -15,8 +15,8 @@ MyPhotoShare can be used entirely with a keyboard.
 | menu                  | TAB, DOWN ARROW     | Move highlight to next menu entry                                |
 | menu                  | SHIFT-TAB, UP ARROW | Move highlight to previous menu entry                            |
 | menu                  | LEFT/RIGHT ARROW    | Toggle main/search menu                                          |
-| expandable menu entry | ENTER               | Toggle menu entry expansion                                      |
-| menu commands         | ENTER               | Activate menu command                                            |
+| expandable menu entry | ENTER, SPACE        | Toggle menu entry expansion                                      |
+| menu commands         | ENTER, SPACE        | Activate menu command                                            |
 |-----------------------|---------------------|------------------------------------------------------------------|
 | root albums           | >                   | Change browsing mode: albums > date > GPS > search > selection   |
 | root albums           | <                   | Change browsing mode reverse                                     |

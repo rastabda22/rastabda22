@@ -122,7 +122,7 @@ $(document).ready(function() {
 					! e.ctrlKey && ! e.altKey
 				) {
 					let highlightedItemObject = util.highlightedItemObject();
-					if (e.key === "Enter") {
+					if (e.key === "Enter" || e.key === " ") {
 						if (highlightedItemObject.hasClass("first-level") && highlightedItemObject.hasClass("expandable"))
 							highlightedItemObject.children().click();
 						else
