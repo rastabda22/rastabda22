@@ -139,7 +139,7 @@
 
 	Album.prototype.removeUnnecessaryPropertiesAndAddParentToMedia = function() {
 		// remove unnecessary properties from album
-		var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
+		var unnecessaryProperties = ["albumIniMTime", "passwordMarkerMTime"];
 		for (let j = 0; j < unnecessaryProperties.length; j ++)
 			if (this.hasOwnProperty(unnecessaryProperties[j]))
 				delete this[unnecessaryProperties[j]];
@@ -203,14 +203,14 @@
 				function(codesComplexCombination) {
 					if (codesComplexCombination === ",")
 						return;
-					let combinations = codesComplexCombination.replace(',', '-').split('-');
+					let combinations = codesComplexCombination.replace(",", "-").split("-");
 					var indexOfVoidString = combinations.indexOf("");
 					if (indexOfVoidString !== -1)
 						combinations.splice(indexOfVoidString, 1);
 
 					combinations.forEach(
 						function(combination) {
-							var codesFromCombination = combination.split('-');
+							var codesFromCombination = combination.split("-");
 							if (typeof codesList === "string")
 								codesFromCombination = [codesFromCombination];
 							codesFromCombination.forEach(
@@ -231,8 +231,8 @@
 		var guessed = [];
 		this.codesSimpleCombinations().forEach(
 			codesSimpleCombination => {
-				var albumCombination = codesSimpleCombination.split(',')[0];
-				var mediaCombination = codesSimpleCombination.split(',')[1];
+				var albumCombination = codesSimpleCombination.split(",")[0];
+				var mediaCombination = codesSimpleCombination.split(",")[1];
 				if (
 					(albumCombination === "" || env.guessedPasswordCodes.indexOf(albumCombination) !== -1) &&
 					(mediaCombination === "" || env.guessedPasswordCodes.indexOf(mediaCombination) !== -1)
@@ -255,20 +255,20 @@
 			function(codesComplexCombination) {
 				if (codesComplexCombination === ",")
 					return;
-				var albumCombinations = codesComplexCombination.split(',')[0].split('-');
+				var albumCombinations = codesComplexCombination.split(",")[0].split("-");
 				if (albumCombinations.length && typeof albumCombinations === "string")
 					albumCombinations = [albumCombinations];
-				var mediaCombinations = codesComplexCombination.split(',')[1].split('-');
+				var mediaCombinations = codesComplexCombination.split(",")[1].split("-");
 				if (mediaCombinations.length && typeof mediaCombinations === "string")
 					mediaCombinations = [mediaCombinations];
 				if (albumCombinations.length) {
 					albumCombinations.forEach(
 						albumCode => {
-							var combination = albumCode + ',';
+							var combination = albumCode + ",";
 							if (mediaCombinations.length) {
 								mediaCombinations.forEach(
 									mediaCode => {
-										combination = albumCode + ',' + mediaCode;
+										combination = albumCode + "," + mediaCode;
 										if (codesSimpleCombinations.indexOf(combination) === -1)
 											codesSimpleCombinations.push(combination);
 									}
@@ -282,7 +282,7 @@
 				} else {
 					mediaCombinations.forEach(
 						mediaCode => {
-							var combination = ',' + mediaCode;
+							var combination = "," + mediaCode;
 							if (codesSimpleCombinations.indexOf(combination) === -1)
 								codesSimpleCombinations.push(combination);
 						}
@@ -422,18 +422,18 @@
   Album.prototype.sortByPath = function() {
 		if (this.subalbums.length) {
 			if (this.isSelection()) {
-				util.sortBy(this.subalbums, ['captionForSelectionSorting']);
-				// this.subalbums = util.sortBy(this.subalbums, ['altName', 'name', 'path']);
+				util.sortBy(this.subalbums, ["captionForSelectionSorting"]);
+				// this.subalbums = util.sortBy(this.subalbums, ["altName", "name", "path"]);
 			} else if (this.isSearch()) {
-				util.sortBy(this.subalbums, ['captionForSelectionSorting']);
-				// this.subalbums = util.sortBy(this.subalbums, ['altName', 'name', 'path']);
+				util.sortBy(this.subalbums, ["captionForSelectionSorting"]);
+				// this.subalbums = util.sortBy(this.subalbums, ["altName", "name", "path"]);
 			} else if (this.isByGps()) {
-				if (this.subalbums[0].hasOwnProperty('altName'))
-					util.sortBy(this.subalbums, ['altName']);
+				if (this.subalbums[0].hasOwnProperty("altName"))
+					util.sortBy(this.subalbums, ["altName"]);
 				else
-					util.sortBy(this.subalbums, ['name']);
+					util.sortBy(this.subalbums, ["name"]);
 			} else {
-				util.sortBy(this.subalbums, ['path']);
+				util.sortBy(this.subalbums, ["path"]);
 			}
 		}
 	};
@@ -887,21 +887,21 @@
 		// var basePath = this.path;
 		zipFilename = env.options.page_title;
 		if (this.isSearch()) {
-			zipFilename += '.' + util._t("#by-search") + " '" + $("#search-field").val() + "'";
+			zipFilename += "." + util._t("#by-search") + " '" + $("#search-field").val() + "'";
 		} else if (this.isSelection()) {
-			zipFilename += '.' + util._t("#by-selection");
+			zipFilename += "." + util._t("#by-selection");
 		} else if (this.isByDate()) {
 			let textComponents = this.path.split("/").splice(1);
 			if (textComponents.length > 1)
 				textComponents[1] = util._t("#month-" + textComponents[1]);
 			if (textComponents.length)
-				zipFilename += '.' + textComponents.join('-');
+				zipFilename += "." + textComponents.join("-");
 		} else if (this.isByGps()) {
-			zipFilename += '.' + this.ancestorsNames.splice(1).join('-');
+			zipFilename += "." + this.ancestorsNames.splice(1).join("-");
 		} else if (this.isMap()) {
-			zipFilename += '.' + util._t("#from-map");
+			zipFilename += "." + util._t("#from-map");
 		} else if (this.cacheBase !== env.options.folders_string) {
-			zipFilename += '.' + this.nameForShowing(null);
+			zipFilename += "." + this.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
@@ -916,7 +916,7 @@
 				$("#preparing-zip").html(util._t("#preparing-zip")).show();
 				$("#preparing-zip").append(env.br + "<div id='file-name'></div>");
 				zip.generateAsync(
-					{type:'blob'},
+					{type: "blob"},
 					function onUpdate(meta) {
 						if (meta.currentFile)
 							$("#preparing-zip #file-name").html(meta.currentFile + env.br + meta.percent.toFixed(1) + "%");
@@ -1021,11 +1021,11 @@
 											if (ancestorsNamesList.length > 2) {
 												ancestorsNamesList[2] = util.transformAltPlaceName(ancestorsNamesList[2]);
 											}
-											let albumPath = ancestorsNamesList.join('/');
+											let albumPath = ancestorsNamesList.join("/");
 											// let albumPath = ithAlbum.path;
 											// // if (true || album.isSearch() || album.isSelection())
 											// // 	// remove the leading folders/date/gps/map string
-											// albumPath = albumPath.split('/').splice(1).join('/');
+											// albumPath = albumPath.split("/").splice(1).join("/");
 											// else
 											// 	albumPath = albumPath.substring(basePath.length + 1);
 											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(ithAlbum, albumPath);
@@ -1068,17 +1068,17 @@
 		var folderMapTitle;
 		if (this.isSelection() && subalbum.isByDate()) {
 			let reducedFolderName = folderName.substring(0, folderName.indexOf(env.br));
-			folderMapTitle = util._t('#place-icon-title') + reducedFolderName;
+			folderMapTitle = util._t("#place-icon-title") + reducedFolderName;
 		} else if (this.isSelection() && subalbum.isByGps()) {
-			if (subalbum.name === '')
-				folderMapTitle = util._t('.not-specified');
-			else if (subalbum.hasOwnProperty('altName'))
+			if (subalbum.name === "")
+				folderMapTitle = util._t(".not-specified");
+			else if (subalbum.hasOwnProperty("altName"))
 				folderMapTitle = util.transformAltPlaceName(subalbum.altName);
 			else
 				folderMapTitle = subalbum.nameForShowing(this);
-			folderMapTitle = util._t('#place-icon-title') + folderMapTitle;
+			folderMapTitle = util._t("#place-icon-title") + folderMapTitle;
 		} else {
-			folderMapTitle = util._t('#place-icon-title') + folderName;
+			folderMapTitle = util._t("#place-icon-title") + folderName;
 		}
 		return folderMapTitle;
 	};
@@ -1177,7 +1177,7 @@
 		// this function gets a single protected json file
 
 		var self = this;
-		var splittedProtectedCacheBase = protectedCacheBase.split('.');
+		var splittedProtectedCacheBase = protectedCacheBase.split(".");
 		var number = parseInt(splittedProtectedCacheBase[splittedProtectedCacheBase.length - 1]);
 		var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
 		self.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
@@ -1381,21 +1381,21 @@
 		var result = [];
 		for (iAlbumPassword = 0; iAlbumPassword <= env.guessedPasswordsMd5.length; iAlbumPassword ++) {
 			if (iAlbumPassword === env.guessedPasswordsMd5.length) {
-				albumCode = '';
+				albumCode = "";
 			} else {
 				albumGuessedPassword = env.guessedPasswordsMd5[iAlbumPassword];
 				albumCode = util.convertMd5ToCode(albumGuessedPassword);
 			}
 			for (iMediaPassword = 0; iMediaPassword <= env.guessedPasswordsMd5.length; iMediaPassword ++) {
 				if (iMediaPassword === env.guessedPasswordsMd5.length) {
-					mediaCode = '';
+					mediaCode = "";
 				} else {
 					mediaGuessedPassword = env.guessedPasswordsMd5[iMediaPassword];
 					mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
 				}
 				if (! albumCode && ! mediaCode)
 					continue;
-				let codesSimpleCombination = albumCode + ',' + mediaCode;
+				let codesSimpleCombination = albumCode + "," + mediaCode;
 
 				for (codesComplexCombinationInAlbum in this.numsProtectedMediaInSubTree) {
 					if (this.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != ",") {
@@ -1462,13 +1462,13 @@
 						// so we must try until a protected directory has the protected album we need
 
 						var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
-						var protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.0']);
+						var protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + ".0"]);
 						if (self.cacheBase.indexOf(env.options.by_gps_string) === 0)
-							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + '.0']);
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + ".0"]);
 						else if (self.cacheBase.indexOf(env.options.by_date_string) === 0)
-							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + '.0']);
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + ".0"]);
 						else if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
-							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + '.0']);
+							protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + ".0"]);
 
 						var promise = self.addContentWithExternalMediaAndPositionsFromProtectedCacheBase(protectedCacheBase, {getMedia: false, getPositions: false});
 						promise.then(
@@ -1667,13 +1667,13 @@
 						for (let iSimple = 0; iSimple < theCodesSimpleCombinationsToGet.length; iSimple ++) {
 							let codesSimpleCombination = theCodesSimpleCombinationsToGet[iSimple];
 							// let codesCombinationsLists = phFl.convertComplexCombinationsIntoLists(codesSimpleCombination);
-							let [albumMd5, mediaMd5] = util.convertCodesListToMd5sList(codesSimpleCombination.split(','));
+							let [albumMd5, mediaMd5] = util.convertCodesListToMd5sList(codesSimpleCombination.split(","));
 							// codesSimpleCombinationGot.push(codesSimpleCombination);
 
 							let protectedDirectory = env.options.protected_directories_prefix;
 							if (albumMd5)
 								protectedDirectory += albumMd5;
-							protectedDirectory += ',';
+							protectedDirectory += ",";
 							if (mediaMd5)
 								protectedDirectory += mediaMd5;
 
@@ -1686,13 +1686,13 @@
 							let numProtectedCacheBases = self.getNumProtectedCacheBases(codesSimpleCombination);
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
-								let protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + '.' + iCacheBase]);
+								let protectedCacheBase = util.pathJoin([protectedDirectory, self.cacheBase + "." + iCacheBase]);
 								if (self.cacheBase.indexOf(env.options.by_date_string) === 0)
-									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + '.' + iCacheBase]);
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_date_album_subdir, self.cacheBase + "." + iCacheBase]);
 								else if (self.cacheBase.indexOf(env.options.by_gps_string) === 0)
-									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + '.' + iCacheBase]);
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_gps_album_subdir, self.cacheBase + "." + iCacheBase]);
 								else if (self.cacheBase.indexOf(env.options.by_search_string) === 0)
-									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + '.' + iCacheBase]);
+									protectedCacheBase = util.pathJoin([protectedDirectory, env.options.by_search_album_subdir, self.cacheBase + "." + iCacheBase]);
 								self.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
 								// if (! self.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 								// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
@@ -2109,9 +2109,9 @@
 		function getMarkerClass(positionAndCount) {
 			var imgClass =
 				"popup-img-" +
-				(positionAndCount.lat / 1000).toString().replace('.', '') +
-				'-' +
-				(positionAndCount.lng / 1000).toString().replace('.', '');
+				(positionAndCount.lat / 1000).toString().replace(".", "") +
+				"-" +
+				(positionAndCount.lng / 1000).toString().replace(".", "");
 			return imgClass;
 		}
 	};
@@ -2272,7 +2272,7 @@
 			env.nextMedia = null;
 			env.prevMedia = null;
 			$("#subalbums").addClass("hidden");
-			env.currentMedia.show(env.currentAlbum, 'center');
+			env.currentMedia.show(env.currentAlbum, "center");
 		} else {
 			// currentMedia is null
 			$("#media-view").addClass("hidden");
@@ -2281,7 +2281,7 @@
 
 			if (env.previousMedia === null)
 				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
-			$("#album-view").off('mousewheel');
+			$("#album-view").off("mousewheel");
 			$("#thumbs").css("height", "");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#media-view, #album-view").removeClass("no-bottom-space");
@@ -2291,7 +2291,7 @@
 			else
 				$("#subalbums").addClass("hidden");
 			util.removeHighligths();
-			$("body").off('mousewheel').on('mousewheel', tF.scrollAlbum);
+			$("body").off("mousewheel").on("mousewheel", tF.scrollAlbum);
 
 			util.setMediaOptions();
 
@@ -2377,7 +2377,7 @@
 									}
 
 									// close the map and reopen it
-									$('.modal-close')[0].click();
+									$(".modal-close")[0].click();
 									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 								}
 
@@ -2637,14 +2637,14 @@
 			let tooManyImagesText, isShowing = false;
 			if (env.options.show_big_virtual_folders) {
 				tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
-					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='too-many-images'>" + util._t("#too-many-images") + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t("#too-many-images-limit-is") + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
 			} else {
 				$("#thumbs").empty();
 				tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
-					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='too-many-images'>" + util._t("#too-many-images") + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t("#too-many-images-limit-is") + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
 				isShowing = true;
 			}
@@ -2730,10 +2730,10 @@
 						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + imgHtml + "</a>";
 					}
 				}
-				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let selectSrc = "img/checkbox-unchecked-48px.png";
 				let titleSelector = "#select-single-media";
 				if (ithMedia.isSelected()) {
-					selectSrc = 'img/checkbox-checked-48px.png';
+					selectSrc = "img/checkbox-checked-48px.png";
 					titleSelector = "#unselect-single-media";
 				}
 
@@ -2979,7 +2979,7 @@
 				randomMediaLink = phFl.encodeHash(randomMedia.foldersCacheBase, randomMedia);
 		}
 
-		titleName = titleName.substr(titleName.indexOf('/') + 1);
+		titleName = titleName.substr(titleName.indexOf("/") + 1);
 		var goTo = util._t(".go-to") + " " + titleName;
 		$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
 		$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", util._t(".arrow"));
@@ -3001,7 +3001,7 @@
 					{
 						chainable: false,
 						threshold: threshold,
-						bind: 'event',
+						bind: "event",
 						removeAttribute: true
 					}
 				);
@@ -3129,17 +3129,17 @@
 
 				let captionObject = $(captionHtml);
 
-				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let selectSrc = "img/checkbox-unchecked-48px.png";
 				let titleSelector = "#select-subalbum";
 				if (ithSubalbum.isSelected()) {
-					selectSrc = 'img/checkbox-checked-48px.png';
+					selectSrc = "img/checkbox-checked-48px.png";
 					titleSelector = "#unselect-subalbum";
 				}
 
 				let positionHtml = "";
 				let folderMapTitleWithoutHtmlTags;
 				if (ithSubalbum.numPositionsInTree && ! env.options.save_data) {
-					folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
+					folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, " ").replace(/<[^>]*>?/gm, "");
 					positionHtml =
 						"<a id='subalbum-map-link-" + id + "' >" +
 							"<img " +
