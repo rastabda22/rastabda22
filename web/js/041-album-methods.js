@@ -3256,7 +3256,7 @@
 				if (ithSubalbum.hasOwnProperty("description"))
 					$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
-				if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree && ! env.options.save_data) {
+				if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ! env.options.save_data && ithSubalbum.numPositionsInTree) {
 					$("#subalbum-map-link-" + id).off("click").on(
 						"click",
 						{ithSubalbum: ithSubalbum},
