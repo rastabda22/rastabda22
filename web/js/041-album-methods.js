@@ -137,43 +137,6 @@
 		return JSON.stringify(clonedAlbum);
 	};
 
-	// Album.prototype.cloneAndRemoveGeotaggedContent = function() {
-	// 	var filteredAlbum = this.clone();
-	// 	if (filteredAlbum.media !== undefined) {
-	// 		filteredAlbum.media = new Media(filteredAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData()));
-	// 		filteredAlbum.numsMedia = filteredAlbum.media.imagesAndVideosCount();
-	// 	}
-	// 	filteredAlbum.subalbums = new Subalbums(
-	// 		filteredAlbum.subalbums.filter(
-	// 			subalbum =>
-	// 				subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
-	// 		)
-	// 	);
-	//
-	// 	filteredAlbum.subalbums = filteredAlbum.subalbums.map(
-	// 		subalbum => {
-	// 			subalbum.numPositionsInTree = 0;
-	// 			subalbum.numsMedia = subalbum.nonGeotagged.numsMedia;
-	// 			subalbum.numsMediaInSubTree = subalbum.nonGeotagged.numsMediaInSubTree;
-	// 			subalbum.sizesOfAlbum = subalbum.nonGeotagged.sizesOfAlbum;
-	// 			subalbum.sizesOfSubTree = subalbum.nonGeotagged.sizesOfSubTree;
-	// 			return subalbum;
-	// 		}
-	// 	);
-	//
-	// 	filteredAlbum.numsMedia = filteredAlbum.nonGeotagged.numsMedia;
-	// 	filteredAlbum.numsMediaInSubTree = filteredAlbum.nonGeotagged.numsMediaInSubTree;
-	// 	filteredAlbum.sizesOfAlbum = filteredAlbum.nonGeotagged.sizesOfAlbum;
-	// 	filteredAlbum.sizesOfSubTree = filteredAlbum.nonGeotagged.sizesOfSubTree;
-	//
-	// 	if (filteredAlbum.positionsAndMediaInTree !== undefined)
-	// 		filteredAlbum.positionsAndMediaInTree = new PositionsAndMedia([]);
-	// 	filteredAlbum.numPositionsInTree = 0;
-	// 	// delete filteredAlbum.nonGeotagged;
-	//
-	// 	return filteredAlbum;
-	// };
-
 	Album.prototype.removeUnnecessaryPropertiesAndAddParentToMedia = function() {
 		// remove unnecessary properties from album
 		var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
