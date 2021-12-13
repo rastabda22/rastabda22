@@ -270,11 +270,12 @@
 	};
 
 	Utilities._t = function(key) {
-		let shortcut = "";
-		if (env.isMobile.any()) {
-			let shortcut = env.shortcuts[env.language][key + "-shortcut"];
-			if (shortcut)
+		let shortcut;
+		if (! env.isMobile.any()) {
+			shortcut = env.shortcuts[env.language][key + "-shortcut"];
+			if (shortcut !== undefined)
 				shortcut = " [" + shortcut + "]";
+			else shortcut = "";
 		}
 
 		return env.translations[env.language][key] + shortcut;
