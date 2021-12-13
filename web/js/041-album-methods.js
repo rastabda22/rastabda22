@@ -1200,9 +1200,9 @@
 					);
 				} else {
 					// the protected cache base hasn't been fetched yet
-					var jsonFile = protectedCacheBase + ".json";
+					var protectedJsonFile = protectedCacheBase + ".json";
 
-					var promise = phFl.getJsonFile(jsonFile);
+					var promise = phFl.getJsonFile(protectedJsonFile);
 					promise.then(
 						function protectedFileExists(object) {
 							var protectedAlbum = new Album(object);

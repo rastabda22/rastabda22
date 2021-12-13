@@ -52,8 +52,6 @@
 	};
 
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
-		jsonRelativeFileName = util.addBySomethingSubdir(jsonRelativeFileName);
-
 		if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
 			return Promise.reject();
 		} else {
@@ -102,7 +100,7 @@
 					// are media still missing?
 					if (mustGetMedia) {
 						mediaJsonFile = cacheBase + '.media.json';
-						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
+						var promise = PhotoFloat.getJsonFile(util.addBySomethingSubdir(mediaJsonFile));
 						promise.then(
 							function(object) {
 								var media = new Media (object);
@@ -126,7 +124,7 @@
 					// are positions still missing?
 					if (mustGetPositions) {
 						positionJsonFile = cacheBase + '.positions.json';
-						var promise = PhotoFloat.getJsonFile(positionJsonFile);
+						var promise = PhotoFloat.getJsonFile(util.addBySomethingSubdir(positionJsonFile));
 						promise.then(
 							function(object) {
 								var positions = new PositionsAndMedia(object);
@@ -170,7 +168,7 @@
 		return new Promise(
 			function(resolve_getSingleUnprotectedCacheBase, reject_getSingleUnprotectedCacheBase) {
 				var jsonFile = unprotectedCacheBase + ".json";
-				var promise = PhotoFloat.getJsonFile(jsonFile);
+				var promise = PhotoFloat.getJsonFile(util.addBySomethingSubdir(jsonFile));
 				promise.then(
 					function unprotectedFileExists(object) {
 						var album = new Album(object);
