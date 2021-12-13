@@ -308,17 +308,17 @@
 		////////////////// SEARCH //////////////////////////////
 
 		if (isMap)
-			$("#right-and-search-menu div.search").addClass("hidden-by-map");
+			$("#search-menu").addClass("hidden-by-map");
 		else
-			$("#right-and-search-menu div.search").removeClass("hidden-by-map");
+			$("#search-menu").removeClass("hidden-by-map");
 
 		if (
 			thisAlbum !== null
 		) {
 			if (isPopup)
-				$("#right-and-search-menu div.search #search-field, #right-and-search-menu div.search #search-button").attr("title", util._t("#refine-popup-content"));
+				$("#search-menu #search-field, #search-menu #search-button").attr("title", util._t("#refine-popup-content"));
 			else
-				$("#right-and-search-menu div.search #search-field, #right-and-search-menu div.search #search-button").attr("title", util._t("#real-search"));
+				$("#search-menu #search-field, #search-menu #search-button").attr("title", util._t("#real-search"));
 
 			if (env.options.search_inside_words)
 				$("#right-and-search-menu li#inside-words").addClass("selected");

@@ -54,7 +54,7 @@ $(document).ready(function() {
 			} else if ($("#you-can-suggest-photo-position").is(":visible")) {
 				$("#you-can-suggest-photo-position").hide();
 				return false;
-			} else if ($("#menu-icon").hasClass("expanded") || $("#search-icon").hasClass("expanded")) {
+			} else if ($("#right-and-search-menu").hasClass("expanded")) {
 				util.closeMenu();
 				util.downloadSelectionInfo();
 				return false;
@@ -108,7 +108,7 @@ $(document).ready(function() {
 			}
 		} else if (! isAuth && ! isMap) {
 			if (
-				! ($("#right-and-search-menu").hasClass("expanded") && $("#search-menu").hasClass("highlighted")) &&
+				! ($("#search-menu").hasClass("highlighted")) &&
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")
 			) {
 				$("#album-and-media-container").stop().fadeOut(500);
@@ -140,9 +140,9 @@ $(document).ready(function() {
 						util.downloadSelectionInfo();
 						return false;
 					} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-						$("#right-and-search-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-and-search-menu div.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
-						$("#right-and-search-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #right-and-search-menu div.search:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
-						$("#right-and-search-menu li.first-level, #right-and-search-menu div.search").toggleClass("hidden-by-menu-selection");
+						$("#right-and-search-menu li.first-level.hidden-by-menu-selection.was-highlighted, #search-menu.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
+						$("#right-and-search-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #search-menu:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
+						$("#right-and-search-menu li.first-level, #search-menu").toggleClass("hidden-by-menu-selection");
 						$("#menu-icon, #search-icon").toggleClass("expanded");
 						util.highlightMenu();
 						util.focusSearchField();
@@ -151,7 +151,7 @@ $(document).ready(function() {
 					}
 				}
 
-				if (! $(".search").hasClass("hidden-by-menu-selection") && ! $("#search-field").is(":focus")) {
+				if (! $("#search-menu").hasClass("hidden-by-menu-selection") && ! $("#search-field").is(":focus")) {
 					// focus the search field, so that the typed text is added
 					$("#search-field").focus();
 				}
@@ -510,7 +510,7 @@ $(document).ready(function() {
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey &&
 				e.key.toLowerCase() === util._s(".menu-icon-title-shortcut") && (
 					! $("#right-and-search-menu").hasClass("expanded") ||
-					$(".search").hasClass("hidden-by-menu-selection")
+					$("#search-menu").hasClass("hidden-by-menu-selection")
 				)
 			) {
 				util.toggleMenu();
@@ -690,7 +690,7 @@ $(document).ready(function() {
 
 	$('#search-field').keypress(
 		function(ev) {
-			// $("#right-and-search-menu div.search ul").removeClass("hidden");
+			// $("#search-menu ul").removeClass("hidden");
 			if (ev.which === 13 || ev.keyCode === 13) {
 				//Enter key pressed, trigger search button click event
 				$('#search-button').click();

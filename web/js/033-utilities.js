@@ -605,10 +605,10 @@
 
 	Utilities.openSearchMenu = function(album) {
 		$("#right-and-search-menu").addClass("expanded");
-		$("#search-icon").addClass("expanded");
-		$("#menu-icon").removeClass("expanded");
+		$("#search-icon, #search-menu").addClass("expanded");
+		$("#menu-icon, #right-menu").removeClass("expanded");
 
-		$(".search").removeClass("hidden-by-menu-selection");
+		$("#search-menu").removeClass("hidden-by-menu-selection");
 		$(".first-level").addClass("hidden-by-menu-selection");
 
 		Utilities.highlightMenu();
@@ -620,7 +620,7 @@
 	};
 
 	Utilities.prototype.toggleSearchMenu = function(ev, album) {
-		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#search-icon").hasClass("expanded"))
+		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#search-menu").hasClass("expanded"))
 			Utilities.openSearchMenu(album);
 		else
 			Utilities.closeMenu();
@@ -628,11 +628,11 @@
 
 	Utilities.openRightMenu = function(album) {
 		$("#right-and-search-menu").addClass("expanded");
-		$("#search-icon").removeClass("expanded");
-		$("#menu-icon").addClass("expanded");
+		$("#search-icon, #search-menu").removeClass("expanded");
+		$("#menu-icon, #right-menu").addClass("expanded");
 
+		$("#search-menu").addClass("hidden-by-menu-selection");
 		$(".first-level").removeClass("hidden-by-menu-selection");
-		$(".search").addClass("hidden-by-menu-selection");
 
 		Utilities.highlightMenu();
 
@@ -642,7 +642,7 @@
 	};
 
 	Utilities.prototype.toggleRightMenu = function(ev, album) {
-		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
+		if (! $("#right-and-search-menu").hasClass("expanded") || ! $("#right-menu").hasClass("expanded"))
 			Utilities.openRightMenu(album);
 		else
 			Utilities.closeMenu();
@@ -659,8 +659,8 @@
 
 	Utilities.closeMenu = function() {
 		$("#right-and-search-menu").removeClass("expanded");
-		$("#search-icon, #menu-icon").removeClass("expanded");
-		$(".search").addClass("hidden-by-menu-selection");
+		$("#search-icon, #search-menu, #menu-icon, #right-menu").removeClass("expanded");
+		$("#search-menu").addClass("hidden-by-menu-selection");
 
 		$("#album-view").css("opacity", "");
 		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "");
@@ -697,33 +697,33 @@
 			$("#search-button").blur();
 		}
 		if (
-			! $("#right-and-search-menu div.search .highlighted").length &&
-			! $("#right-and-search-menu div.search .was-highlighted").length
+			! $("#search-menu .highlighted").length &&
+			! $("#search-menu .was-highlighted").length
 		)
-			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection)").addClass("highlighted");
+			$("#search-menu:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if (
-			! $("#right-and-search-menu div.search .highlighted").length &&
-			$("#right-and-search-menu div.search .was-highlighted").length
+			! $("#search-menu .highlighted").length &&
+			$("#search-menu .was-highlighted").length
 		)
-			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+			$("#search-menu:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.highlightMenu = function() {
 		if (
-			! $("#right-and-search-menu div.search.highlighted").length &&
-			! $("#right-and-search-menu div.search .highlighted").length &&
-			! $("#right-and-search-menu div.search.was-highlighted").length &&
-			! $("#right-and-search-menu div.search .was-highlighted").length
+			! $("#search-menu.highlighted").length &&
+			! $("#search-menu .highlighted").length &&
+			! $("#search-menu.was-highlighted").length &&
+			! $("#search-menu .was-highlighted").length
 		)
-			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection)").addClass("highlighted");
+			$("#search-menu:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if(
-			! $("#right-and-search-menu div.search.highlighted").length &&
-			! $("#right-and-search-menu div.search .highlighted").length && (
-				$("#right-and-search-menu div.search.was-highlighted").length ||
-				$("#right-and-search-menu div.search .was-highlighted").length
+			! $("#search-menu.highlighted").length &&
+			! $("#search-menu .highlighted").length && (
+				$("#search-menu.was-highlighted").length ||
+				$("#search-menu .was-highlighted").length
 			)
 		)
-			$("#right-and-search-menu div.search:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+			$("#search-menu:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 
 		if (
 			! $("#right-and-search-menu li.first-level.highlighted").length &&
@@ -830,7 +830,7 @@
 	};
 
 	Utilities.prototype.downloadSelectionInfo = function() {
-		if ($(".download-album.selection").hasClass("highlighted") && $("#right-and-search-menu").hasClass("expanded") && $("#menu-icon").hasClass("expanded")) {
+		if ($(".download-album.selection").hasClass("highlighted") && $("#right-and-search-menu").hasClass("expanded") && $("#right-menu").hasClass("expanded")) {
 			$("#how-to-download-selection").show();
 			$("#how-to-download-selection").off("click").on(
 				"click",
@@ -1335,8 +1335,8 @@
 	};
 
 	Utilities.removeHighligthsToItems = function() {
-		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			$("#right-and-search-menu .search.highlighted, #right-and-search-menu .search .highlighted").removeClass("highlighted");
+		if (! $("#search-menu").hasClass("hidden-by-menu-selection"))
+			$("#search-menu.highlighted, #search-menu .highlighted").removeClass("highlighted");
 		else
 			$("#right-and-search-menu .first-level.highlighted, #right-and-search-menu .first-level .highlighted").removeClass("highlighted");
 	};
@@ -1424,8 +1424,8 @@
 	};
 
 	Utilities.prototype.highlightedItemObject = function() {
-		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			return $("#right-and-search-menu .search.highlighted, #right-and-search-menu .search .highlighted");
+		if (! $("#search-menu").hasClass("hidden-by-menu-selection"))
+			return $("#search-menu.highlighted, #search-menu .highlighted");
 		else
 			return $("#right-and-search-menu .first-level.highlighted, #right-and-search-menu .first-level .highlighted");
 	};
