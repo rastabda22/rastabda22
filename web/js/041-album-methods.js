@@ -774,24 +774,20 @@
 							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(ithAlbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
-							if (ithAlbum.positionsAndMediaInTree.length) {
-							// if (ithAlbum.hasOwnProperty("positionsAndMediaInTree") && ithAlbum.positionsAndMediaInTree.length) {
-								if (ithAlbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
-									let newPos = new PositionsAndMedia();
-									let firstTime = true;
-									env.selectionAlbum.subalbums.forEach(
-										function(selectedAlbum) {
-											if (firstTime) {
-												newPos = new PositionsAndMedia(selectedAlbum);
-												firstTime = false;
-											} else {
-												newPos.mergePositionsAndMedia(selectedAlbum.positionsAndMediaInTree);
-											}
-										}
-									);
-								} else {
-									env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
-								}
+							if (
+								ithAlbum.hasOwnProperty("positionsAndMediaInTree") && ithAlbum.positionsAndMediaInTree.length &&
+								selectedSubalbum.hasOwnProperty("positionsAndMediaInTree") && selectedSubalbum.positionsAndMediaInTree.length
+							) {
+								// if (ithAlbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
+								// 	let newPositions = new PositionsAndMedia();
+								// 	env.selectionAlbum.subalbums.forEach(
+								// 		function(selectedSubalbum) {
+								// 			newPositions.mergePositionsAndMedia(selectedSubalbum.positionsAndMediaInTree);
+								// 		}
+								// 	);
+								// } else {
+								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
+								// }
 								env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 							}
 
