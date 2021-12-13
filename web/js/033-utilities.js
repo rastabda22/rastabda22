@@ -317,7 +317,7 @@
 		return scrollbarWidth;
 	};
 
-	Utilities.cloneObject = function(object) {
+	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);
 	};
 
@@ -3224,7 +3224,6 @@
 	Utilities.prototype.onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent;
 	Utilities.prototype.isLoaded = Utilities.isLoaded;
 	Utilities.prototype.hasSomeDescription = Utilities.hasSomeDescription;
-	Utilities.prototype.cloneObject = Utilities.cloneObject;
 
 	window.Utilities = Utilities;
 }());
