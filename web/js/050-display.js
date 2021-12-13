@@ -107,7 +107,14 @@ $(document).ready(function() {
 				}
 			}
 		} else if (! isAuth && ! isMap) {
-			if ($("#right-and-search-menu").hasClass("expanded")) {
+			if (
+				! ($("#right-and-search-menu").hasClass("expanded") && $("#search-menu").hasClass("highlighted")) &&
+				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")
+			) {
+				$("#album-and-media-container").stop().fadeOut(500);
+				$("#contextual-help").stop().fadeIn(500);
+				return false;
+			} else if ($("#right-and-search-menu").hasClass("expanded")) {
 				if (
 					(
 						! $("#search-field").is(":focus") || e.key === "Tab"
@@ -150,7 +157,7 @@ $(document).ready(function() {
 				}
 			} else {
 				// no class "expanded" in $("#right-and-search-menu")
-				if (! e.altKey && e.key === " ") {
+ 				if (! e.altKey && e.key === " ") {
 					if (env.currentMedia === null || env.currentAlbum.isAlbumWithOneMedia()) {
 						let highlightedObject = util.highlightedObject();
 						util.selectBoxObject(highlightedObject).click();
@@ -512,20 +519,16 @@ $(document).ready(function() {
 			}
 		}
 
-		// "i" opens the contestual help
-		if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
-			$("#album-and-media-container").stop().fadeOut(500);
-			$("#contextual-help").stop().fadeIn(500);
-			return false;
-		}
-
 		return true;
 	});
 
 	$(document).off("keyup").on(
 		"keyup",
 		function(e) {
-			if (! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s(".info-icon-shortcut")) {
+			if (
+				! ($("#right-and-search-menu").hasClass("expanded") && $("#search-menu").hasClass("highlighted")) &&
+				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s(".info-icon-shortcut")
+			) {
 				$("#album-and-media-container").stop().fadeIn(500);
 				$("#contextual-help").stop().fadeOut(500);
 				return false;
