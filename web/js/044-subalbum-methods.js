@@ -7,6 +7,10 @@
 		return (new Album(this)).toSubalbum();
 	};
 
+	Subalbum.prototype.hasGpsData = function() {
+		return this.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal() === 0;
+	};
+
 	Subalbum.prototype.isEqual = function(otherSubalbum) {
 		return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 	};

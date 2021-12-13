@@ -65,25 +65,25 @@
 		);
 	};
 
-	MenuFunctions.updateMenu = function(album) {
-		var albumOrMedia, thisAlbum;
+	MenuFunctions.updateMenu = function(thisAlbum) {
+		var albumOrMedia;
 		var isPopup = util.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
-		if (album === undefined)
-			album = env.currentAlbum;
-
-		if (onlyShowNonGeotaggedContent)
-			thisAlbum = album.cloneAndRemoveGeotaggedContent();
-		else
-			thisAlbum = album;
+		if (thisAlbum === undefined)
+			thisAlbum = env.currentAlbum;
 
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRoot = thisAlbum.isAnyRoot();
+
+		var subalbumsLength = thisAlbum.subalbums.filter(subalbum => ! onlyShowNonGeotaggedContent || ! subalbum.hasGpsData()).length;
+		var mediaLength = thisAlbum.media.filter(singleMedia => ! onlyShowNonGeotaggedContent || ! singleMedia.hasGpsData()).length;
+
+		var numsMedia = onlyShowNonGeotaggedContent ? thisAlbum.nonGeotagged.numsMedia : thisAlbum.numsMedia;
 
 		var nothingIsSelected = util.nothingIsSelected();
 		var everySubalbumIsSelected = false;
@@ -100,7 +100,7 @@
 			noMediaIsSelected = env.mapAlbum.noMediaIsSelected();
 		else
 			noMediaIsSelected = thisAlbum.noMediaIsSelected();
-		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
+		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
 
 		var hasGpsData, thisMedia;
 
@@ -108,10 +108,10 @@
 			if (env.currentMedia !== null)
 				thisMedia = env.currentMedia;
 			else
-				thisMedia = thisAlbum.media[0];
+				thisMedia = thisAlbum.media.filter(singleMedia => ! onlyShowNonGeotaggedContent || ! singleMedia.hasGpsData())[0];
 			hasGpsData = thisMedia.hasGpsData();
 		} else if (isAnyRoot) {
-			hasGpsData = (thisAlbum.numPositionsInTree > 0);
+			hasGpsData = (thisAlbum.hasOwnProperty("numPositionsInTree") && thisAlbum.numPositionsInTree > 0);
 		} else {
 			hasGpsData = false;
 		}
@@ -407,7 +407,7 @@
 				isMapOrPopup ||
 				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
-				thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
+				thisAlbum !== null && subalbumsLength === 0 && env.options.hide_title
 			) {
 				$("#right-and-search-menu li.media-count").addClass("hidden");
 			} else {
@@ -432,7 +432,7 @@
 				isMapOrPopup ||
 				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
-				thisAlbum !== null && thisAlbum.subalbums.length === 0
+				thisAlbum !== null && subalbumsLength === 0
 			) {
 				$("#right-and-search-menu li.square-album-thumbnails").addClass("hidden");
 			} else {
@@ -447,7 +447,7 @@
 				isMapOrPopup ||
 				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
-				thisAlbum !== null && thisAlbum.subalbums.length === 0
+				thisAlbum !== null && subalbumsLength === 0
 			) {
 				$("#right-and-search-menu li.slide").addClass("hidden");
 			} else {
@@ -462,7 +462,7 @@
 				isMapOrPopup ||
 				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
-				thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
+				thisAlbum !== null && (subalbumsLength === 0 || ! thisAlbum.isFolder())
 			) {
 				$("#right-and-search-menu li.album-names").addClass("hidden");
 			} else {
@@ -488,7 +488,7 @@
 					env.currentMedia !== null ||
 					isAlbumWithOneMedia ||
 					thisAlbum !== null && (
-						thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
+						numsMedia.imagesAndVideosTotal() === 0 ||
 						highMediaNumberInTransversalAlbum
 					)
 				)
@@ -522,6 +522,7 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
+			// in the following line the non geotagged mode must not be taken into account
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			! isTransversalAlbum
 		) {
@@ -538,20 +539,20 @@
 
 		if (
 			isMap ||
-			! isPopup && (env.currentMedia !== null || thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 && thisAlbum.subalbums.length <= 1) ||
+			! isPopup && (env.currentMedia !== null || numsMedia.imagesAndVideosTotal() <= 1 && subalbumsLength <= 1) ||
 			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-and-search-menu li.sort").addClass("hidden");
 		} else if (thisAlbum !== null) {
-			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1) {
+			if (numsMedia.imagesAndVideosTotal() <= 1) {
 				// no media or one media
 				$("#right-and-search-menu li.media-sort").addClass("hidden");
 			} else {
 				$("#right-and-search-menu li.media-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.subalbums.length <= 1 || isMapOrPopup) {
+			if (subalbumsLength <= 1 || isMapOrPopup) {
 				// no subalbums or one subalbum
 				$("#right-and-search-menu li.album-sort").addClass("hidden");
 			} else {
@@ -559,7 +560,7 @@
 			}
 
 			if (
-				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 && (! isPopup || env.mapAlbum.media.length <= 1) ||
+				numsMedia.imagesAndVideosTotal() <= 1 && (! isPopup || env.mapAlbum.media.length <= 1) ||
 				highMediaNumberInTransversalAlbum
 			) {
 				// no media or one media or too many media
@@ -593,7 +594,7 @@
 
 		////////////////// SELECTION //////////////////////////////
 
-		if (isMap || thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+		if (isMap || thisAlbum.isSearch() && ! mediaLength && ! subalbumsLength) {
 			$(".select").addClass("hidden");
 		} else {
 			$(".select").removeClass("hidden").removeClass("selected");
@@ -617,17 +618,17 @@
 				$(".select.no-albums").addClass("hidden");
 				$(".select.no-media").addClass("hidden");
 			}
-			if (! thisAlbum.subalbums.length || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
+			if (! subalbumsLength || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
 				$(".select.no-albums").addClass("hidden");
 			}
-			if (! thisAlbum.numsMedia.imagesAndVideosTotal() || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
+			if (! numsMedia.imagesAndVideosTotal() || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
 				$(".select.no-media").addClass("hidden");
 			}
 
 			if (! isPopup) {
-				if (! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length)
+				if (! numsMedia.imagesAndVideosTotal() || ! subalbumsLength)
 					$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
-				if (! thisAlbum.numsMedia.imagesAndVideosTotal() && ! thisAlbum.subalbums.length)
+				if (! numsMedia.imagesAndVideosTotal() && ! subalbumsLength)
 					$(".select.everything, .select.everything-individual").addClass("hidden");
 			} else if (isPopup) {
 				$(".select.albums, .select.no-albums").addClass("hidden");
@@ -650,7 +651,7 @@
 				$(".select.everything, .select.media").addClass("hidden");
 			}
 
-			if (! thisAlbum.subalbums.length || isPopup) {
+			if (! subalbumsLength || isPopup) {
 				$(".select.everything-individual").addClass("hidden");
 			} else {
 				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
@@ -926,14 +927,14 @@
 				$(".download-album.selection").attr("title", util._t("#how-to-download-selection").replace(/<br \/>/gm, ' '));
 			}
 
-			if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+			if (thisAlbum.isSearch() && ! mediaLength && ! subalbumsLength) {
 				// download menu item remains hidden
 			} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
 				$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 				$(".download-single-media").removeClass("hidden");
 				let trueOriginalMediaPath;
 				if (isAlbumWithOneMedia)
-					trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
+					trueOriginalMediaPath = encodeURI(thisAlbum.media.filter(singleMedia => ! onlyShowNonGeotaggedContent || ! singleMedia.hasGpsData())[0].trueOriginalMediaPath());
 				else
 					trueOriginalMediaPath = encodeURI(env.currentMedia.trueOriginalMediaPath());
 				$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
@@ -942,9 +943,27 @@
 
 				let showDownloadEverything = false;
 
-				let albumForDownload = thisAlbum;
+				let albumForDownload = new Album(thisAlbum);
 				if (isPopup)
-					albumForDownload = env.mapAlbum;
+					albumForDownload = new Album(env.mapAlbum);
+
+				// modify the album for when only non geotagged content is shown
+				albumForDownload.subalbums = albumForDownload.subalbums.filter(subalbum => ! onlyShowNonGeotaggedContent || ! subalbum.hasGpsData());
+				if (albumForDownload.hasOwnProperty("media"))
+					albumForDownload.media = albumForDownload.media.filter(singleMedia => ! onlyShowNonGeotaggedContent || ! singleMedia.hasGpsData());
+				if (onlyShowNonGeotaggedContent) {
+					albumForDownload.subalbums.forEach(subalbum => {
+						subalbum.numsMedia = subalbum.nonGeotagged.numsMedia;
+						subalbum.numsMediaInSubTree = subalbum.nonGeotagged.numsMediaInSubTree;
+						subalbum.sizesOfAlbum = subalbum.nonGeotagged.sizesOfAlbum;
+						subalbum.sizesOfSubTree = subalbum.nonGeotagged.sizesOfSubTree;
+					});
+
+					albumForDownload.numsMedia = albumForDownload.nonGeotagged.numsMedia;
+					albumForDownload.numsMediaInSubTree = albumForDownload.nonGeotagged.numsMediaInSubTree;
+					albumForDownload.sizesOfAlbum = albumForDownload.nonGeotagged.sizesOfAlbum;
+					albumForDownload.sizesOfSubTree = albumForDownload.nonGeotagged.sizesOfSubTree;
+				}
 
 				if (albumForDownload.subalbums.length) {
 					$(".download-album.everything.all.full").removeClass("hidden");
@@ -960,8 +979,8 @@
 					if (numVideos === 0)
 						what = util._t(".title-images");
 
-					if (albumForDownload.isSearch() && albumForDownload.subalbums.length) {
-						// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
+					if (albumForDownload.isSearch()) {
+						// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOM must be update by code here
 						for (let iSubalbum = 0; iSubalbum < albumForDownload.subalbums.length; iSubalbum ++) {
 							nMediaInSubTree += albumForDownload.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
 						}
@@ -1214,9 +1233,8 @@
 
 		////////////////// NON-GEOTAGGED ONLY MODE //////////////////////////////
 
-		// WARNING: album is used here because the album with geotagged content is needed here
-		var mediaCount = album.numsMediaInSubTree.imagesAndVideosTotal();
-		var nonGeotaggedMediaCount = album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
+		var mediaCount = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+		var nonGeotaggedMediaCount = thisAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 		if (
 			isMap || isPopup ||
 			! nonGeotaggedMediaCount || nonGeotaggedMediaCount === mediaCount
