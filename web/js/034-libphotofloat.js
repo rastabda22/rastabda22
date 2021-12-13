@@ -634,7 +634,7 @@
 							env.options.search_current_album = searchOptions.includes('o');
 						}
 
-						$("#right-and-search-menu #search-field").attr("value", decodeURIComponent(wordsStringOriginal));
+						$("#search-field").attr("value", decodeURIComponent(wordsStringOriginal));
 						wordsString = util.normalizeAccordingToOptions(wordsString);
 						if (env.options.search_tags_only) {
 							searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];

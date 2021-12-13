@@ -974,7 +974,7 @@ $(document).ready(function() {
 			tF.toggleMediaSquare(ev);
 		}
 	);
-	$("#right-and-search-menu #restore").off("click").on(
+	$("#restore").off("click").on(
 		"click",
 		function(ev) {
 			ev.stopPropagation();
@@ -982,7 +982,7 @@ $(document).ready(function() {
 			tF.restoreSettings(ev);
 		}
 	);
-	$("#right-and-search-menu #show-big-albums").off("click").on(
+	$("#show-big-albums").off("click").on(
 		"click",
 		function(ev) {
 			ev.stopPropagation();
@@ -990,7 +990,7 @@ $(document).ready(function() {
 			util.toggleBigAlbumsShow(ev);
 		}
 	);
-	$("#right-and-search-menu #save-data").off("click").on(
+	$("#save-data").off("click").on(
 		"click",
 		function(ev) {
 			ev.stopPropagation();

@@ -298,7 +298,7 @@
 					keyObject.html(Utilities._s(key));
 			}
 		}
-		$("#right-and-search-menu #save-data").attr("title", Utilities._t("#save-data-tip"));
+		$("#save-data").attr("title", Utilities._t("#save-data-tip"));
 	};
 
 	Utilities.prototype.windowVerticalScrollbarWidth = function() {

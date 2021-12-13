@@ -316,34 +316,34 @@
 			thisAlbum !== null
 		) {
 			if (isPopup)
-				$("#search-menu #search-field, #search-menu #search-button").attr("title", util._t("#refine-popup-content"));
+				$("#search-field, #search-button").attr("title", util._t("#refine-popup-content"));
 			else
-				$("#search-menu #search-field, #search-menu #search-button").attr("title", util._t("#real-search"));
+				$("#search-field, #search-button").attr("title", util._t("#real-search"));
 
 			if (env.options.search_inside_words)
-				$("#right-and-search-menu li#inside-words").addClass("selected");
+				$("li#inside-words").addClass("selected");
 			else
-				$("#right-and-search-menu li#inside-words").removeClass("selected");
+				$("li#inside-words").removeClass("selected");
 			if (env.options.search_any_word)
-				$("#right-and-search-menu li#any-word").addClass("selected");
+				$("li#any-word").addClass("selected");
 			else
-				$("#right-and-search-menu li#any-word").removeClass("selected");
+				$("li#any-word").removeClass("selected");
 			if (env.options.search_case_sensitive)
-				$("#right-and-search-menu li#case-sensitive").addClass("selected");
+				$("li#case-sensitive").addClass("selected");
 			else
-				$("#right-and-search-menu li#case-sensitive").removeClass("selected");
+				$("li#case-sensitive").removeClass("selected");
 			if (env.options.search_accent_sensitive)
-				$("#right-and-search-menu li#accent-sensitive").addClass("selected");
+				$("li#accent-sensitive").addClass("selected");
 			else
-				$("#right-and-search-menu li#accent-sensitive").removeClass("selected");
+				$("li#accent-sensitive").removeClass("selected");
 			if (env.options.search_tags_only)
-				$("#right-and-search-menu li#tags-only").addClass("selected");
+				$("li#tags-only").addClass("selected");
 			else
-				$("#right-and-search-menu li#tags-only").removeClass("selected");
+				$("li#tags-only").removeClass("selected");
 			// if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
-				// $("#right-and-search-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
+				// $("li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
 			// } else {
-				// $("#right-and-search-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
+				// $("li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
 			if (env.options.cache_base_to_search_in === env.options.folders_string) {
 				// TO DO: actually code could enter here for any root album, i.e. for by date, ecc. too
 				$("#album-search").attr('title', util._t("#current-album-is") + '""');
@@ -357,9 +357,9 @@
 			}
 
 			if (env.options.search_current_album)
-				$("#right-and-search-menu li#album-search").addClass("selected");
+				$("li#album-search").addClass("selected");
 			else
-				$("#right-and-search-menu li#album-search").removeClass("selected");
+				$("li#album-search").removeClass("selected");
 			// }
 		}
 
@@ -1348,9 +1348,9 @@
 		////////////////// SAVE DATA MODE //////////////////////////////
 
 		if (env.options.save_data)
-			$("#right-and-search-menu #save-data").addClass("selected");
+			$("#save-data").addClass("selected");
 		else
-			$("#right-and-search-menu #save-data").removeClass("selected");
+			$("#save-data").removeClass("selected");
 
 
 		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
