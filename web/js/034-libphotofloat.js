@@ -926,8 +926,8 @@
 
 												var resultAlbum = wordAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
-												resultAlbum.filterMediaAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-												resultAlbum.filterSubalbumsAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.media.filterAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.subalbums.filterAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 
 												if (! (thisIndexWords in searchResultsMedia)) {
 													searchResultsMedia[thisIndexWords] = resultAlbum.media;
@@ -964,8 +964,8 @@
 														// we still have to filter out the media and subalbums that do not match the words after the first
 														// we are in all words search mode
 
-														env.searchAlbum.filterMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
-														env.searchAlbum.filterSubalbumsAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
+														env.searchAlbum.media.filterAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
+														env.searchAlbum.subalbums.filterAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
 													}
 
 													// search albums need to conform to default behaviour of albums:

@@ -624,14 +624,14 @@ $(document).ready(function() {
 									let mediaResult = new Media([]);
 									searchWordsFromUserNormalizedAccordingToOptions.forEach(
 										function(normalizedSearchWord, index) {
-											let mapAlbumClone = env.mapAlbum.clone();
-											mapAlbumClone.filterMediaAgainstOneWordAndAlbumSearchedIn(normalizedSearchWord);
-											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b);});
+											let mediaInMapAlbum = new Media(env.mapAlbum.media);
+											mediaInMapAlbum.filterAgainstOneWordAndAlbumSearchedIn(normalizedSearchWord);
+											mediaResult = util.arrayUnion(mediaResult, mediaInMapAlbum, function(a, b) {return a.isEqual(b);});
 										}
 									);
 									env.mapAlbum.media = mediaResult;
 								} else {
-									env.mapAlbum.filterMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions);
+									env.mapAlbum.media.filterAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions);
 								}
 								tF.prepareAndDoPopupUpdate();
 								if (! env.options.search_inside_words && removedStopWords.length) {

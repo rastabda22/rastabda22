@@ -65,4 +65,109 @@
 		return result;
 	};
 
+	Media.prototype.filterAgainstOneWordAndAlbumSearchedIn = function(normalizedWord) {
+		var normalizedWords, normalizedTags;
+		for (let indexMedia = this.length - 1; indexMedia >= 0 ; indexMedia --) {
+			let ithMedia = this[indexMedia];
+			if (! env.options.search_inside_words) {
+				// whole word
+				normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+				if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+					normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
+				if (
+					! (
+						! env.options.search_tags_only &&
+						normalizedWords.includes(normalizedWord) ||
+						env.options.search_tags_only &&
+						ithMedia.metadata.hasOwnProperty("tags") &&
+						normalizedTags.includes(normalizedWord)
+					) || ! (
+						! env.options.search_current_album ||
+						util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+							// check whether the media is inside the current album tree
+							ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							util.isMapCacheBase(env.options.cache_base_to_search_in) &&
+							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(singleMedia => singleMedia.isEqual(ithMedia.cacheBase))
+						)
+					)
+				) {
+					this.splice(indexMedia, 1);
+				}
+			} else {
+				// inside words
+				normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+				if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+					normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
+				if (
+					(
+						! env.options.search_tags_only &&
+						! normalizedWords.some(element => element.includes(normalizedWord)) ||
+						env.options.search_tags_only && (
+							! ithMedia.metadata.hasOwnProperty("tags") ||
+							! normalizedTags.some(element => element.includes(normalizedWord))
+						)
+					) || ! (
+						! env.options.search_current_album ||
+						util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+							// check whether the media is inside the current album tree
+							ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+							util.isMapCacheBase(env.options.cache_base_to_search_in) &&
+							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(singleMedia => singleMedia.isEqual(ithMedia))
+						)
+					)
+				) {
+					this.splice(indexMedia, 1);
+				}
+			}
+		}
+	};
+
+	Media.prototype.filterAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
+		var normalizedWords, normalizedTags;
+		if (lastIndex === undefined)
+			lastIndex = -1;
+
+		for (let indexMedia = this.length - 1; indexMedia >= 0 ; indexMedia --) {
+			let ithMedia = this[indexMedia];
+			if (! env.options.search_inside_words) {
+				// whole word
+				normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+				if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+					normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
+				if (
+					! env.options.search_tags_only &&
+					searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedWords.indexOf(normalizedSearchWord) === -1) ||
+					env.options.search_tags_only && (
+						! ithMedia.metadata.hasOwnProperty("tags") ||
+						searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedTags.indexOf(normalizedSearchWord) === -1)
+					)
+				) {
+					this.splice(indexMedia, 1);
+				}
+			} else {
+				// inside words
+				for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUserNormalizedAccordingToOptions.length; indexWordsLeft ++) {
+					normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+					if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+						normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
+					if (
+						! env.options.search_tags_only &&
+						! normalizedWords.some(normalizedSearchWord => normalizedSearchWord.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
+						env.options.search_tags_only && (
+							! ithMedia.metadata.hasOwnProperty("tags") ||
+							! normalizedTags.some((normalizedSearchWord, index) => index > lastIndex && normalizedTags.indexOf(normalizedSearchWord) === -1)
+						)
+					) {
+						this.splice(indexMedia, 1);
+						break;
+					}
+				}
+			}
+		}
+	};
+
 }());
