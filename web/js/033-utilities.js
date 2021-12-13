@@ -317,6 +317,20 @@
 		return scrollbarWidth;
 	};
 
+	Utilities.prototype.addBySomethingSubdir = function(cacheBase)	{
+		var table = {};
+		table[env.options.by_date_string] = env.options.by_date_album_subdir;
+		table[env.options.by_gps_string] = env.options.by_gps_album_subdir;
+		table[env.options.by_search_string] = env.options.by_search_album_subdir;
+		for (const string in table) {
+			if (cacheBase.indexOf(string) === 0) {
+				cacheBase = Utilities.pathJoin([table[string], cacheBase]);
+				break;
+			}
+		}
+		return cacheBase;
+	};
+
 	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);
 	};
