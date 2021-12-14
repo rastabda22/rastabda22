@@ -734,6 +734,10 @@ video {
 	text-align: center;
 }
 
+#contextual-help {
+	margin-top: 2%;
+}
+
 .error, .browsing-mode-message, .sort-message, .selection-message, .search-failed, .messages {
 	font-size: 4em;
 	font-weight: bold;

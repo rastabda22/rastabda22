@@ -20,17 +20,15 @@ MyPhotoShare can be used entirely with a keyboard.
 |-----------------------|---------------------|------------------------------------------------------------------|
 | root albums           | >                   | Change browsing mode: albums > date > GPS > search > selection   |
 | root albums           | <                   | Change browsing mode reverse                                     |
-| album                 | SHIFT-DOWN ARROW    | first media in album                                             |
 | album                 | ENTER               | enter highlighted album/single media                             |
 | album                 | LEFT ARROW          | move selection backward circularly                               |
 | album                 | RIGHT ARROW         | move selection forward circularly                                |
-| album                 | SHIFT-PAGE DOWN     | first media in album                                             |
-| album                 | ]                   | Sort albums by name asc > name desc > date desc > date asc       |
-| album                 | [                   | Sort albums reverse                                              |
-| album                 | }                   | Sort media by name asc > date asc > name desc > date desc        |
-| album                 | {                   | Sort media reverse                                               |
+| album                 | ]                   | Change album sorting: name asc > name desc > date desc > date asc |
+| album                 | [                   | Change album sorting reverse                                     |
+| album                 | }                   | Change media sorting: name asc > date asc > name desc > date desc |
+| album                 | {                   | Change media sorting reverse                                     |
 | album                 | h                   | Show/hide title                                                  |
-| album                 | a                   | Select all media                                                 |
+| album                 | a                   | Select all subalbums and media                                   |
 | album                 | SHIFT-a             | Unselect all media                                               |
 | album                 | SPACE, CTRL-SPACE   | toggle selection status of highlighted subalbum/media            |
 |-----------------------|---------------------|------------------------------------------------------------------|

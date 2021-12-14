@@ -739,10 +739,41 @@
 						<td class="shortcut-help activate-menu-entry"></td>
 					</tr>
 					<tr>
+						<td class="scope root-album"></td>
+						<td class="shortcut">&gt; , &lt;</td>
+						<td class="shortcut-help change-browsing-mode"></td>
+					</tr>
+					<tr>
+						<td class="scope album"></td>
+						<td class="shortcut enter"></td>
+						<td class="shortcut-help enter-highlighted"></td>
+					</tr>
+					<tr>
+						<td class="scope album"></td>
+						<td class="shortcut"><span class="arrow-right"></span> / <span class="arrow-left"></span></td>
+						<td class="shortcut-help move-highlighting"></td>
+					</tr>
+					<tr>
+						<td class="scope album"></td>
+						<td class="shortcut">] / [</td>
+						<td class="shortcut-help change-album-sorting"></td>
+					</tr>
+					<tr>
+						<td class="scope album"></td>
+						<td class="shortcut">} / {</td>
+						<td class="shortcut-help change-media-sorting"></td>
+					</tr>
+					<tr>
+						<td class="scope album"></td>
+						<td class="shortcut hide-everytyhing-shortcut"></td>
+						<td class="shortcut-help toggle-title"></td>
+					</tr>
+					<tr>
 						<td class="scope album"></td>
 						<td class="shortcut select everything-shortcut"></td>
 						<td class="shortcut-help select everything"></td>
 					</tr>
+
 					<tr>
 						<td class="scope single-media"></td>
 						<td class="shortcut download-link-shortcut"></td>
