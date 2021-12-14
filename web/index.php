@@ -683,10 +683,11 @@
 			<div id="settings-restored" class="messages"></div>
 
 			<div id="contextual-help" class="messages">
+				<div class="shortcuts-table-title"></div>
 				<table class="shortcuts">
-					<tr>
+					<!-- <tr>
 						<td colspan="3" class="table-title"></td>
-					</tr>
+					</tr> -->
 					<tr>
 						<th class="table-title-scope"></th>
 						<th class="table-title-shortcut"></th>
@@ -711,6 +712,31 @@
 						<td class="scope any"></td>
 						<td class="shortcut enter-fullscreen-shortcut"></td>
 						<td class="shortcut-help enter-fullscreen"></td>
+					</tr>
+					<tr>
+						<td class="scope menu"></td>
+						<td class="shortcut">TAB, <span class="arrow-down"></span></td>
+						<td class="shortcut-help highlight-next-in-menu"></td>
+					</tr>
+					<tr>
+						<td class="scope menu"></td>
+						<td class="shortcut"><span class="shift"></span>-TAB, <span class="arrow-up"></span></td>
+						<td class="shortcut-help highlight-previous-in-menu"></td>
+					</tr>
+					<tr>
+						<td class="scope menu"></td>
+						<td class="shortcut"><span class="arrow-left"></span>, <span class="arrow-right"></span></td>
+						<td class="shortcut-help toggle-main-search-menu"></td>
+					</tr>
+					<tr>
+						<td class="scope expandable-menu"></td>
+						<td class="shortcut"><span class="enter"></span>, <span class="space"></span></td>
+						<td class="shortcut-help toggle-menu-expansion"></td>
+					</tr>
+					<tr>
+						<td class="scope menu-command"></td>
+						<td class="shortcut"><span class="enter"></span>, <span class="space"></span></td>
+						<td class="shortcut-help activate-menu-entry"></td>
 					</tr>
 					<tr>
 						<td class="scope album"></td>
