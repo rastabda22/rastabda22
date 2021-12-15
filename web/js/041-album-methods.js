@@ -2209,17 +2209,7 @@
 		env.albumOfPreviousState = env.currentAlbum;
 		env.currentAlbum = this;
 
-		// if (this !== env.currentAlbum) {
-		// 	env.previousAlbum = env.currentAlbum;
-		// 	env.currentAlbum = null;
-		// }
-
-		// if (env.currentAlbum && mediaIndex !== -1) {
-		// // if (env.currentAlbum && env.currentAlbum.isByDate() && mediaIndex !== -1) {
-		// 	env.previousMedia = this.media[mediaIndex];
-		// } else {
 		env.previousMedia = env.currentMedia;
-		// }
 
 		env.currentMedia = null;
 		if (mediaIndex !== -1)
@@ -2227,8 +2217,6 @@
 		env.currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = env.currentAlbum.isAlbumWithOneMedia();
-
-		// menuF.setOptions();
 
 		let menuIconTitle = util._t(".menu-icon-title");
 		if (! env.isMobile.any())

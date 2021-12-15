@@ -326,11 +326,6 @@
 						if (env.currentAlbum.isAlbumWithOneMedia()) {
 							// only one media has remained after the removal
 							window.location.href = upHash;
-							// env.currentMedia = env.currentAlbum.media[0];
-							// env.currentMediaIndex = 0;
-							// $("#media-view").removeClass("hidden");
-							// env.currentMedia.show(env.currentAlbum, "center");
-							// // env.currentAlbum.prepareForShowing(0);
 						} else {
 							if (clickedMediaIndex < env.currentMediaIndex)
 								env.currentMediaIndex --;

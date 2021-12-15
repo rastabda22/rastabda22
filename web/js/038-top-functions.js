@@ -1242,45 +1242,6 @@
 	};
 
 	TopFunctions.prototype.restoreSettings = function(ev) {
-
-		// menuF.setBooleanCookie("hideTitle", env.options.hide_title);
-		// menuF.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
-		// menuF.setBooleanCookie("hideTags", env.options.hide_tags);
-		// menuF.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		// menuF.setBooleanCookie("saveData", env.options.save_data);
-		// menuF.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
-		// menuF.setBooleanCookie("spacing", env.options.thumb_spacing);
-		// menuF.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
-		// menuF.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
-		// menuF.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
-		// menuF.setCookie("albumThumbType", env.options.album_thumb_type);
-		// menuF.setCookie("mediaThumbType", env.options.media_thumb_type);
-
-		// var oldOptions = {};
-		// oldOptions.hide_title = env.options.hide_title;
-		// oldOptions.show_album_media_count = env.options.show_album_media_count;
-		//
-		// oldOptions.albums_slide_style = env.options.albums_slide_style;
-		// oldOptions.album_thumb_type = env.options.album_thumb_type;
-		// oldOptions.show_album_names_below_thumbs = env.options.show_album_names_below_thumbs;
-		//
-		// oldOptions.media_thumb_type = env.options.media_thumb_type;
-		// oldOptions.show_media_names_below_thumbs = env.options.show_media_names_below_thumbs;
-		//
-		// oldOptions.hide_descriptions = env.options.hide_descriptions;
-		// oldOptions.hide_tags = env.options.hide_tags;
-		// oldOptions.spacing = env.options.spacing;
-		// oldOptions.hide_bottom_thumbnails = env.options.hide_bottom_thumbnails;
-		// oldOptions.save_data = env.options.save_data;
-		// // oldOptions.default_album_name_sort = env.options.default_album_name_sort;
-		// // oldOptions.default_album_reverse_sort = env.options.default_album_reverse_sort;
-		// // oldOptions.default_media_name_sort = env.options.default_media_name_sort;
-		// // oldOptions.default_media_reverse_sort = env.options.default_media_reverse_sort;
-		// var promise = menuF.getOptions(true);
-		// promise.then(
-		// 	function optionsHaveBeenReset() {
-		// 		// menuF.setOptions();
-
 		var changed = false;
 		if (env.albumNameSort !== env.options.default_album_name_sort) {
 			env.albumNameSort = env.options.default_album_name_sort;
@@ -1312,65 +1273,53 @@
 		}
 
 		if (env.defaultOptions.show_album_media_count !== env.options.show_album_media_count) {
-			// env.options.show_album_media_count = env.defaultOptions.show_album_media_count;
 			TopFunctions.toggleMediaCount(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.hide_title !== env.options.hide_title) {
-			// env.options.hide_title = env.defaultOptions.hide_title;
 			TopFunctions.toggleTitle(ev);
 			changed = true;
 		}
 
 		if (env.defaultOptions.albums_slide_style !== env.options.albums_slide_style) {
-			// env.options.albums_slide_style = env.defaultOptions.albums_slide_style;
 			TopFunctions.toggleSlideMode(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.album_thumb_type !== env.options.album_thumb_type) {
-			// env.options.album_thumb_type = env.defaultOptions.album_thumb_type;
 			TopFunctions.toggleAlbumsSquare(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.show_album_names_below_thumbs !== env.options.show_album_names_below_thumbs) {
-			// env.options.show_album_names_below_thumbs = env.defaultOptions.show_album_names_below_thumbs;
 			TopFunctions.toggleAlbumNames(ev);
 			changed = true;
 		}
 
 		if (env.defaultOptions.media_thumb_type !== env.options.media_thumb_type) {
-			// env.options.media_thumb_type = env.defaultOptions.media_thumb_type;
 			TopFunctions.toggleMediaSquare(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.show_media_names_below_thumbs !== env.options.show_media_names_below_thumbs) {
-			// env.options.show_media_names_below_thumbs = env.defaultOptions.show_media_names_below_thumbs;
 			TopFunctions.toggleMediaNames(ev);
 			changed = true;
 		}
 
 		if (env.defaultOptions.hide_descriptions !== env.options.hide_descriptions) {
-			// env.options.hide_descriptions = env.defaultOptions.hide_descriptions;
 			TopFunctions.toggleDescriptions(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.hide_tags !== env.options.hide_tags) {
-			// env.options.hide_tags = env.defaultOptions.hide_tags;
 			TopFunctions.toggleTags(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.thumb_spacing !== env.options.spacing) {
-			// env.options.spacing = env.defaultOptions.spacing;
 			TopFunctions.toggleSpacing(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails) {
-			// env.options.hide_bottom_thumbnails = env.defaultOptions.hide_bottom_thumbnails;
 			TopFunctions.toggleBottomThumbnails(ev);
 			changed = true;
 		}
 		if (env.defaultOptions.save_data !== env.options.save_data) {
-			// env.options.save_data = env.defaultOptions.save_data;
 			TopFunctions.toggleSaveData(ev);
 			changed = true;
 		}
@@ -1426,8 +1375,6 @@
 			$(window).hashchange();
 		}
 
-		// 	}
-		// );
 		return false;
 	};
 

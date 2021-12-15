@@ -1439,7 +1439,6 @@
 	};
 
 
-
 	MenuFunctions.prototype.getOptions = function() {
 		function setEnvLanguage() {
 			var userLanguage = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
@@ -1480,42 +1479,6 @@
 							env.defaultOptions = util.cloneObject(env.options);
 
 							setEnvLanguage();
-
-							// if (forceReload) {
-							// 	MenuFunctions.setBooleanCookie("albumNameSortRequested", env.options.default_album_name_sort);
-							// 	MenuFunctions.setBooleanCookie("albumReverseSortCookie", env.options.default_album_reverse_sort);
-							// 	MenuFunctions.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
-							// 	MenuFunctions.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
-							// 	MenuFunctions.setBooleanCookie("hideTitle", env.options.hide_title);
-							// 	MenuFunctions.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
-							// 	MenuFunctions.setBooleanCookie("hideTags", env.options.hide_tags);
-							// 	MenuFunctions.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-							// 	MenuFunctions.setBooleanCookie("saveData", env.options.save_data);
-							// 	MenuFunctions.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
-							// 	MenuFunctions.setBooleanCookie("spacing", env.options.thumb_spacing);
-							// 	MenuFunctions.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
-							// 	MenuFunctions.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
-							// 	MenuFunctions.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
-							// 	MenuFunctions.setCookie("albumThumbType", env.options.album_thumb_type);
-							// 	MenuFunctions.setCookie("mediaThumbType", env.options.media_thumb_type);
-							// 	MenuFunctions.setCookie("searchInsideWords", env.options.search_inside_words);
-							// 	MenuFunctions.setCookie("searchAnyWord", env.options.search_any_word);
-							// 	MenuFunctions.setCookie("searchCaseSensitive", env.options.search_case_sensitive);
-							// 	MenuFunctions.setCookie("searchAccentSensitive", env.options.searchAccentSensitiveCookie);
-							// 	MenuFunctions.setCookie("searchTagsOnly", env.options.search_tags_only);
-							// 	MenuFunctions.setCookie("searchCurrentAlbum", true);
-							// 	MenuFunctions.setCookie("showBigVirtualFolders", false);
-							//
-							// 	if (env.options.thumb_spacing)
-							// 		env.options.spacingSavedValue = env.options.thumb_spacing;
-							// 	else
-							// 		env.options.spacingSavedValue = env.options.media_thumb_size * 0.03;
-							// 	env.options.spacing = env.options.thumb_spacing;
-							// 	MenuFunctions.setCookie("spacing", env.options.spacing);
-							//
-							// 	MenuFunctions.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-							// 	MenuFunctions.setBooleanCookie("saveData", env.options.save_data);
-							// } else {
 							util.translate();
 
 							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];

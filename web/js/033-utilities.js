@@ -1102,10 +1102,6 @@
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
 			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
-			// heightForMediaAndTitle -= parseInt($("#album-view").css("height"));
-			// // 22 is for the scroll bar and the current media marker
-			// // 5 is an extra space
-			// heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
 	};
@@ -1400,11 +1396,7 @@
 	Utilities.prototype.addHighlightToItem = function(object) {
 		if(object.attr("id") !== "menu-icon" && object.attr("id") !== "search-icon")
 			Utilities.removeHighligthsToItems();
-		// // if (object.attr("id") === "save-data") {
-		// // 	object.parent().addClass("highlighted");
-		// } else {
 		object.addClass("highlighted");
-		// }
 	};
 
 	Utilities.prototype.highlightedItemObject = function() {
