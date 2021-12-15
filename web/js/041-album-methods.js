@@ -1022,12 +1022,6 @@
 												ancestorsNamesList[2] = util.transformAltPlaceName(ancestorsNamesList[2]);
 											}
 											let albumPath = ancestorsNamesList.join("/");
-											// let albumPath = ithAlbum.path;
-											// // if (true || album.isSearch() || album.isSelection())
-											// // 	// remove the leading folders/date/gps/map string
-											// albumPath = albumPath.split("/").splice(1).join("/");
-											// else
-											// 	albumPath = albumPath.substring(basePath.length + 1);
 											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(ithAlbum, albumPath);
 											addMediaAndSubalbumsPromise.then(
 												function() {
@@ -2377,8 +2371,6 @@
 			$("#powered-by").show();
 		}
 
-		// // options function must be called again in order to set elements previously absent
-		// menuF.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
 			$(window).off("load").on("load", util.socialButtons());
