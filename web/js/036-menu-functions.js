@@ -1353,6 +1353,14 @@
 			$("#save-data").removeClass("selected");
 
 
+		////////////////// RESTORE SETTINGS //////////////////////////////
+
+		if (! util.settingsChanged())
+			$("#restore").addClass("hidden");
+		else
+			$("#restore").removeClass("hidden");
+
+
 		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
 
 		if ($(".first-level ul li.highlighted.hidden").length) {

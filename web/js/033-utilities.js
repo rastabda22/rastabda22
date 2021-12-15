@@ -3162,6 +3162,34 @@
 		return 10 * 365 * 24 * 60 * 60;
 	};
 
+	Utilities.prototype.settingsChanged = function() {
+		return (
+			env.albumNameSort !== env.options.default_album_name_sort ||
+			env.albumReverseSort !== env.options.default_album_reverse_sort ||
+			env.mediaNameSort !== env.options.default_media_name_sort ||
+			env.mediaReverseSort !== env.options.default_media_reverse_sort ||
+			env.defaultOptions.show_album_media_count !== env.options.show_album_media_count ||
+			env.defaultOptions.hide_title !== env.options.hide_title ||
+			env.defaultOptions.albums_slide_style !== env.options.albums_slide_style ||
+			env.defaultOptions.album_thumb_type !== env.options.album_thumb_type ||
+			env.defaultOptions.show_album_names_below_thumbs !== env.options.show_album_names_below_thumbs ||
+			env.defaultOptions.media_thumb_type !== env.options.media_thumb_type ||
+			env.defaultOptions.show_media_names_below_thumbs !== env.options.show_media_names_below_thumbs ||
+			env.defaultOptions.hide_descriptions !== env.options.hide_descriptions ||
+			env.defaultOptions.hide_tags !== env.options.hide_tags ||
+			env.defaultOptions.thumb_spacing !== env.options.spacing ||
+			env.defaultOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails ||
+			env.defaultOptions.save_data !== env.options.save_data ||
+			env.options.search_inside_words ||
+			env.options.search_any_word ||
+			env.options.search_case_sensitive ||
+			env.options.search_accent_sensitive ||
+			env.options.search_tags_only ||
+			! env.options.search_current_album ||
+			env.options.show_big_virtual_folders
+		);
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
