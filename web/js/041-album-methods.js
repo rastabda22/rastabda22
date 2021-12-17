@@ -2641,9 +2641,10 @@
 		}
 
 		if (
-			populateMedia &&
-			$("#thumbs").is(":visible") && (
+			populateMedia && (
 				! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders || env.isRevertingFromHidingGeotaggedMedia
+			) && (
+				inPopup || $("#thumbs").is(":visible")
 			)
 		) {
 			$(thumbsSelector).empty();
