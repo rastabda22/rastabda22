@@ -5,6 +5,7 @@
 * contextual help now available from top right and with `i` shortcut (WIP)
 * the space bar can now  be used in menu to open an expandable entry and to activate a command
 * right menu is now more spaced on mobile
+* central click on subalbums now "remembers" selection, map album, passwords
 * bug fixes
 
 ### version v5.5.1 (December 5, 2021)
