@@ -126,7 +126,8 @@
 		);
 		clonedAlbum.subalbums.forEach(
 			function(subalbum, index) {
-				clonedAlbum.subalbums[index] = subalbum.toSubalbum();
+				if (subalbum instanceof Album)
+					clonedAlbum.subalbums[index] = subalbum.toSubalbum();
 			}
 		);
 		clonedAlbum.media.forEach(
