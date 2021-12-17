@@ -374,7 +374,7 @@ $(document).ready(function() {
 							env.currentMedia !== null && (
 								env.currentMedia.hasGpsData() || typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
 							) ||
-							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
+							env.currentMedia === null && ! env.options.save_data && env.currentAlbum.positionsAndMediaInTree.length
 						)
 					) {
 						if ($(".map-popup-trigger-double")[0] !== undefined)
