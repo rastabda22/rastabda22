@@ -61,6 +61,7 @@
 			"captionForSearchSorting",
 			"sizesOfAlbum",
 			"sizesOfSubTree",
+			"subalbums",
 			"unicodeWords",
 			"words",
 			"tags"
