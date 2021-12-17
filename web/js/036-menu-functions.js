@@ -1620,7 +1620,7 @@
 							env.options.bySelectionStringWithTrailingSeparator = env.options.by_selection_string + env.options.cache_folder_separator;
 							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
 
-							if (typeof isPhp === "function" && env.options.request_password_email) {
+							if (util.isPhp() && env.options.request_password_email) {
 								$("#request-password").off("click").on("click", util.showPasswordRequestForm);
 								$("#password-request-form").submit(
 									function() {
@@ -1655,7 +1655,7 @@
 								$("#request-password").hide();
 							}
 
-							if (typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email) {
+							if (util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email) {
 								$(".map-marker-centered-send-suggestion").off("click").on(
 									"click",
 									function() {

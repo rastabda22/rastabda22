@@ -378,7 +378,7 @@
 
 			if (
 				env.currentMedia !== null && ! env.currentMedia.hasGpsData() &&
-				typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+				util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email
 			) {
 				// show the central marker, in order to permit the user to suggest by email the geolocation of current media
 				if (env.lastMapPositionAndZoom.center !== false)

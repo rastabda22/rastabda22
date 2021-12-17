@@ -372,7 +372,7 @@ $(document).ready(function() {
 						! util.onlyShowNonGeotaggedContent() &&
 						(
 							env.currentMedia !== null && (
-								env.currentMedia.hasGpsData() || typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+								env.currentMedia.hasGpsData() || util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email
 							) ||
 							env.currentMedia === null && ! env.options.save_data && env.currentAlbum.positionsAndMediaInTree.length
 						)
@@ -1140,7 +1140,7 @@ $(document).ready(function() {
 						menuF.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}
 
-					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {
+					if (util.isPhp() && typeof postData !== "undefined" && postData !== null) {
 						util.readPostData();
 					}
 

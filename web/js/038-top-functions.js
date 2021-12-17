@@ -584,7 +584,7 @@
 
 							if (
 								singleMedia.hasGpsData() ||
-								typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+								util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email
 							) {
 								let imgHtml;
 								if (singleMedia.hasGpsData())
@@ -780,7 +780,7 @@
 								if (
 									env.currentMedia !== null && (
 										env.currentMedia.hasGpsData() ||
-										typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+										util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email
 									)
 								) {
 									TopFunctions.generateMapFromTitle(ev, from);
@@ -1377,7 +1377,7 @@
 		if (env.currentMedia !== null) {
 			if (env.currentMedia.hasGpsData()) {
 				pointList = new PositionsAndMedia([env.currentMedia.generatePositionAndMedia()]);
-			} else if (typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email) {
+			} else if (util.isPhp() && env.options.user_may_suggest_location && env.options.request_password_email) {
 				pointList = new PositionsAndMedia([]);
 			}
 		} else if (env.currentAlbum.positionsAndMediaInTree.length) {

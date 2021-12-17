@@ -551,6 +551,10 @@
 		return name;
 	};
 
+	Utilities.isPhp = function() {
+		return typeof isPhp === "function";
+	};
+
 	Utilities.isFolderCacheBase = function(cacheBase) {
 		return cacheBase === env.options.folders_string || cacheBase.indexOf(env.options.foldersStringWithTrailingSeparator) === 0;
 	};
@@ -1727,7 +1731,7 @@
 				window.location.href = imgData.mediaHash;
 			}
 		);
-		if (typeof isPhp === "function") {
+		if (Utilities.isPhp) {
 			// execution enters here if we are using index.php
 			element.parent().parent().off("auxclick").on(
 				"auxclick",
@@ -3259,6 +3263,7 @@
 	Utilities.prototype.onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent;
 	Utilities.prototype.isLoaded = Utilities.isLoaded;
 	Utilities.prototype.hasSomeDescription = Utilities.hasSomeDescription;
+	Utilities.prototype.isPhp = Utilities.isPhp;
 
 	window.Utilities = Utilities;
 }());

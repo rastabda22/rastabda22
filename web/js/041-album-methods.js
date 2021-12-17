@@ -2875,7 +2875,7 @@
 				);
 
 				if (
-					typeof isPhp === "function" && (
+					util.isPhp() && (
 						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
 					)
 				) {
@@ -3234,7 +3234,7 @@
 				}
 
 				if (
-					typeof isPhp === "function" && (
+					util.isPhp() && (
 						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
 					)
 				) {
