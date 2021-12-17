@@ -3297,6 +3297,25 @@
 						randomMedia = randomMediaFromCache;
 					self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
 				}
+
+				if (
+					util.isPhp() && (true
+						// util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+					)
+				) {
+					// execution enters here if we are using index.php
+					let subalbumId = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);;
+					$("#" + subalbumId).parent().off("auxclick").on(
+						"auxclick",
+						{subalbumHash: subfolderHash},
+						function (ev) {
+							if (ev.which === 2) {
+								util.openInNewTab(ev.data.subalbumHash);
+								return false;
+							}
+						}
+					);
+				}
 			}
 
 			if (populateSubalbums)
