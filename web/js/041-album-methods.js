@@ -751,21 +751,20 @@
 	};
 
 	Album.prototype.removeSubalbumFromSelection = function(clickedSelector) {
-		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
-		var ithSubalbum = this.subalbums[iSubalbum];
-		// var ithSubalbum = this.subalbums[iSubalbum];
+		var iClickedSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
+		var clickedSubalbum = this.subalbums[iClickedSubalbum];
 		var self = this;
 		return new Promise(
 			function(resolve_removeSubalbum) {
-				if (! ithSubalbum.isSelected()) {
-					if (ithSubalbum.isEmpty())
+				if (! clickedSubalbum.isSelected()) {
+					if (clickedSubalbum.isEmpty())
 						util.initializeSelectionAlbum();
 					resolve_removeSubalbum();
 				} else {
-					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: ! env.options.save_data});
+					let convertSubalbumPromise = clickedSubalbum.toAlbum(null, {getMedia: true, getPositions: ! env.options.save_data});
 					convertSubalbumPromise.then(
-						function(ithAlbum) {
-							self.subalbums[iSubalbum] = ithAlbum;
+						function(clickedAlbum) {
+							self.subalbums[iClickedSubalbum] = clickedAlbum;
 
 							var selectedMediaInsideSelectedAlbums = [];
 							env.selectionAlbum.media.forEach(
@@ -775,16 +774,16 @@
 								}
 							);
 
-							var subalbumIsInsideSelectedAlbums = ithAlbum.isInsideSelectedAlbums();
+							var subalbumIsInsideSelectedAlbums = clickedAlbum.isInsideSelectedAlbums();
 
-							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(ithAlbum));
+							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(clickedAlbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (
-								ithAlbum.hasOwnProperty("positionsAndMediaInTree") && ithAlbum.positionsAndMediaInTree.length &&
-								selectedSubalbum.hasOwnProperty("positionsAndMediaInTree") && selectedSubalbum.positionsAndMediaInTree.length
+								env.selectionAlbum.hasOwnProperty("positionsAndMediaInTree") && env.selectionAlbum.positionsAndMediaInTree.length &&
+								clickedAlbum.hasOwnProperty("positionsAndMediaInTree") && clickedAlbum.positionsAndMediaInTree.length
 							) {
-								// if (ithAlbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
+								// if (clickedAlbum.numPositionsInTree > env.selectionAlbum.numPositionsInTree / 10) {
 								// 	let newPositions = new PositionsAndMedia();
 								// 	env.selectionAlbum.subalbums.forEach(
 								// 		function(selectedSubalbum) {
@@ -792,16 +791,16 @@
 								// 		}
 								// 	);
 								// } else {
-								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
+								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(clickedAlbum.positionsAndMediaInTree);
 								// }
 								env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 							}
 
 							if (! subalbumIsInsideSelectedAlbums) {
-								env.selectionAlbum.numsMediaInSubTree.subtract(ithAlbum.numsMediaInSubTree);
-								env.selectionAlbum.nonGeotagged.numsMediaInSubTree.subtract(ithAlbum.nonGeotagged.numsMediaInSubTree);
-								env.selectionAlbum.sizesOfSubTree.subtract(ithAlbum.sizesOfSubTree);
-								env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(ithAlbum.nonGeotagged.sizesOfSubTree);
+								env.selectionAlbum.numsMediaInSubTree.subtract(clickedAlbum.numsMediaInSubTree);
+								env.selectionAlbum.nonGeotagged.numsMediaInSubTree.subtract(clickedAlbum.nonGeotagged.numsMediaInSubTree);
+								env.selectionAlbum.sizesOfSubTree.subtract(clickedAlbum.sizesOfSubTree);
+								env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(clickedAlbum.nonGeotagged.sizesOfSubTree);
 								// selectedMediaInsideSelectedAlbums.forEach(
 								// 	function(singleMedia) {
 								// 		if (! singleMedia.isInsideSelectedAlbums()) {
@@ -811,7 +810,7 @@
 								// 		}
 								// 	}
 								// );
-								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(ithAlbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(clickedAlbum.numsProtectedMediaInSubTree);
 							}
 
 							if (! env.currentAlbum.isSelection()) {
