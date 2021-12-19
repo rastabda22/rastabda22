@@ -748,12 +748,6 @@ video {
 	color: yellow;
 }
 
-.shortcuts-body {
-	column-count: 2;
-	-moz-column-count:2;
-	-webkit-column-count:2;
-}
-
 .error, .browsing-mode-message, .sort-message, .selection-message, .search-failed, .messages {
 	font-size: 4em;
 	font-weight: bold;
@@ -1245,7 +1239,7 @@ a.search-link:hover {
 }
 
 #contextual-help table {
-	font-size: 12px;
+	font-size: 14px;
 	width: auto;
 	margin: 1em auto;
 }

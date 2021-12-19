@@ -48,8 +48,7 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("#contextual-help").is(":visible")) {
-				$("#contextual-help").stop().fadeOut(500);
-				$("#album-and-media-container").stop().fadeIn(500);
+				util.hideContextualHelp();
 				return false;
 			} else if ($("#you-can-suggest-photo-position").is(":visible")) {
 				$("#you-can-suggest-photo-position").hide();
@@ -111,8 +110,7 @@ $(document).ready(function() {
 				! ($("#search-menu").hasClass("expanded")) &&
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key.toLowerCase() === util._s(".info-icon-shortcut")
 			) {
-				$("#album-and-media-container").stop().fadeOut(500);
-				$("#contextual-help").stop().fadeIn(500);
+				util.showContextualHelp();
 				return false;
 			} else if ($("#right-and-search-menu").hasClass("expanded")) {
 				if (
@@ -529,8 +527,7 @@ $(document).ready(function() {
 				! ($("#right-and-search-menu").hasClass("expanded") && $("#search-menu").hasClass("highlighted")) &&
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey && e.key !== undefined && e.key.toLowerCase() === util._s(".info-icon-shortcut")
 			) {
-				$("#album-and-media-container").stop().fadeIn(500);
-				$("#contextual-help").stop().fadeOut(500);
+				util.hideContextualHelp();
 				return false;
 			}
 		}
@@ -1013,14 +1010,12 @@ $(document).ready(function() {
 	$(".info-icon").off("mouseenter").on(
 		"mouseenter",
 		function() {
-			$("#album-and-media-container").stop().fadeOut(500);
-			$("#contextual-help").stop().fadeIn(500);
+			util.showContextualHelp();
 		}
 	).off("mouseleave").on(
 		"mouseleave",
 		function() {
-			$("#album-and-media-container").stop().fadeIn(500);
-			$("#contextual-help").stop().fadeOut(500);
+			util.hideContextualHelp();
 		}
 	);
 

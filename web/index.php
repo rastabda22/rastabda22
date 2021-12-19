@@ -737,7 +737,7 @@
 							<td class="shortcut-help activate-menu-entry" />
 						</tr>
 						<tr>
-							<td class="scope root-album-and-single-media" />
+							<td class="scope root-albums-and-single-media" />
 							<td class="shortcut"><span class="bold">&gt;</span> / <span class="bold">&lt;</span></td>
 							<td class="shortcut-help change-browsing-mode" />
 						</tr>

@@ -535,7 +535,7 @@
 		);
 	};
 
-	Utilities.isAnyRootCacheBase = function(cacheBase) {
+	Utilities.prototype.isAnyRootCacheBase = function(cacheBase) {
 		var result =
 			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) === 0 ||
 			Utilities.isSearchCacheBase(cacheBase) ||
@@ -3194,6 +3194,53 @@
 		);
 	};
 
+	Utilities.prototype.hideContextualHelp = function() {
+		$("#contextual-help").stop().fadeOut(500);
+		$("#album-and-media-container").stop().fadeTo(500, 1);
+		if ($("#my-modal").hasClass("fadedOut")) {
+			$("#my-modal").removeClass("fadedOut").stop().fadeTo(500, 1);
+		}
+
+	};
+
+	Utilities.prototype.showContextualHelp = function() {
+		$("#album-and-media-container").stop().fadeTo(500, 0.1);
+		if ($("#my-modal").is(":visible")) {
+			$("#my-modal").addClass("fadedOut").stop().fadeTo(500, 0.1);
+		}
+		// hide everything except scope "any"
+		$("#contextual-help .shortcuts tr td.scope:not(.any)").parent().hide();
+		// show what is pertinent
+		if ($("#right-and-search-menu .menu").hasClass("expanded")) {
+			// is any menu
+			$(
+				"#contextual-help .shortcuts tr td.scope.menu, " +
+				"#contextual-help .shortcuts tr td.scope.expandable-menu, " +
+				"#contextual-help .shortcuts tr td.scope.menu-command"
+			).parent().show();
+		} else if (env.currentMedia !== null && ! Utilities.isMap() && ! Utilities.isPopup()) {
+			// is a single media
+			$(
+				"#contextual-help .shortcuts tr td.scope.single-media, " +
+				"#contextual-help .shortcuts tr td.scope.root-albums-and-single-media, " +
+				"#contextual-help .shortcuts tr td.scope.enlarged-image, " +
+				"#contextual-help .shortcuts tr td.scope.video"
+			).parent().show();
+		} else if (! Utilities.isMap()) {
+			// is an album or a popup
+			$(
+				"#contextual-help .shortcuts tr td.scope.album"
+			).parent().show();
+			if (env.currentAlbum.isAnyRoot() && ! Utilities.isPopup()) {
+				// is a root album
+				$(
+					"#contextual-help .shortcuts tr td.scope.root-albums-and-single-media"
+				).parent().show();
+			}
+		}
+		$("#contextual-help").stop().fadeIn(500);
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
@@ -3215,7 +3262,6 @@
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype._s = Utilities._s;
 	Utilities.prototype.upHash = Utilities.upHash;
-	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeOrGetMapRootAlbum = Utilities.initializeOrGetMapRootAlbum;
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
