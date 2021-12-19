@@ -470,7 +470,10 @@
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
 			pinchZoom = parseFloat(pinchZoom);
-			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+			if (
+				event.button === 1 ||
+				event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)
+			) {
 				return;
 			}
 

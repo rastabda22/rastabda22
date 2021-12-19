@@ -2803,11 +2803,7 @@
 				}
 			);
 
-			if (
-				util.isPhp() && (
-					util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-				)
-			) {
+			if (util.isPhp()) {
 				// execution enters here if we are using index.php
 				let imageId = ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase;
 				$("#album-view-" + imageId + ", #popup-" + imageId).off("auxclick").on(
@@ -3245,11 +3241,7 @@
 					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 				}
 
-				if (
-					util.isPhp() && (
-						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-					)
-				) {
+				if (util.isPhp()) {
 					// execution enters here if we are using index.php
 					$("#" + id).off("auxclick").off("auxclick").on(
 						"auxclick",
@@ -3297,11 +3289,7 @@
 					self.insertRandomImage(randomMedia.foldersCacheBase, randomMedia, iSubalbum);
 				}
 
-				if (
-					util.isPhp() && (true
-						// util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-					)
-				) {
+				if (util.isPhp()) {
 					// execution enters here if we are using index.php
 					let subalbumId = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);;
 					$("#" + subalbumId).parent().off("auxclick").on(
