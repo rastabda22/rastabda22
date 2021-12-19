@@ -724,10 +724,33 @@
 							}
 						}
 
+						let selector;
 						if (id === "album")
-							$("#album-view .title-string").html(title);
+							selector = "#album-view .title-string";
 						else
-							$(".media-box#" + id + " .title-string").html(title);
+							selector = ".media-box#" + id + " .title-string";
+						$(selector).html(title);
+
+						// add the middle click event
+						if (util.isPhp()) {
+							// execution enters here if we are using index.php
+							$(selector + " .title-anchor").each(
+								function() {
+									var [albumCacheBase] = phFl.decodeHash($(this).attr("href"));
+									$(this).off("auxclick").on(
+										"auxclick",
+										{albumHash: env.hashBeginning + albumCacheBase},
+										function (ev) {
+											if (ev.which === 2) {
+												util.openInNewTab(ev.data.albumHash);
+												return false;
+											}
+										}
+									);
+								}
+							);
+						}
+
 
 						$(".hidden-geotagged-media").attr("title", util._t("#hide-geotagged-media"));
 
