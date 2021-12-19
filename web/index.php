@@ -763,7 +763,7 @@
 						</tr>
 						<tr>
 							<td class="scope album" />
-							<td class="shortcut hide-everytyhing-shortcut" />
+							<td class="shortcut hide-everytyhing-shortcut bold" />
 							<td class="shortcut-help toggle-title" />
 						</tr>
 						<tr>
