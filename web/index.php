@@ -806,7 +806,11 @@
 							</td>
 							<td class="shortcut-help prev-media" />
 						</tr>
-
+						<tr>
+							<td class="scope single-media" />
+							<td class="shortcut metadata-show-shortcut bold" />
+							<td class="shortcut-help show-meadata" />
+						</tr>
 						<tr>
 							<td class="scope single-media" />
 							<td class="shortcut download-link-shortcut bold" />
