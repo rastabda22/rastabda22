@@ -738,6 +738,16 @@ video {
 	margin-top: 2%;
 }
 
+#contextual-help .italic {
+	font-style: italic;
+	white-space: nowrap;
+}
+
+#contextual-help .bold {
+	font-weight: bolder;
+	color: yellow;
+}
+
 .shortcuts-body {
 	column-count: 2;
 	-moz-column-count:2;
