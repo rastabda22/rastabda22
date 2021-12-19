@@ -1,7 +1,7 @@
 * by search json files are now saved into a separate directory, new option `by_search_album_subdir`
 * similarly with by gps json file, new option `by_gps_album_subdir`
 * similarly with by date json file, new option `by_date_album_subdir`
-* swap metadata and map shortcuts, now they are respectively `s` and `m`
+* change metadata and map shortcuts, now they are respectively `t` and `m`
 * contextual help now available from top right and with `i` shortcut (WIP)
 * the space bar can now  be used in menu to open an expandable entry and to activate a command
 * right menu is now more spaced on mobile

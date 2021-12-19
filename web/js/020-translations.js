@@ -9,7 +9,7 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "s",
+				".metadata-show-shortcut": "t",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
@@ -25,7 +25,7 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "s",
+				".metadata-show-shortcut": "t",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
@@ -41,7 +41,7 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "s",
+				".metadata-show-shortcut": "t",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
@@ -57,7 +57,7 @@
 				".next-media-title-shortcut": "n",
 				".prev-media-title-shortcut": "p",
 				".info-icon-shortcut": "i",
-				".metadata-show-shortcut": "s",
+				".metadata-show-shortcut": "t",
 				// ".metadata-hide" is defined further to ".metadata-show" value
 				".original-link-shortcut": "o",
 				".download-link-shortcut": "d",
