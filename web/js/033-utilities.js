@@ -537,7 +537,7 @@
 
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
-			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1 ||
+			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) === 0 ||
 			Utilities.isSearchCacheBase(cacheBase) ||
 			Utilities.isMapCacheBase(cacheBase) ||
 			Utilities.isSelectionCacheBase(cacheBase);
