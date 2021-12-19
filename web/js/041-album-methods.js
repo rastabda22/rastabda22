@@ -3243,7 +3243,7 @@
 
 				if (util.isPhp()) {
 					// execution enters here if we are using index.php
-					$("#" + id).off("auxclick").off("auxclick").on(
+					$("#" + id).off("auxclick").on(
 						"auxclick",
 						// {subfolderHash: subfolderHash},
 						function (ev) {

@@ -1130,10 +1130,6 @@
 		}
 	};
 
-	// PhotoFloat.mediaCacheBase = function(album, singleMedia) {
-	// 	return singleMedia.cacheBase;
-	// };
-
 	PhotoFloat.convertHashToCacheBase = function(hash) {
 		while (hash.length) {
 			if (hash.charAt(0) === "#")
