@@ -172,7 +172,9 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						env.currentMedia === null &&
-						(e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp") && (
+						! e.shiftKey && ! e.ctrlKey && (
+							e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp"
+						) && (
 							env.currentAlbum.subalbums.length || env.currentAlbum.numsMedia.imagesAndVideosTotal()
 						)
 					) {
