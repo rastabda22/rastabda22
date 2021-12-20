@@ -7,8 +7,8 @@ MyPhotoShare can be used entirely with a keyboard.
 |         Scope         |         Key         |                           Action                                 |
 |-----------------------|---------------------|------------------------------------------------------------------|
 | any                   | ESC                 | Quit current action, go up in the albums tree, hide map, ecc.    |
-| any                   | e                   | Open menu                                                        |
-| any                   | m                   | Show map                                                         |
+| any but menu          | e                   | Open menu                                                        |
+| any but menu          | m                   | Show map                                                         |
 | any                   | f                   | Full screen                                                      |
 |-----------------------|---------------------|------------------------------------------------------------------|
 | menu                  | ESC                 | Closes the menu                                                  |
@@ -54,8 +54,6 @@ MyPhotoShare can be used entirely with a keyboard.
 | single media          | <                   | Change browsing mode reverse                                     |
 | single media          | h                   | Show/hide title and bottom thumbnails                            |
 | single media          | 0 .. 9              | Zoom level                                                       |
-| single media          | a                   | Select current media                                             |
-| single media          | SHIFT-a             | Unselect current media                                           |
 | single media          | CTRL-SPACE          | toggle selection status                                          |
 | video                 | SPACE               | play/stop                                                        |
 | picture               | SPACE               | Next picture                                                     |

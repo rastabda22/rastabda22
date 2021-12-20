@@ -3221,6 +3221,7 @@
 		} else if (env.currentMedia !== null && ! Utilities.isMap() && ! Utilities.isPopup()) {
 			// is a single media
 			$(
+				"#contextual-help .shortcuts tr td.scope.any-but-menu, " +
 				"#contextual-help .shortcuts tr td.scope.single-media, " +
 				"#contextual-help .shortcuts tr td.scope.root-albums-and-single-media, " +
 				"#contextual-help .shortcuts tr td.scope.enlarged-image, " +
@@ -3229,11 +3230,13 @@
 		} else if (! Utilities.isMap()) {
 			// is an album or a popup
 			$(
+				"#contextual-help .shortcuts tr td.scope.any-but-menu, " +
 				"#contextual-help .shortcuts tr td.scope.album"
 			).parent().show();
 			if (env.currentAlbum.isAnyRoot() && ! Utilities.isPopup()) {
 				// is a root album
 				$(
+					"#contextual-help .shortcuts tr td.scope.any-but-menu, " +
 					"#contextual-help .shortcuts tr td.scope.root-albums-and-single-media"
 				).parent().show();
 			}

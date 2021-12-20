@@ -698,16 +698,6 @@
 						</tr>
 						<tr>
 							<td class="scope any"></td>
-							<td class="shortcut open-menu-shortcut bold"></td>
-							<td class="shortcut-help open-menu"></td>
-						</tr>
-						<tr>
-							<td class="scope any"></td>
-							<td class="shortcut map-link-shortcut bold"></td>
-							<td class="shortcut-help map-link"></td>
-						</tr>
-						<tr>
-							<td class="scope any"></td>
 							<td class="shortcut enter-fullscreen-shortcut bold"></td>
 							<td class="shortcut-help enter-fullscreen"></td>
 						</tr>
@@ -735,6 +725,26 @@
 							<td class="scope menu-command"></td>
 							<td class="shortcut"><span class="enter italic"></span>, <span class="space italic"></span></td>
 							<td class="shortcut-help activate-menu-entry"></td>
+						</tr>
+						<tr>
+							<td class="scope any-but-menu"></td>
+							<td class="shortcut open-menu-shortcut bold"></td>
+							<td class="shortcut-help open-menu"></td>
+						</tr>
+						<tr>
+							<td class="scope any-but-menu"></td>
+							<td class="shortcut map-link-shortcut bold"></td>
+							<td class="shortcut-help map-link"></td>
+						</tr>
+						<tr>
+							<td class="scope any-but-menu"></td>
+							<td class="shortcut hide-everytyhing-shortcut bold"></td>
+							<td class="shortcut-help toggle-title"></td>
+						</tr>
+						<tr>
+							<td class="scope any-but-menu"></td>
+							<td class="shortcut select everything-shortcut bold"></td>
+							<td class="shortcut-help select everything"></td>
 						</tr>
 						<tr>
 							<td class="scope root-albums-and-single-media"></td>
@@ -774,6 +784,22 @@
 							<td class="shortcut-help select-highlighted"></td>
 						</tr>
 						<tr>
+							<td class="scope album"></td>
+							<td class="shortcut">
+								<span class="shift italic"></span>-<span class="arrow-up italic"></span>,
+								<span class="shift italic"></span>-<span class="page-up italic"></span>
+							</td>
+							<td class="shortcut-help album-up"></td>
+						</tr>
+						<tr>
+							<td class="scope album"></td>
+							<td class="shortcut">
+								<span class="shift italic"></span>-<span class="arrow-down italic"></span>,
+								<span class="shift italic"></span>-<span class="page-down italic"></span>
+							</td>
+							<td class="shortcut-help first-media"></td>
+						</tr>
+						<tr>
 							<td class="scope single-media"></td>
 							<td class="shortcut">
 								<span class="enter italic"></span>,
@@ -804,16 +830,6 @@
 							<td class="shortcut-help play-stop"></td>
 						</tr>
 						<tr>
-							<td class="scope album"></td>
-							<td class="shortcut hide-everytyhing-shortcut bold"></td>
-							<td class="shortcut-help toggle-title"></td>
-						</tr>
-						<tr>
-							<td class="scope album"></td>
-							<td class="shortcut select everything-shortcut bold"></td>
-							<td class="shortcut-help select everything"></td>
-						</tr>
-						<tr>
 							<td class="scope single-media"></td>
 							<td class="shortcut hide-everytyhing-shortcut bold"></td>
 							<td class="shortcut-help toggle-title-and-bottom-thumbnails"></td>
@@ -837,6 +853,46 @@
 							<td class="scope single-media"></td>
 							<td class="shortcut"><span class="bold">+</span> / <span class="bold">-</span></td>
 							<td class="shortcut-help zoom-in-out"></td>
+						</tr>
+						<tr>
+							<td class="scope single-media"></td>
+							<td class="shortcut">
+								<span class="shift italic"></span>-<span class="arrow-up italic"></span>,
+								<span class="shift italic"></span>-<span class="page-up italic"></span>,
+								<span class="shift italic"></span>-<span class="arrow-down italic"></span>,
+								<span class="shift italic"></span>-<span class="page-down italic"></span>
+							</td>
+							<td class="shortcut-help album-up-from-media"></td>
+						</tr>
+						<tr>
+							<td class="scope single-media"></td>
+							<td class="shortcut">
+								<span class="control italic"></span>-<span class="space italic"></span>
+							</td>
+							<td class="shortcut-help toggle-selection"></td>
+						</tr>
+						<tr>
+							<td class="scope single-media"></td>
+							<td class="shortcut"><span class="bold">0</span> .. <span class="bold">9</span></td>
+							<td class="shortcut-help zoom-level"></td>
+						</tr>
+						<tr>
+							<td class="scope enlarged-image"></td>
+							<td class="shortcut">
+								<span class="arrows italic"></span>,
+								<span class="page-up italic"></span>,
+								<span class="page-down italic"></span>
+							</td>
+							<td class="shortcut-help drag"></td>
+						</tr>
+						<tr>
+							<td class="scope enlarged-image"></td>
+							<td class="shortcut">
+								<span class="shift italic"></span>-<span class="arrows italic"></span>,
+								<span class="shift italic"></span>-<span class="page-up italic"></span>,
+								<span class="shift italic"></span>-<span class="page-down italic"></span>
+							</td>
+							<td class="shortcut-help drag-faster"></td>
 						</tr>
 					</table>
 				</div>
