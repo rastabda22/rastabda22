@@ -3204,6 +3204,8 @@
 	};
 
 	Utilities.prototype.showContextualHelp = function() {
+		if ($("#auth-text").is(":visible"))
+			return;
 		$("#album-and-media-container").stop().fadeTo(500, 0.1);
 		if ($("#my-modal").is(":visible")) {
 			$("#my-modal").addClass("fadedOut").stop().fadeTo(500, 0.1);
