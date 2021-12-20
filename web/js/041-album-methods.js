@@ -3152,14 +3152,14 @@
 			// respect the existing mediaLink (you cannot do it more than once)
 			env.firstEscKey = false;
 		} else {
-			// reset mediaLink
-			if (self.numsMedia.imagesAndVideosTotal())
-				env.mediaLink = phFl.encodeHash(self.cacheBase, self.media[0], env.foundAlbumCacheBase, env.collectionCacheBase);
-			else
-				env.mediaLink = env.hashBeginning + self.cacheBase;
-
 			env.firstEscKey = true;
 		}
+
+		// reset mediaLink
+		if (self.numsMedia.imagesAndVideosTotal())
+			env.mediaLink = phFl.encodeHash(self.cacheBase, self.media[0], env.foundAlbumCacheBase, env.collectionCacheBase);
+		else
+			env.mediaLink = env.hashBeginning + self.cacheBase;
 
 		// insert into DOM
 		if (! self.subalbums.length)
