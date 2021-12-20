@@ -641,7 +641,7 @@
 				"#contextual-help .shortcuts .shortcut-help.enter-fullscreen": "Entra/esci dalla modalità schermo intero",
 				"#contextual-help .shortcuts .shortcut-help.select.everything": "Seleziona/deseleziona tutti i sottoalbum e tutte le immagini/video",
 				"#contextual-help .shortcuts .shortcut-help.download-link": "Scarica l'originale",
-				"#contextual-help .shortcuts .shortcut-help.show-meadata": "Mostra/nasconi i metadati",
+				"#contextual-help .shortcuts .shortcut-help.show-meadata": "Mostra/nascondi i metadati",
 				"#contextual-help .shortcuts .highlight-next-in-menu": "Evidenzia la prossima voce",
 				"#contextual-help .shortcuts .highlight-previous-in-menu": "Evidenzia la voce precedente",
 				"#contextual-help .shortcuts .toggle-main-search-menu": "Commuta tra menu principale e ricerca",
