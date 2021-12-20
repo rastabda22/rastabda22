@@ -864,10 +864,10 @@
 
 		$("#downloading-media").hide();
 
-		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, env.foundAlbumCacheBase, env.collectionCacheBase);
 		env.firstEscKey = true;
 
 		if (id === "center") {
+			env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, env.foundAlbumCacheBase, env.collectionCacheBase);
 			$(".media-bar").show();
 			whatMedia = this;
 			util.setNextPrevVisibility();
