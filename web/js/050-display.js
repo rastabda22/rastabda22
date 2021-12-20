@@ -289,14 +289,14 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: 1, y: 0});
 						}
 						return false;
-					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink) {
-						if (e.shiftKey && env.currentMedia === null) {
+					} else if ((e.key === "ArrowUp" || e.key === "PageUp")) {
+						if (upLink && e.shiftKey && env.currentMedia === null) {
 							$("#loading").show();
 							pS.swipeDown(upLink);
 							return false;
 						} else if (env.currentMedia !== null) {
 							if (env.currentZoom === env.initialZoom) {
-								if (e.shiftKey) {
+								if (upLink && e.shiftKey) {
 								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 									pS.swipeDown(upLink);
 									return false;
