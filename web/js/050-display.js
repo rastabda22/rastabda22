@@ -292,13 +292,14 @@ $(document).ready(function() {
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp")) {
-						if (upLink && e.shiftKey && env.currentMedia === null) {
+						let canGoUp = upLink && upLink !== window.location.hash;
+						if (canGoUp && e.shiftKey && env.currentMedia === null) {
 							$("#loading").show();
 							pS.swipeDown(upLink);
 							return false;
 						} else if (env.currentMedia !== null) {
 							if (env.currentZoom === env.initialZoom) {
-								if (upLink && e.shiftKey) {
+								if (canGoUp && e.shiftKey) {
 								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 									pS.swipeDown(upLink);
 									return false;
