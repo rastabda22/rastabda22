@@ -466,8 +466,8 @@
 				<div id="auth-close"></div>
 				<form id="auth-form">
 					<div id="auth-question"></div>
-					<input type="text" value="username" autocomplete="username" style="display: none;" />
-					<input id="password" type="password" autocomplete="current-password" />
+					<input type="text" value="username" autocomplete="username" style="display: none;"></input>
+					<input id="password" type="password" autocomplete="current-password"></td>
 					<input type="submit" value="⏎" class="button"/>
 				</form>
 				<div>
@@ -475,14 +475,14 @@
 					<form id="password-request-form">
 						<div id="enter-your-data"></div>
 						<div id="please-fill"></div>
-						<input type="hidden" name="requestpassword" />
-						<span id="name-label" />
-						<input id="form-name" type="text" name="name" />
-						<span id="email-label" class="space-before" />
-						<input id="form-email" type="text" name="email" />
+						<input type="hidden" name="requestpassword"></input>
+						<span id="name-label"></span>
+						<input id="form-name" type="text" name="name"></input>
+						<span id="email-label" class="space-before"></span>
+						<input id="form-email" type="text" name="email"></input>
 						<span id="identity" class="space-before">
-							<span id="identity-label" />
-							<input id="form-identity" type="text" name="identity" />
+							<span id="identity-label"></span>
+							<input id="form-identity" type="text" name="identity"></input>
 						</span>
 						<input type="submit" value="⏎" class="button"/>
 					</form>
@@ -538,7 +538,7 @@
 
 				<div id="album-view">
 					<div class="title">
-						<span class="title-string" />
+						<span class="title-string"></span>
 					</div>
 
 					<div id="subalbums"></div>
@@ -562,7 +562,7 @@
 				</div>
 				<div id="search-menu" class="menu search active hidden-by-menu-selection">
 					<form class="caption">
-						<input type="search" id="search-field" />
+						<input type="search" id="search-field"></input>
 						<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 					</form>
 					<ul>
@@ -577,7 +577,7 @@
 
 				<ul id="right-menu" class="menu">
 					<li class="first-level expandable browsing-mode-switcher active">
-						<span class="browsing-mode-switcher caption" />
+						<span class="browsing-mode-switcher caption"></span>
 						<ul class="sub-menu hidden">
 							<li id="folders-view" class="browsing-mode-switcher radio active"></li>
 							<li id="by-date-view" class="browsing-mode-switcher radio active"></li>
@@ -589,7 +589,7 @@
 					</li>
 
 					<li class="first-level expandable sort album-sort active">
-						<span class="sort album-sort caption" />
+						<span class="sort album-sort caption"></span>
 						<ul class="sub-menu hidden">
 							<li class="sort album-sort by-date radio"></li>
 							<li class="sort album-sort by-name radio"></li>
@@ -598,7 +598,7 @@
 					</li>
 
 					<li class="first-level expandable sort media-sort active">
-						<span class="sort media-sort caption" />
+						<span class="sort media-sort caption"></span>
 						<ul class="sub-menu hidden">
 							<li class="sort media-sort by-date radio"></li>
 							<li class="sort media-sort by-name radio"></li>
@@ -607,7 +607,7 @@
 					</li>
 
 					<li class="first-level expandable ui active">
-						<span class="ui caption" />
+						<span class="ui caption"></span>
 						<ul class="sub-menu hidden">
 							<li class="ui hide-title active"></li>
 							<li class="ui media-count active"></li>
@@ -624,7 +624,7 @@
 					</li>
 
 					<li class="first-level expandable select active">
-						<span class="select caption" />
+						<span class="select caption"></span>
 						<ul class="sub-menu hidden">
 							<li class="select everything active"></li>
 							<li class="select everything-individual active"></li>
@@ -641,7 +641,7 @@
 					<li id="show-big-albums" class="first-level big-albums active"></li>
 
 					<li class="first-level expandable download-album active">
-						<span class="download-album caption" />
+						<span class="download-album caption"></span>
 						<ul class="sub-menu hidden">
 							<li class="download-single-media active">
 								<a class="download-link"></a>
@@ -692,92 +692,89 @@
 							<th class="table-title-action"></th>
 						</tr>
 						<tr>
-							<td class="scope any" />
+							<td class="scope any"></td>
 							<td class="shortcut italic">ESC</td>
-							<td class="shortcut-help esc" />
+							<td class="shortcut-help esc"></td>
 						</tr>
 						<tr>
-							<td class="scope any" />
-							<td class="shortcut open-menu-shortcut bold" />
-							<td class="shortcut-help open-menu" />
+							<td class="scope any"></td>
+							<td class="shortcut open-menu-shortcut bold"></td>
+							<td class="shortcut-help open-menu"></td>
 						</tr>
 						<tr>
-							<td class="scope any" />
-							<td class="shortcut map-link-shortcut bold" />
-							<td class="shortcut-help map-link" />
+							<td class="scope any"></td>
+							<td class="shortcut map-link-shortcut bold"></td>
+							<td class="shortcut-help map-link"></td>
 						</tr>
 						<tr>
-							<td class="scope any" />
-							<td class="shortcut enter-fullscreen-shortcut bold" />
-							<td class="shortcut-help enter-fullscreen" />
+							<td class="scope any"></td>
+							<td class="shortcut enter-fullscreen-shortcut bold"></td>
+							<td class="shortcut-help enter-fullscreen"></td>
 						</tr>
 						<tr>
-							<td class="scope menu" />
-							<td class="shortcut"><span class="italic">TAB</span>, <span class="arrow-down italic" /></td>
-							<td class="shortcut-help highlight-next-in-menu" />
+							<td class="scope menu"></td>
+							<td class="shortcut"><span class="italic">TAB</span>, <span class="arrow-down italic"></span></td>
+							<td class="shortcut-help highlight-next-in-menu"></td>
 						</tr>
 						<tr>
-							<td class="scope menu" />
-							<td class="shortcut"><span class="shift italic" ></span>-<span class="italic">TAB</span>, <span class="arrow-up italic" /></td>
-							<td class="shortcut-help highlight-previous-in-menu" />
+							<td class="scope menu"></td>
+							<td class="shortcut"><span class="shift italic"></span>-<span class="italic">TAB</span>, <span class="arrow-up italic"></span></td>
+							<td class="shortcut-help highlight-previous-in-menu"></td>
 						</tr>
 						<tr>
-							<td class="scope menu" />
-							<td class="shortcut"><span class="arrow-left italic" />, <span class="arrow-right italic" /></td>
-							<td class="shortcut-help toggle-main-search-menu" />
+							<td class="scope menu"></td>
+							<td class="shortcut"><span class="arrow-left italic"></span>, <span class="arrow-right italic"></span></td>
+							<td class="shortcut-help toggle-main-search-menu"></td>
 						</tr>
 						<tr>
-							<td class="scope expandable-menu" />
-							<td class="shortcut"><span class="enter italic" />, <span class="space italic" /></td>
-							<td class="shortcut-help toggle-menu-expansion" />
+							<td class="scope expandable-menu"></td>
+							<td class="shortcut"><span class="enter italic"></span>, <span class="space italic"></span></td>
+							<td class="shortcut-help toggle-menu-expansion"></td>
 						</tr>
 						<tr>
-							<td class="scope menu-command" />
-							<td class="shortcut"><span class="enter italic" />, <span class="space italic" /></td>
-							<td class="shortcut-help activate-menu-entry" />
+							<td class="scope menu-command"></td>
+							<td class="shortcut"><span class="enter italic"></span>, <span class="space italic"></span></td>
+							<td class="shortcut-help activate-menu-entry"></td>
 						</tr>
 						<tr>
-							<td class="scope root-albums-and-single-media" />
+							<td class="scope root-albums-and-single-media"></td>
 							<td class="shortcut"><span class="bold">&gt;</span> / <span class="bold">&lt;</span></td>
-							<td class="shortcut-help change-browsing-mode" />
+							<td class="shortcut-help change-browsing-mode"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
-							<td class="shortcut enter italic" />
-							<td class="shortcut-help enter-highlighted" />
+							<td class="scope album"></td>
+							<td class="shortcut enter italic"></td>
+							<td class="shortcut-help enter-highlighted"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
-							<td class="shortcut"><span class="arrow-right italic" /> / <span class="arrow-left italic" /></td>
-							<td class="shortcut-help move-highlighting" />
+							<td class="scope album"></td>
+							<td class="shortcut"><span class="arrow-right italic"></span> / <span class="arrow-left italic"></span></td>
+							<td class="shortcut-help move-highlighting"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
+							<td class="scope album"></td>
 							<td class="shortcut"><span class="bold">]</span> / <span class="bold">[</span></td>
-							<td class="shortcut-help change-album-sorting" />
+							<td class="shortcut-help change-album-sorting"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
+							<td class="scope album"></td>
 							<td class="shortcut"><span class="bold">}</span> / <span class="bold">{</span></td>
-							<td class="shortcut-help change-media-sorting" />
+							<td class="shortcut-help change-media-sorting"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
-							<td class="shortcut hide-everytyhing-shortcut bold" />
-							<td class="shortcut-help toggle-title" />
+							<td class="scope album"></td>
+							<td class="shortcut">
+								<span class="select everything-shortcut bold"></span> /
+								<span class="shift italic"></span>-<span class="select everything-shortcut bold"></span></td>
+							<td class="shortcut-help select everything"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
-							<td class="shortcut"><span class="select everything-shortcut bold" /> / <span class="shift italic" />-<span class="select everything-shortcut bold" /></td>
-							<td class="shortcut-help select everything" />
+							<td class="scope album"></td>
+							<td class="shortcut space italic"></td>
+							<td class="shortcut-help select-highlighted"></td>
 						</tr>
 						<tr>
-							<td class="scope album" />
-							<td class="shortcut space italic" />
-							<td class="shortcut-help select-highlighted" />
-						</tr>
-						<tr>
-							<td class="scope single-media" />
+							<td class="scope single-media"></td>
 							<td class="shortcut">
 								<span class="enter italic"></span>,
 								<span class="arrow-right italic"></span>,
@@ -785,17 +782,10 @@
 								<span class="next-media-title-shortcut bold"></span>,
 								<span class="shift italic"></span>-<span class="prev-media-title-shortcut bold"></span>
 							</td>
-							<td class="shortcut-help next-media" />
+							<td class="shortcut-help next-media"></td>
 						</tr>
 						<tr>
-							<td class="scope video" />
-							<td class="shortcut">
-								<span class="space italic"></span>
-							</td>
-							<td class="shortcut-help play-stop" />
-						</tr>
-						<tr>
-							<td class="scope single-media" />
+							<td class="scope single-media"></td>
 							<td class="shortcut">
 								<span class="shift italic"></span>-<span class="enter italic"></span>,
 								<span class="arrow-left italic"></span>,
@@ -804,17 +794,34 @@
 								<span class="prev-media-title-shortcut bold"></span>,
 								<span class="shift italic"></span>-<span class="next-media-title-shortcut bold"></span>
 							</td>
-							<td class="shortcut-help prev-media" />
+							<td class="shortcut-help prev-media"></td>
 						</tr>
 						<tr>
-							<td class="scope single-media" />
-							<td class="shortcut metadata-show-shortcut bold" />
-							<td class="shortcut-help show-meadata" />
+							<td class="scope video"></td>
+							<td class="shortcut">
+								<span class="space italic"></span>
+							</td>
+							<td class="shortcut-help play-stop"></td>
 						</tr>
 						<tr>
-							<td class="scope single-media" />
-							<td class="shortcut download-link-shortcut bold" />
-							<td class="shortcut-help download-link" />
+							<td class="scope album"></td>
+							<td class="shortcut hide-everytyhing-shortcut bold"></td>
+							<td class="shortcut-help toggle-title"></td>
+						</tr>
+						<tr>
+							<td class="scope album"></td>
+							<td class="shortcut select everything-shortcut bold"></td>
+							<td class="shortcut-help select everything"></td>
+						</tr>
+						<tr>
+							<td class="scope single-media"></td>
+							<td class="shortcut metadata-show-shortcut bold"></td>
+							<td class="shortcut-help show-meadata"></td>
+						</tr>
+						<tr>
+							<td class="scope single-media"></td>
+							<td class="shortcut download-link-shortcut bold"></td>
+							<td class="shortcut-help download-link"></td>
 						</tr>
 					</table>
 				</div>
